@@ -46,12 +46,6 @@ view _ mem =
         cy =
             toFloat (y * cellWidth) + toFloat cellWidth * 0.5
 
-        gx =
-            toFloat (mem.width * cellWidth) * -0.5
-
-        gy =
-            toFloat (mem.height * cellWidth) * -0.5
-
         gw =
             toFloat (mem.width * cellWidth)
 
@@ -65,7 +59,7 @@ view _ mem =
                 |> fade 0.8
                 |> move cx cy
             ]
-            |> move gx gy
+            |> move (gw * -0.5) (gh * -0.5)
         ]
         |> scale 0.4
     ]
