@@ -57,7 +57,7 @@ initial =
 
 update : Computer -> Mem -> Mem
 update c mem =
-    if modBy 30 mem.ticks == 0 then
+    if modBy 10 mem.ticks == 0 then
         mem
             |> updateDirectionFromCachedInputDirection
             |> step
