@@ -59,13 +59,13 @@ update : Computer -> Mem -> Mem
 update c mem =
     if modBy 30 mem.ticks == 0 then
         mem
-            |> updateDirection
+            |> consumeInputDirection
             |> step
-            |> updateInputDirection c.keyboard
+            |> cacheInputDirection c.keyboard
             |> incTicks
 
     else
-        updateInputDirection c.keyboard mem
+        cacheInputDirection c.keyboard mem
             |> incTicks
 
 
@@ -97,8 +97,8 @@ incTicks mem =
     { mem | ticks = mem.ticks + 1 }
 
 
-updateInputDirection : Keyboard -> Mem -> Mem
-updateInputDirection k mem =
+cacheInputDirection : Keyboard -> Mem -> Mem
+cacheInputDirection k mem =
     let
         inputDirection =
             if k.left then
@@ -119,8 +119,8 @@ updateInputDirection k mem =
     { mem | inputDirection = inputDirection }
 
 
-updateDirection : Mem -> Mem
-updateDirection mem =
+consumeInputDirection : Mem -> Mem
+consumeInputDirection mem =
     case mem.inputDirection of
         Just inputDirection ->
             if areOrthogonal inputDirection mem.direction then
