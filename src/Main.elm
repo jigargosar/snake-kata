@@ -22,7 +22,7 @@ initial : Mem
 initial =
     { width = 10
     , height = 20
-    , pos = ( 0, 0 )
+    , pos = ( 9, 19 )
     }
 
 
