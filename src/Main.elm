@@ -161,14 +161,22 @@ viewGrid mem =
     group
         [ rectangle gray gw gh
         , group
-            (viewCell mem.head
-                :: List.map viewCell mem.tail
+            (viewHead mem.head
+                :: List.map viewTail mem.tail
             )
             |> move (gw * -0.5) (gh * -0.5)
         ]
 
 
-viewCell ( x, y ) =
+viewHead =
+    viewCell2 red
+
+
+viewTail =
+    viewCell2 blue
+
+
+viewCell2 color ( x, y ) =
     let
         cx =
             toFloat (x * 100) + 50
@@ -177,7 +185,7 @@ viewCell ( x, y ) =
             toFloat (y * 100) + 50
     in
     group
-        [ square blue 100
+        [ square color 100
             |> fade 0.8
             |> move cx cy
             |> scale 0.95
