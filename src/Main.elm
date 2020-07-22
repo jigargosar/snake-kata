@@ -152,12 +152,6 @@ viewGrid mem =
         ( x, y ) =
             mem.head
 
-        cx =
-            toFloat (x * 100) + 50
-
-        cy =
-            toFloat (y * 100) + 50
-
         gw =
             toFloat (mem.width * 100)
 
@@ -174,11 +168,8 @@ viewGrid mem =
         ]
 
 
-viewCell pos =
+viewCell ( x, y ) =
     let
-        ( x, y ) =
-            pos
-
         cx =
             toFloat (x * 100) + 50
 
