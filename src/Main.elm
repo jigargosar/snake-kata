@@ -32,21 +32,23 @@ update _ m =
 
 
 view : Computer -> Mem -> List Shape
-view c mem =
+view _ mem =
     let
         cw =
             20
-
-        ( x, y ) =
-            mem.pos
-
-        sx =
-            toFloat (cw - mem.width * cw + x * cw)
-
-        sy =
-            toFloat (cw - mem.height * cw + y * cw)
     in
     [ square blue cw
         |> fade 0.8
-        |> move sx sy
+        |> moveCell mem.width mem.height cw mem.pos
     ]
+
+
+moveCell width height cw ( x, y ) =
+    let
+        sx =
+            toFloat (cw - width * cw + x * cw)
+
+        sy =
+            toFloat (cw - height * cw + y * cw)
+    in
+    move sx sy
