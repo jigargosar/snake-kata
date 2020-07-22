@@ -163,6 +163,7 @@ viewGrid mem =
         , group
             (viewHead mem.head
                 :: List.map viewTail mem.tail
+                |> List.reverse
             )
             |> move (gw * -0.5) (gh * -0.5)
         ]
