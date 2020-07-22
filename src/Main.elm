@@ -35,31 +35,31 @@ view : Computer -> Mem -> List Shape
 view _ mem =
     let
         cellWidth =
-            100
+            40
 
         ( x, y ) =
             mem.pos
 
         cx =
-            toFloat (x * cellWidth) + toFloat cellWidth * 0.5
+            toFloat (x * 100) + 50
 
         cy =
-            toFloat (y * cellWidth) + toFloat cellWidth * 0.5
+            toFloat (y * 100) + 50
 
         gw =
-            toFloat (mem.width * cellWidth)
+            toFloat (mem.width * 100)
 
         gh =
-            toFloat (mem.height * cellWidth)
+            toFloat (mem.height * 100)
     in
     [ group
         [ rectangle gray gw gh
         , group
-            [ square blue cellWidth
+            [ square blue 100
                 |> fade 0.8
                 |> move cx cy
             ]
             |> move (gw * -0.5) (gh * -0.5)
         ]
-        |> scale 0.4
+        |> scale (cellWidth * 0.01)
     ]
