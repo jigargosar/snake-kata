@@ -31,8 +31,8 @@ initial : Mem
 initial =
     { width = 10
     , height = 20
-    , pos = ( 9, 19 )
-    , direction = Up
+    , pos = ( 0, 0 )
+    , direction = Right
     , ticks = 0
     }
 
