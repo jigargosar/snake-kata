@@ -12,6 +12,7 @@ type alias Mem =
     , height : Int
     , pos : Pos
     , direction : Direction
+    , inputDirection : Maybe Direction
     , ticks : Int
     }
 
@@ -33,6 +34,7 @@ initial =
     , height = 20
     , pos = ( 0, 0 )
     , direction = Right
+    , inputDirection = Nothing
     , ticks = 0
     }
 
@@ -41,11 +43,11 @@ update : Computer -> Mem -> Mem
 update c mem =
     if modBy 30 mem.ticks == 0 then
         step mem
-            |> updateDirection c.keyboard
+            |> updateInputDirection c.keyboard
             |> incTicks
 
     else
-        updateDirection c.keyboard mem
+        updateInputDirection c.keyboard mem
             |> incTicks
 
 
@@ -77,32 +79,56 @@ incTicks mem =
     { mem | ticks = mem.ticks + 1 }
 
 
-updateDirection : Keyboard -> Mem -> Mem
-updateDirection k mem =
+updateInputDirection : Keyboard -> Mem -> Mem
+updateInputDirection k mem =
     let
-        existingVertical =
-            mem.direction == Up || mem.direction == Down
+        inputDirection =
+            if k.left then
+                Just Left
 
-        existingHorizontal =
-            mem.direction == Left || mem.direction == Right
+            else if k.right then
+                Just Right
 
-        newDirection =
-            if k.left && existingVertical then
-                Left
+            else if k.up then
+                Just Up
 
-            else if k.right && existingVertical then
-                Right
-
-            else if k.up && existingHorizontal then
-                Up
-
-            else if k.down && existingHorizontal then
-                Down
+            else if k.down then
+                Just Down
 
             else
-                mem.direction
+                mem.inputDirection
     in
-    { mem | direction = newDirection }
+    { mem | inputDirection = inputDirection }
+
+
+
+--updateInputDirection : Keyboard -> Mem -> Mem
+--updateInputDirection k mem =
+--    let
+--        existingVertical =
+--            mem.direction == Up || mem.direction == Down
+--
+--        existingHorizontal =
+--            mem.direction == Left || mem.direction == Right
+--
+--        newDirection =
+--            if k.left && existingVertical then
+--                Left
+--
+--            else if k.right && existingVertical then
+--                Right
+--
+--            else if k.up && existingHorizontal then
+--                Up
+--
+--            else if k.down && existingHorizontal then
+--                Down
+--
+--            else
+--                mem.direction
+--    in
+--    { mem | direction = newDirection }
+--
 
 
 view : Computer -> Mem -> List Shape
