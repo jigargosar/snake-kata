@@ -32,10 +32,10 @@ update _ m =
 
 
 view : Computer -> Mem -> List Shape
-view _ mem =
+view c mem =
     let
         cellWidth =
-            40
+            toCellWidth c.screen mem
 
         ( x, y ) =
             mem.pos
@@ -63,3 +63,12 @@ view _ mem =
         ]
         |> scale (cellWidth * 0.01)
     ]
+
+
+toCellWidth screen mem =
+    let
+        cellWidth =
+            min (screen.width / toFloat mem.width) (screen.height / toFloat mem.height)
+                * 0.9
+    in
+    cellWidth
