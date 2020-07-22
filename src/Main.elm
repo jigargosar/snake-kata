@@ -50,7 +50,7 @@ initial =
     { width = 10
     , height = 20
     , head = ( 5, 5 )
-    , tail = [ ( 4, 5 ), ( 3, 5 ) ]
+    , tail = [ ( 3, 5 ), ( 4, 5 ) ]
     , direction = Right
     , inputDirection = Nothing
     , ticks = 0
@@ -91,7 +91,10 @@ step mem =
                 Right ->
                     ( 1, 0 )
     in
-    { mem | head = ( x + dx |> modBy mem.width, y + dy |> modBy mem.height ) }
+    { mem
+        | head = ( x + dx |> modBy mem.width, y + dy |> modBy mem.height )
+        , tail = mem.head :: List.drop 1 mem.tail
+    }
 
 
 incTicks : Mem -> Mem
@@ -149,9 +152,6 @@ view c mem =
 viewGrid : Mem -> Shape
 viewGrid mem =
     let
-        ( x, y ) =
-            mem.head
-
         gw =
             toFloat (mem.width * 100)
 
