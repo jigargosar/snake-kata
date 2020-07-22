@@ -38,13 +38,15 @@ initial =
 
 
 update : Computer -> Mem -> Mem
-update _ mem =
+update c mem =
     if modBy 30 mem.ticks == 0 then
         step mem
+            |> updateDirection c.keyboard
             |> incTicks
 
     else
-        incTicks mem
+        updateDirection c.keyboard mem
+            |> incTicks
 
 
 step : Mem -> Mem
