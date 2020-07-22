@@ -70,8 +70,37 @@ step mem =
     { mem | pos = ( x + dx |> modBy mem.width, y + dy |> modBy mem.height ) }
 
 
+incTicks : Mem -> Mem
 incTicks mem =
     { mem | ticks = mem.ticks + 1 }
+
+
+updateDirection : Keyboard -> Mem -> Mem
+updateDirection k mem =
+    let
+        existingVertical =
+            mem.direction == Up || mem.direction == Down
+
+        existingHorizontal =
+            mem.direction == Left || mem.direction == Right
+
+        newDirection =
+            if k.left && existingVertical then
+                Left
+
+            else if k.right && existingVertical then
+                Right
+
+            else if k.up && existingHorizontal then
+                Up
+
+            else if k.down && existingHorizontal then
+                Down
+
+            else
+                mem.direction
+    in
+    { mem | direction = newDirection }
 
 
 view : Computer -> Mem -> List Shape
