@@ -35,15 +35,15 @@ update _ m =
 
 view : Computer -> Mem -> List Shape
 view _ mem =
-    [ cellShape mem.cellWidth
-        |> moveCell mem.width mem.height mem.cellWidth mem.pos
+    [ viewGridCell mem mem.pos
     ]
 
 
-cellShape : Int -> Shape
-cellShape cw =
-    square blue (toFloat cw)
+viewGridCell : Mem -> Pos -> Shape
+viewGridCell mem pos =
+    square blue (toFloat mem.cellWidth)
         |> fade 0.8
+        |> moveCell mem.width mem.height mem.cellWidth pos
 
 
 moveCell : Int -> Int -> Int -> ( Int, Int ) -> Shape -> Shape
