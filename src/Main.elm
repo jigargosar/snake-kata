@@ -42,6 +42,7 @@ view c mem =
     ]
 
 
+viewGrid : Mem -> Shape
 viewGrid mem =
     let
         ( x, y ) =
