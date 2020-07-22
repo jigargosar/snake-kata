@@ -49,8 +49,8 @@ initial : Mem
 initial =
     { width = 10
     , height = 20
-    , head = ( 0, 0 )
-    , tail = []
+    , head = ( 5, 5 )
+    , tail = [ ( 4, 5 ), ( 3, 5 ) ]
     , direction = Right
     , inputDirection = Nothing
     , ticks = 0
