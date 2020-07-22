@@ -11,6 +11,7 @@ type alias Mem =
     { width : Int
     , height : Int
     , pos : Pos
+    , ticks : Int
     }
 
 
@@ -23,12 +24,30 @@ initial =
     { width = 10
     , height = 20
     , pos = ( 9, 19 )
+    , ticks = 0
     }
 
 
 update : Computer -> Mem -> Mem
-update _ m =
-    m
+update _ mem =
+    if modBy 30 mem.ticks == 0 then
+        step mem
+            |> incTicks
+
+    else
+        incTicks mem
+
+
+step mem =
+    let
+        ( x, y ) =
+            mem.pos
+    in
+    { mem | pos = ( x, y + 1 |> modBy mem.height ) }
+
+
+incTicks mem =
+    { mem | ticks = mem.ticks + 1 }
 
 
 view : Computer -> Mem -> List Shape
