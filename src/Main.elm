@@ -51,14 +51,21 @@ view _ mem =
 
         gy =
             toFloat (mem.height * cellWidth) * -0.5
+
+        gw =
+            toFloat (mem.width * cellWidth)
+
+        gh =
+            toFloat (mem.height * cellWidth)
     in
     [ group
-        [ group
+        [ rectangle gray gw gh
+        , group
             [ square blue cellWidth
                 |> fade 0.8
                 |> move cx cy
             ]
             |> move gx gy
         ]
-        |> scale 0.25
+        |> scale 0.4
     ]
