@@ -36,7 +36,14 @@ view c mem =
     let
         cellWidth =
             toCellWidth c.screen mem
+    in
+    [ viewGrid mem
+        |> scale (cellWidth * 0.01)
+    ]
 
+
+viewGrid mem =
+    let
         ( x, y ) =
             mem.pos
 
@@ -52,7 +59,7 @@ view c mem =
         gh =
             toFloat (mem.height * 100)
     in
-    [ group
+    group
         [ rectangle gray gw gh
         , group
             [ square blue 100
@@ -61,8 +68,6 @@ view c mem =
             ]
             |> move (gw * -0.5) (gh * -0.5)
         ]
-        |> scale (cellWidth * 0.01)
-    ]
 
 
 toCellWidth screen mem =
