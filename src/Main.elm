@@ -62,7 +62,7 @@ update c mem =
     if modBy 10 mem.ticks == 0 then
         mem
             |> updateDirectionFromCachedInputDirection
-            --|> step
+            |> step
             |> cacheInputDirection c.keyboard
             |> incTicks
 
