@@ -62,7 +62,7 @@ update c mem =
     if modBy 10 mem.ticks == 0 then
         mem
             |> updateDirectionFromCachedInputDirection
-            |> step
+            --|> step
             |> cacheInputDirection c.keyboard
             |> incTicks
 
@@ -167,11 +167,27 @@ viewGrid mem =
     group
         [ rectangle gray gw gh
         , group
-            [ square blue 100
-                |> fade 0.8
-                |> move cx cy
+            [ viewCell mem.head
             ]
             |> move (gw * -0.5) (gh * -0.5)
+        ]
+
+
+viewCell pos =
+    let
+        ( x, y ) =
+            pos
+
+        cx =
+            toFloat (x * 100) + 50
+
+        cy =
+            toFloat (y * 100) + 50
+    in
+    group
+        [ square blue 100
+            |> fade 0.8
+            |> move cx cy
         ]
 
 
