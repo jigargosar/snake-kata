@@ -10,6 +10,7 @@ main =
 type alias Mem =
     { width : Int
     , height : Int
+    , cellWidth : Int
     , pos : Pos
     }
 
@@ -22,6 +23,7 @@ initial : Mem
 initial =
     { width = 10
     , height = 20
+    , cellWidth = 25
     , pos = ( 10, 10 )
     }
 
@@ -39,7 +41,7 @@ view _ mem =
     in
     [ square blue cw
         |> fade 0.8
-        |> moveCell mem.width mem.height cw mem.pos
+        |> moveCell mem.width mem.height mem.cellWidth mem.pos
     ]
 
 
