@@ -189,6 +189,7 @@ viewCell pos =
         [ square blue 100
             |> fade 0.8
             |> move cx cy
+            |> scale 0.95
         ]
 
 
