@@ -59,7 +59,7 @@ update : Computer -> Mem -> Mem
 update c mem =
     if modBy 30 mem.ticks == 0 then
         mem
-            |> consumeInputDirection
+            |> updateDirectionFromCachedInputDirection
             |> step
             |> cacheInputDirection c.keyboard
             |> incTicks
@@ -119,8 +119,8 @@ cacheInputDirection k mem =
     { mem | inputDirection = inputDirection }
 
 
-consumeInputDirection : Mem -> Mem
-consumeInputDirection mem =
+updateDirectionFromCachedInputDirection : Mem -> Mem
+updateDirectionFromCachedInputDirection mem =
     case mem.inputDirection of
         Just inputDirection ->
             if areOrthogonal inputDirection mem.direction then
