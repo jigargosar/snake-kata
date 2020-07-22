@@ -35,7 +35,7 @@ view : Computer -> Mem -> List Shape
 view _ mem =
     let
         cellWidth =
-            20
+            100
 
         ( x, y ) =
             mem.pos
@@ -46,7 +46,10 @@ view _ mem =
         sy =
             toFloat (cellWidth - mem.height * cellWidth + y * cellWidth)
     in
-    [ square blue cellWidth
-        |> fade 0.8
-        |> move sx sy
+    [ [ square blue cellWidth
+            |> fade 0.8
+            |> move sx sy
+      ]
+        |> group
+        |> scale 0.25
     ]
