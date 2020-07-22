@@ -92,10 +92,20 @@ step mem =
 
                 Right ->
                     ( 1, 0 )
+
+        newHead =
+            ( x + dx |> modBy mem.width, y + dy |> modBy mem.height )
     in
     { mem
-        | head = ( x + dx |> modBy mem.width, y + dy |> modBy mem.height )
-        , tail = mem.head :: (List.reverse mem.tail |> List.drop 1 |> List.reverse)
+        | head = newHead
+        , tail =
+            mem.head
+                :: (if newHead == mem.fruit then
+                        mem.tail
+
+                    else
+                        List.reverse mem.tail |> List.drop 1 |> List.reverse
+                   )
     }
 
 
