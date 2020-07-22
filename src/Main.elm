@@ -163,8 +163,8 @@ viewGrid mem =
     group
         [ rectangle gray gw gh
         , group
-            (viewFruit mem.fruit
-                :: viewHead mem.head
+            (viewHead mem.head
+                :: viewFruit mem.fruit
                 :: List.map viewTail mem.tail
                 |> List.reverse
             )
