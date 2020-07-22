@@ -35,11 +35,7 @@ update _ m =
 
 view : Computer -> Mem -> List Shape
 view _ mem =
-    let
-        cw =
-            20
-    in
-    [ square blue cw
+    [ square blue (toFloat mem.cellWidth)
         |> fade 0.8
         |> moveCell mem.width mem.height mem.cellWidth mem.pos
     ]
