@@ -24,6 +24,22 @@ type Direction
     | Right
 
 
+isHorizontal : Direction -> Bool
+isHorizontal direction =
+    direction == Left || direction == Right
+
+
+isVertical : Direction -> Bool
+isVertical direction =
+    direction == Up || direction == Down
+
+
+areOrthogonal : Direction -> Direction -> Bool
+areOrthogonal d1 d2 =
+    (isHorizontal d1 && isVertical d2)
+        || (isVertical d1 && isHorizontal d2)
+
+
 type alias Pos =
     ( Int, Int )
 
@@ -101,22 +117,6 @@ updateInputDirection k mem =
                 mem.inputDirection
     in
     { mem | inputDirection = inputDirection }
-
-
-isHorizontal : Direction -> Bool
-isHorizontal direction =
-    direction == Left || direction == Right
-
-
-isVertical : Direction -> Bool
-isVertical direction =
-    direction == Up || direction == Down
-
-
-areOrthogonal : Direction -> Direction -> Bool
-areOrthogonal d1 d2 =
-    (isHorizontal d1 && isVertical d2)
-        || (isVertical d1 && isHorizontal d2)
 
 
 updateDirection : Mem -> Mem
