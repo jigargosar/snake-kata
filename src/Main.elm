@@ -12,6 +12,7 @@ type alias Mem =
     , height : Int
     , head : Pos
     , tail : List Pos
+    , fruit : Pos
     , direction : Direction
     , inputDirection : Maybe Direction
     , ticks : Int
@@ -51,6 +52,7 @@ initial =
     , height = 20
     , head = ( 5, 5 )
     , tail = [ ( 4, 5 ), ( 3, 5 ), ( 2, 5 ), ( 1, 5 ), ( 0, 5 ) ]
+    , fruit = ( 3, 10 )
     , direction = Right
     , inputDirection = Nothing
     , ticks = 0
@@ -161,7 +163,8 @@ viewGrid mem =
     group
         [ rectangle gray gw gh
         , group
-            (viewHead mem.head
+            (viewFruit mem.fruit
+                :: viewHead mem.head
                 :: List.map viewTail mem.tail
                 |> List.reverse
             )
@@ -175,6 +178,10 @@ viewHead =
 
 viewTail =
     viewCell2 blue
+
+
+viewFruit =
+    viewCell2 darkGreen
 
 
 viewCell2 color ( x, y ) =
