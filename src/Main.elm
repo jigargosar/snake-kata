@@ -42,7 +42,9 @@ initial =
 update : Computer -> Mem -> Mem
 update c mem =
     if modBy 30 mem.ticks == 0 then
-        step mem
+        mem
+            |> updateDirection
+            |> step
             |> updateInputDirection c.keyboard
             |> incTicks
 
@@ -101,34 +103,34 @@ updateInputDirection k mem =
     { mem | inputDirection = inputDirection }
 
 
+isHorizontal : Direction -> Bool
+isHorizontal direction =
+    direction == Left || direction == Right
 
---updateInputDirection : Keyboard -> Mem -> Mem
---updateInputDirection k mem =
---    let
---        existingVertical =
---            mem.direction == Up || mem.direction == Down
---
---        existingHorizontal =
---            mem.direction == Left || mem.direction == Right
---
---        newDirection =
---            if k.left && existingVertical then
---                Left
---
---            else if k.right && existingVertical then
---                Right
---
---            else if k.up && existingHorizontal then
---                Up
---
---            else if k.down && existingHorizontal then
---                Down
---
---            else
---                mem.direction
---    in
---    { mem | direction = newDirection }
---
+
+isVertical : Direction -> Bool
+isVertical direction =
+    direction == Up || direction == Down
+
+
+areOrthogonal : Direction -> Direction -> Bool
+areOrthogonal d1 d2 =
+    (isHorizontal d1 && isVertical d2)
+        || (isVertical d1 && isHorizontal d2)
+
+
+updateDirection : Mem -> Mem
+updateDirection mem =
+    case mem.inputDirection of
+        Just inputDirection ->
+            if areOrthogonal inputDirection mem.direction then
+                { mem | direction = inputDirection, inputDirection = Nothing }
+
+            else
+                mem
+
+        Nothing ->
+            mem
 
 
 view : Computer -> Mem -> List Shape
