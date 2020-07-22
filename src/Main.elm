@@ -8,12 +8,22 @@ main =
 
 
 type alias Mem =
-    {}
+    { width : Int
+    , height : Int
+    , pos : Pos
+    }
+
+
+type alias Pos =
+    ( Int, Int )
 
 
 initial : Mem
 initial =
-    {}
+    { width = 30
+    , height = 50
+    , pos = ( 10, 10 )
+    }
 
 
 update : Computer -> Mem -> Mem
