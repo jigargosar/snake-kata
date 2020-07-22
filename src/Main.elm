@@ -20,8 +20,8 @@ type alias Pos =
 
 initial : Mem
 initial =
-    { width = 30
-    , height = 50
+    { width = 10
+    , height = 20
     , pos = ( 10, 10 )
     }
 
@@ -32,11 +32,21 @@ update _ m =
 
 
 view : Computer -> Mem -> List Shape
-view c _ =
+view c mem =
     let
-        t =
-            c.time
+        cw =
+            20
+
+        ( x, y ) =
+            mem.pos
+
+        sx =
+            toFloat (cw - mem.width * cw + x * cw)
+
+        sy =
+            toFloat (cw - mem.height * cw + y * cw)
     in
-    [ group [ square blue 50 |> fade 0.5, rectangle red 1 50 |> rotate 45 ] |> moveX (wave -200 200 4 t)
-    , group [ rectangle red 1 400, rectangle red 400 1 ]
+    [ square blue cw
+        |> fade 0.8
+        |> move sx sy
     ]
