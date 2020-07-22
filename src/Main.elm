@@ -10,7 +10,6 @@ main =
 type alias Mem =
     { width : Int
     , height : Int
-    , cellWidth : Int
     , pos : Pos
     }
 
@@ -23,7 +22,6 @@ initial : Mem
 initial =
     { width = 10
     , height = 20
-    , cellWidth = 25
     , pos = ( 10, 10 )
     }
 
@@ -35,24 +33,20 @@ update _ m =
 
 view : Computer -> Mem -> List Shape
 view _ mem =
-    [ viewGridCell mem mem.pos
-    ]
-
-
-viewGridCell : Mem -> Pos -> Shape
-viewGridCell mem pos =
-    square blue (toFloat mem.cellWidth)
-        |> fade 0.8
-        |> moveCell mem.width mem.height mem.cellWidth pos
-
-
-moveCell : Int -> Int -> Int -> ( Int, Int ) -> Shape -> Shape
-moveCell width height cw ( x, y ) =
     let
+        cellWidth =
+            20
+
+        ( x, y ) =
+            mem.pos
+
         sx =
-            toFloat (cw - width * cw + x * cw)
+            toFloat (cellWidth - mem.width * cellWidth + x * cellWidth)
 
         sy =
-            toFloat (cw - height * cw + y * cw)
+            toFloat (cellWidth - mem.height * cellWidth + y * cellWidth)
     in
-    move sx sy
+    [ square blue cellWidth
+        |> fade 0.8
+        |> move sx sy
+    ]
