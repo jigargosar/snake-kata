@@ -11,8 +11,16 @@ type alias Mem =
     { width : Int
     , height : Int
     , pos : Pos
+    , direction : Direction
     , ticks : Int
     }
+
+
+type Direction
+    = Up
+    | Down
+    | Left
+    | Right
 
 
 type alias Pos =
@@ -24,6 +32,7 @@ initial =
     { width = 10
     , height = 20
     , pos = ( 9, 19 )
+    , direction = Up
     , ticks = 0
     }
 
@@ -38,12 +47,27 @@ update _ mem =
         incTicks mem
 
 
+step : Mem -> Mem
 step mem =
     let
         ( x, y ) =
             mem.pos
+
+        ( dx, dy ) =
+            case mem.direction of
+                Up ->
+                    ( 0, 1 )
+
+                Down ->
+                    ( 0, -1 )
+
+                Left ->
+                    ( -1, 0 )
+
+                Right ->
+                    ( 1, 0 )
     in
-    { mem | pos = ( x, y + 1 |> modBy mem.height ) }
+    { mem | pos = ( x + dx |> modBy mem.width, y + dy |> modBy mem.height ) }
 
 
 incTicks mem =
