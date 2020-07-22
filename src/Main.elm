@@ -50,7 +50,7 @@ initial =
     { width = 10
     , height = 20
     , head = ( 5, 5 )
-    , tail = [ ( 3, 5 ), ( 4, 5 ) ]
+    , tail = [ ( 4, 5 ), ( 3, 5 ) ]
     , direction = Right
     , inputDirection = Nothing
     , ticks = 0
@@ -93,7 +93,7 @@ step mem =
     in
     { mem
         | head = ( x + dx |> modBy mem.width, y + dy |> modBy mem.height )
-        , tail = mem.head :: List.drop 1 mem.tail
+        , tail = mem.head :: (List.reverse mem.tail |> List.drop 1 |> List.reverse)
     }
 
 
