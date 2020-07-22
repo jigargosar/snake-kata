@@ -167,8 +167,9 @@ viewGrid mem =
     group
         [ rectangle gray gw gh
         , group
-            [ viewCell mem.head
-            ]
+            (viewCell mem.head
+                :: List.map viewCell mem.tail
+            )
             |> move (gw * -0.5) (gh * -0.5)
         ]
 
