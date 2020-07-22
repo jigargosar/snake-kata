@@ -10,7 +10,8 @@ main =
 type alias Mem =
     { width : Int
     , height : Int
-    , pos : Pos
+    , head : Pos
+    , tail : List Pos
     , direction : Direction
     , inputDirection : Maybe Direction
     , ticks : Int
@@ -48,7 +49,8 @@ initial : Mem
 initial =
     { width = 10
     , height = 20
-    , pos = ( 0, 0 )
+    , head = ( 0, 0 )
+    , tail = []
     , direction = Right
     , inputDirection = Nothing
     , ticks = 0
@@ -73,7 +75,7 @@ step : Mem -> Mem
 step mem =
     let
         ( x, y ) =
-            mem.pos
+            mem.head
 
         ( dx, dy ) =
             case mem.direction of
@@ -89,7 +91,7 @@ step mem =
                 Right ->
                     ( 1, 0 )
     in
-    { mem | pos = ( x + dx |> modBy mem.width, y + dy |> modBy mem.height ) }
+    { mem | head = ( x + dx |> modBy mem.width, y + dy |> modBy mem.height ) }
 
 
 incTicks : Mem -> Mem
@@ -148,7 +150,7 @@ viewGrid : Mem -> Shape
 viewGrid mem =
     let
         ( x, y ) =
-            mem.pos
+            mem.head
 
         cx =
             toFloat (x * 100) + 50
