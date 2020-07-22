@@ -46,6 +46,7 @@ cellShape cw =
         |> fade 0.8
 
 
+moveCell : Int -> Int -> Int -> ( Int, Int ) -> Shape -> Shape
 moveCell width height cw ( x, y ) =
     let
         sx =
