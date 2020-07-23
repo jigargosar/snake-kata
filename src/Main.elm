@@ -170,7 +170,7 @@ viewGrid gridHelper mem =
     group
         [ viewGridBackground gridHelper
         , group
-            (viewHead gridHelper mem.head
+            (viewHead gridHelper mem.direction mem.head
                 :: viewFruit gridHelper mem.fruit
                 :: List.map (viewTail gridHelper) mem.tail
                 |> List.reverse
@@ -183,18 +183,33 @@ viewGridBackground gridHelper =
     rectangle gray (GH.width gridHelper) (GH.height gridHelper)
 
 
-viewHead gridHelper ( x, y ) =
+viewHead gridHelper direction ( x, y ) =
     let
         ( cx, cy ) =
             GH.toScreen x y gridHelper
 
         cellWidth =
             GH.cellWidth gridHelper
+
+        ang =
+            case direction of
+                Up ->
+                    0
+
+                Down ->
+                    180
+
+                Left ->
+                    90
+
+                Right ->
+                    -90
     in
     group
         [ square red cellWidth
             |> fade 0.8
         , triangle black (cellWidth / 3)
+            |> rotate ang
         ]
         |> move cx cy
         |> scale 0.95
