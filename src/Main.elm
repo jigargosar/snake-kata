@@ -183,8 +183,20 @@ viewGridBackground gridHelper =
     rectangle gray (GH.width gridHelper) (GH.height gridHelper)
 
 
-viewHead =
-    viewCell red
+viewHead gridHelper ( x, y ) =
+    let
+        ( cx, cy ) =
+            GH.toScreen x y gridHelper
+
+        cellWidth =
+            GH.cellWidth gridHelper
+    in
+    group
+        [ square red cellWidth
+            |> fade 0.8
+        ]
+        |> move cx cy
+        |> scale 0.95
 
 
 viewTail =
