@@ -99,24 +99,10 @@ stepSnake : Mem -> Mem
 stepSnake mem =
     let
         ( x, y ) =
-            mem.head
-
-        ( dx, dy ) =
-            case mem.direction of
-                Up ->
-                    ( 0, 1 )
-
-                Down ->
-                    ( 0, -1 )
-
-                Left ->
-                    ( -1, 0 )
-
-                Right ->
-                    ( 1, 0 )
+            stepPosition mem.direction mem.head
 
         newHead =
-            ( x + dx |> modBy mem.width, y + dy |> modBy mem.height )
+            ( x |> modBy mem.width, y |> modBy mem.height )
     in
     { mem
         | head = newHead
