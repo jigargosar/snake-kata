@@ -59,8 +59,7 @@ type alias Pos =
     ( Int, Int )
 
 
-initial : Mem
-initial =
+init seed =
     let
         mem : Mem
         mem =
@@ -73,11 +72,15 @@ initial =
             , over = False
             , inputDirection = Nothing
             , ticks = 0
-            , seed = Random.initialSeed 42
+            , seed = seed
             }
     in
-    mem
-        |> randomizeFruit
+    mem |> randomizeFruit
+
+
+initial : Mem
+initial =
+    init (Random.initialSeed 42)
 
 
 fruitPositionGenerator : Mem -> Random.Generator Pos
