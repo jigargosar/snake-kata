@@ -174,7 +174,13 @@ incTicks mem =
 
 recordInputDirection : Keyboard -> Mem -> Mem
 recordInputDirection k mem =
-    { mem | inputDirection = toDirection k }
+    case toDirection k of
+        Nothing ->
+            -- Preserve Last Direction
+            mem
+
+        d ->
+            { mem | inputDirection = d }
 
 
 toDirection : Keyboard -> Maybe Direction
