@@ -125,7 +125,10 @@ updateSnake mem =
                 |> stepPosition mem.direction
                 |> warpPosition mem.width mem.height
     in
-    if newHead == mem.fruit then
+    if List.member newHead mem.tail then
+        { mem | over = True }
+
+    else if newHead == mem.fruit then
         { mem | head = newHead, tail = mem.head :: mem.tail }
             |> randomizeFruit
 
