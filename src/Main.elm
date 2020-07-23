@@ -58,16 +58,36 @@ type alias Pos =
 
 initial : Mem
 initial =
-    { width = 10
-    , height = 20
-    , head = ( 5, 5 )
-    , tail = [ ( 4, 5 ), ( 3, 5 ), ( 2, 5 ), ( 1, 5 ), ( 0, 5 ) ]
-    , fruit = ( 3, 10 )
-    , direction = Right
-    , inputDirection = Nothing
-    , ticks = 0
-    , seed = Random.initialSeed 42
-    }
+    let
+        mem : Mem
+        mem =
+            { width = 10
+            , height = 20
+            , head = ( 5, 5 )
+            , tail = [ ( 4, 5 ), ( 3, 5 ), ( 2, 5 ), ( 1, 5 ), ( 0, 5 ) ]
+            , fruit = ( 3, 10 )
+            , direction = Right
+            , inputDirection = Nothing
+            , ticks = 0
+            , seed = Random.initialSeed 42
+            }
+    in
+    mem
+        |> randomizeFruit
+
+
+fruitPositionGenerator : Mem -> Random.Generator Pos
+fruitPositionGenerator mem =
+    Random.pair (Random.int 0 (mem.width - 1)) (Random.int 0 (mem.height - 1))
+
+
+randomizeFruit : Mem -> Mem
+randomizeFruit mem =
+    let
+        ( fruit, seed ) =
+            Random.step (fruitPositionGenerator mem) mem.seed
+    in
+    { mem | fruit = fruit, seed = seed }
 
 
 
