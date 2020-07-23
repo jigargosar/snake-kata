@@ -220,6 +220,7 @@ viewGridBackground gridHelper =
     rectangle gray (GH.width gridHelper) (GH.height gridHelper)
 
 
+viewHead : GridHelper -> Direction -> ( Int, Int ) -> Shape
 viewHead gridHelper direction ( x, y ) =
     let
         ( cx, cy ) =
