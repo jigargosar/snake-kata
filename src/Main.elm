@@ -167,22 +167,16 @@ viewGrid mem =
     let
         gridHelper =
             GH.init mem.width mem.height 100
-
-        gw =
-            GH.width gridHelper
-
-        gh =
-            GH.height gridHelper
     in
     group
         [ viewGridBackground gridHelper
         , group
-            (viewHead mem.head
-                :: viewFruit mem.fruit
-                :: List.map viewTail mem.tail
+            (viewHead gridHelper mem.head
+                :: viewFruit gridHelper mem.fruit
+                :: List.map (viewTail gridHelper) mem.tail
                 |> List.reverse
             )
-            |> move (gw * -0.5) (gh * -0.5)
+            |> move (GH.width gridHelper * -0.5) (GH.height gridHelper * -0.5)
         ]
 
 
@@ -203,7 +197,7 @@ viewFruit =
     viewCell darkGreen
 
 
-viewCell color ( x, y ) =
+viewCell color gridHelper ( x, y ) =
     let
         cx =
             toFloat (x * 100) + 50
