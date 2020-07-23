@@ -79,8 +79,8 @@ init seed =
         |> randomizeFruit
 
 
-fruitPositionGenerator : Mem -> Random.Generator Pos
-fruitPositionGenerator mem =
+positionGenerator : Mem -> Random.Generator Pos
+positionGenerator mem =
     Random.pair (Random.int 0 (mem.width - 1)) (Random.int 0 (mem.height - 1))
 
 
@@ -88,7 +88,7 @@ randomizeFruit : Mem -> Mem
 randomizeFruit mem =
     let
         ( fruit, seed ) =
-            Random.step (fruitPositionGenerator mem) mem.seed
+            Random.step (positionGenerator mem) mem.seed
     in
     { mem | fruit = fruit, seed = seed }
 
