@@ -100,7 +100,14 @@ randomizeFruit mem =
 
 update : Computer -> Mem -> Mem
 update c mem =
-    if modBy 10 mem.ticks == 0 then
+    if mem.over then
+        if c.keyboard.enter then
+            initial
+
+        else
+            mem
+
+    else if modBy 10 mem.ticks == 0 then
         mem
             |> updateDirectionFromInputDirection
             |> updateSnake
