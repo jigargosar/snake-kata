@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import GridHelper as GH
+import GridHelper as GH exposing (GridHelper)
 import Playground exposing (..)
 
 
@@ -175,7 +175,7 @@ viewGrid mem =
             GH.height gridHelper
     in
     group
-        [ rectangle gray gw gh
+        [ viewGridBackground gridHelper
         , group
             (viewHead mem.head
                 :: viewFruit mem.fruit
@@ -184,6 +184,11 @@ viewGrid mem =
             )
             |> move (gw * -0.5) (gh * -0.5)
         ]
+
+
+viewGridBackground : GridHelper -> Shape
+viewGridBackground gridHelper =
+    rectangle gray (GH.width gridHelper) (GH.height gridHelper)
 
 
 viewHead =
