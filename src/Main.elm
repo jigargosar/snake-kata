@@ -241,25 +241,22 @@ view c mem =
     let
         cellWidth =
             computeCellWidth c.screen mem
-
-        fontSize =
-            1 / 16 * cellWidth
     in
     let
         gridHelper =
             GH.init mem.width mem.height cellWidth
     in
-    let
-        gameOver =
-            if mem.over then
-                viewGameOver cellWidth
-
-            else
-                viewNothing
-    in
     [ viewGrid gridHelper mem
-    , gameOver
+    , viewIf mem.over (viewGameOver cellWidth)
     ]
+
+
+viewIf bool v =
+    if bool then
+        v
+
+    else
+        viewNothing
 
 
 viewNothing =
