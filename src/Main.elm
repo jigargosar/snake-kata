@@ -159,10 +159,9 @@ view c mem =
     in
     let
         gridHelper =
-            GH.init mem.width mem.height 100
+            GH.init mem.width mem.height cellWidth
     in
     [ viewGrid gridHelper mem
-        |> scale (cellWidth * 0.01)
     ]
 
 
@@ -200,9 +199,12 @@ viewCell color gridHelper ( x, y ) =
     let
         ( cx, cy ) =
             GH.toScreen x y gridHelper
+
+        cellWidth =
+            GH.cellWidth gridHelper
     in
     group
-        [ square color 100
+        [ square color cellWidth
             |> fade 0.8
             |> move cx cy
             |> scale 0.95
