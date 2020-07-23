@@ -47,6 +47,26 @@ type alias Pos =
     ( Int, Int )
 
 
+stepPosition : Direction -> Pos -> Pos
+stepPosition direction ( x, y ) =
+    let
+        ( dx, dy ) =
+            case direction of
+                Up ->
+                    ( 0, 1 )
+
+                Down ->
+                    ( 0, -1 )
+
+                Left ->
+                    ( -1, 0 )
+
+                Right ->
+                    ( 1, 0 )
+    in
+    ( x + dx, y + dy )
+
+
 initial : Mem
 initial =
     { width = 10
