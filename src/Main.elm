@@ -165,14 +165,14 @@ view c mem =
 viewGrid : Mem -> Shape
 viewGrid mem =
     let
-        gg =
+        gridHelper =
             GH.init mem.width mem.height 100
 
         gw =
-            GH.width gg
+            GH.width gridHelper
 
         gh =
-            GH.height gg
+            GH.height gridHelper
     in
     group
         [ rectangle gray gw gh
