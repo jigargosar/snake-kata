@@ -157,17 +157,17 @@ view c mem =
         cellWidth =
             toCellWidth c.screen mem
     in
-    [ viewGrid mem
-        |> scale (cellWidth * 0.01)
-    ]
-
-
-viewGrid : Mem -> Shape
-viewGrid mem =
     let
         gridHelper =
             GH.init mem.width mem.height 100
     in
+    [ viewGrid gridHelper mem
+        |> scale (cellWidth * 0.01)
+    ]
+
+
+viewGrid : GridHelper -> Mem -> Shape
+viewGrid gridHelper mem =
     group
         [ viewGridBackground gridHelper
         , group
