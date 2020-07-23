@@ -60,6 +60,10 @@ initial =
     }
 
 
+
+-- UPDATE
+
+
 update : Computer -> Mem -> Mem
 update c mem =
     if modBy 10 mem.ticks == 0 then
