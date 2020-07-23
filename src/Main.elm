@@ -59,7 +59,7 @@ type alias Pos =
     ( Int, Int )
 
 
-init seed =
+init initialSeed =
     let
         mem : Mem
         mem =
@@ -72,11 +72,29 @@ init seed =
             , over = False
             , inputDirection = Nothing
             , ticks = 0
-            , seed = seed
+            , seed = initialSeed
+            }
+
+        ( head, seed1 ) =
+            Random.step (positionGenerator mem) mem.seed
+
+        mem2 =
+            { mem
+                | head = head
+                , seed = seed1
+                , tail = List.map (addPos (subPos head mem.head) >> warpPosition mem.width mem.height) mem.tail
             }
     in
-    mem
+    mem2
         |> randomizeFruit
+
+
+subPos ( a, b ) ( c, d ) =
+    ( a - c, b - d )
+
+
+addPos ( a, b ) ( c, d ) =
+    ( a + c, b + d )
 
 
 randomizeFruit : Mem -> Mem
