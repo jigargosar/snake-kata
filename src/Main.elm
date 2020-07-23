@@ -27,20 +27,20 @@ type Direction
     | Right
 
 
-isHorizontal : Direction -> Bool
-isHorizontal direction =
-    direction == Left || direction == Right
+opposite : Direction -> Direction
+opposite direction =
+    case direction of
+        Up ->
+            Down
 
+        Down ->
+            Up
 
-isVertical : Direction -> Bool
-isVertical direction =
-    direction == Up || direction == Down
+        Left ->
+            Right
 
-
-areOrthogonal : Direction -> Direction -> Bool
-areOrthogonal d1 d2 =
-    (isHorizontal d1 && isVertical d2)
-        || (isVertical d1 && isHorizontal d2)
+        Right ->
+            Left
 
 
 type alias Pos =
@@ -142,7 +142,7 @@ updateDirectionFromInputDirection : Mem -> Mem
 updateDirectionFromInputDirection mem =
     case mem.inputDirection of
         Just inputDirection ->
-            if areOrthogonal inputDirection mem.direction then
+            if inputDirection /= opposite mem.direction then
                 { mem | direction = inputDirection, inputDirection = Nothing }
 
             else
