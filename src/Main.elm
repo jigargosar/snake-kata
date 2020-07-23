@@ -47,26 +47,6 @@ type alias Pos =
     ( Int, Int )
 
 
-stepPosition : Direction -> Pos -> Pos
-stepPosition direction ( x, y ) =
-    let
-        ( dx, dy ) =
-            case direction of
-                Up ->
-                    ( 0, 1 )
-
-                Down ->
-                    ( 0, -1 )
-
-                Left ->
-                    ( -1, 0 )
-
-                Right ->
-                    ( 1, 0 )
-    in
-    ( x + dx, y + dy )
-
-
 initial : Mem
 initial =
     { width = 10
@@ -112,6 +92,26 @@ stepSnake mem =
                 mem.head :: dropLast mem.tail
     in
     { mem | head = newHead, tail = newTail }
+
+
+stepPosition : Direction -> Pos -> Pos
+stepPosition direction ( x, y ) =
+    let
+        ( dx, dy ) =
+            case direction of
+                Up ->
+                    ( 0, 1 )
+
+                Down ->
+                    ( 0, -1 )
+
+                Left ->
+                    ( -1, 0 )
+
+                Right ->
+                    ( 1, 0 )
+    in
+    ( x + dx, y + dy )
 
 
 dropLast : List a -> List a
