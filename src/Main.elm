@@ -141,9 +141,12 @@ recordInputDirection k mem =
 updateDirectionFromInputDirection : Mem -> Mem
 updateDirectionFromInputDirection mem =
     case mem.inputDirection of
-        Just inputDirection ->
-            if inputDirection /= opposite mem.direction then
-                { mem | direction = inputDirection, inputDirection = Nothing }
+        Just requestedDirection ->
+            if requestedDirection /= opposite mem.direction then
+                { mem
+                    | direction = requestedDirection
+                    , inputDirection = Nothing
+                }
 
             else
                 mem
