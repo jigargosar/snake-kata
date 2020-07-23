@@ -61,32 +61,33 @@ type alias Pos =
 
 init initialSeed =
     let
-        mem : Mem
-        mem =
-            { width = 10
-            , height = 20
-            , head = ( 5, 5 )
-            , direction = Right
-            , tail = [ ( 4, 5 ), ( 3, 5 ), ( 2, 5 ), ( 1, 5 ), ( 0, 5 ) ]
-            , fruit = ( 3, 10 )
-            , over = False
-            , inputDirection = Nothing
-            , ticks = 0
-            , seed = initialSeed
-            }
+        width =
+            10
 
-        ( head, seed1 ) =
-            Random.step (positionGenerator mem) mem.seed
+        height =
+            20
 
-        mem2 =
-            { mem
-                | head = head
-                , seed = seed1
-                , tail = List.map (addPos (subPos head mem.head) >> warpPosition mem.width mem.height) mem.tail
-            }
+        head =
+            ( width // 2, height // 2 )
+
+        tail =
+            [ ( 4, 5 ), ( 3, 5 ), ( 2, 5 ), ( 1, 5 ), ( 0, 5 ) ]
+                |> List.map (addPos (subPos head head) >> warpPosition width height)
+
+        fruit =
+            ( width // 3, height // 3 )
     in
-    mem2
-        |> randomizeFruit
+    { width = width
+    , height = height
+    , head = head
+    , direction = Right
+    , tail = tail
+    , fruit = fruit
+    , over = False
+    , inputDirection = Nothing
+    , ticks = 0
+    , seed = initialSeed
+    }
 
 
 subPos ( a, b ) ( c, d ) =
