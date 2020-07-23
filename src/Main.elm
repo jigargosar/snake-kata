@@ -199,11 +199,8 @@ viewFruit =
 
 viewCell color gridHelper ( x, y ) =
     let
-        cx =
-            toFloat (x * 100) + 50
-
-        cy =
-            toFloat (y * 100) + 50
+        ( cx, cy ) =
+            GH.toScreen x y gridHelper
     in
     group
         [ square color 100

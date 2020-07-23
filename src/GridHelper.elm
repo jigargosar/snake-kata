@@ -2,7 +2,7 @@ module GridHelper exposing
     ( GridHelper
     , height
     , init
-    , size
+    , toScreen
     , width
     )
 
@@ -22,13 +22,6 @@ init w h cw =
     }
 
 
-size : GridHelper -> { width : Float, height : Float }
-size g =
-    { width = width g
-    , height = height g
-    }
-
-
 width : GridHelper -> Float
 width g =
     toFloat g.width * g.cellWidth
@@ -37,3 +30,10 @@ width g =
 height : GridHelper -> Float
 height g =
     toFloat g.height * g.cellWidth
+
+
+toScreen : Int -> Int -> GridHelper -> ( Float, Float )
+toScreen x y g =
+    ( toFloat x * g.cellWidth + g.cellWidth / 2
+    , toFloat y * g.cellWidth + g.cellWidth / 2
+    )
