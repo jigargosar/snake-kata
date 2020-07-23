@@ -251,7 +251,7 @@ view c mem =
     in
     let
         gameOver =
-            if not mem.over then
+            if mem.over then
                 group
                     [ words black "Game Over"
                         |> scale (cellWidth / 16)
