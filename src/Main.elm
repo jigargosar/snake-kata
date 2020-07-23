@@ -72,7 +72,7 @@ init initialSeed =
 
         tail =
             [ ( 4, 5 ), ( 3, 5 ), ( 2, 5 ), ( 1, 5 ), ( 0, 5 ) ]
-                |> List.map (addPos (subPos head head) >> warpPosition width height)
+                |> List.map (addPos (subPos head ( 5, 5 )) >> warpPosition width height)
 
         fruit =
             ( width // 3, height // 3 )
