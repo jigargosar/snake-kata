@@ -9,12 +9,19 @@ main =
 
 
 type alias Mem =
-    { width : Int
+    { -- WORLD
+      width : Int
     , height : Int
+
+    -- SNAKE
     , head : Pos
-    , tail : List Pos
-    , fruit : Pos
     , direction : Direction
+    , tail : List Pos
+
+    --
+    , fruit : Pos
+
+    --
     , inputDirection : Maybe Direction
     , ticks : Int
     }
