@@ -176,7 +176,8 @@ viewGrid mem =
                 :: List.map (viewTail gridHelper) mem.tail
                 |> List.reverse
             )
-            |> move (GH.width gridHelper * -0.5) (GH.height gridHelper * -0.5)
+
+        --|> move (GH.width gridHelper * -0.5) (GH.height gridHelper * -0.5)
         ]
 
 
