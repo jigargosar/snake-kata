@@ -23,6 +23,9 @@ type alias Mem =
     , fruit : Pos
 
     --
+    , over : Bool
+
+    --
     , inputDirection : Maybe Direction
     , ticks : Int
     , seed : Seed
@@ -64,9 +67,10 @@ initial =
             { width = 10
             , height = 20
             , head = ( 5, 5 )
+            , direction = Right
             , tail = [ ( 4, 5 ), ( 3, 5 ), ( 2, 5 ), ( 1, 5 ), ( 0, 5 ) ]
             , fruit = ( 3, 10 )
-            , direction = Right
+            , over = False
             , inputDirection = Nothing
             , ticks = 0
             , seed = Random.initialSeed 42
