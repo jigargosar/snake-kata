@@ -179,8 +179,8 @@ recordInputDirection k mem =
             -- Preserve Last Direction
             mem
 
-        d ->
-            { mem | inputDirection = d }
+        Just d ->
+            { mem | inputDirection = Just d }
 
 
 toDirection : Keyboard -> Maybe Direction
