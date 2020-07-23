@@ -155,7 +155,7 @@ view : Computer -> Mem -> List Shape
 view c mem =
     let
         cellWidth =
-            toCellWidth c.screen mem
+            computeCellWidth c.screen mem
     in
     let
         gridHelper =
@@ -211,7 +211,8 @@ viewCell color gridHelper ( x, y ) =
         ]
 
 
-toCellWidth screen mem =
+computeCellWidth : Screen -> Mem -> Float
+computeCellWidth screen mem =
     let
         cellWidth =
             min (screen.width / toFloat mem.width) (screen.height / toFloat mem.height)
