@@ -194,6 +194,7 @@ viewHead gridHelper ( x, y ) =
     group
         [ square red cellWidth
             |> fade 0.8
+        , triangle black (cellWidth / 3)
         ]
         |> move cx cy
         |> scale 0.95
