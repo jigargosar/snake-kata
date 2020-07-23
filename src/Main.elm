@@ -103,18 +103,20 @@ stepSnake mem =
 
         newHead =
             ( x |> modBy mem.width, y |> modBy mem.height )
-    in
-    { mem
-        | head = newHead
-        , tail =
-            mem.head
-                :: (if newHead == mem.fruit then
-                        mem.tail
 
-                    else
-                        List.reverse mem.tail |> List.drop 1 |> List.reverse
-                   )
-    }
+        newTail =
+            if newHead == mem.fruit then
+                mem.head :: mem.tail
+
+            else
+                mem.head :: dropLast mem.tail
+    in
+    { mem | head = newHead, tail = newTail }
+
+
+dropLast : List a -> List a
+dropLast =
+    List.reverse >> List.drop 1 >> List.reverse
 
 
 incTicks : Mem -> Mem
