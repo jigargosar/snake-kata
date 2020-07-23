@@ -120,15 +120,13 @@ updateSnake mem =
             mem.head
                 |> stepPosition mem.direction
                 |> warpPosition mem.width mem.height
-
-        newTail =
-            if newHead == mem.fruit then
-                mem.head :: mem.tail
-
-            else
-                mem.head :: dropLast mem.tail
     in
-    { mem | head = newHead, tail = newTail }
+    if newHead == mem.fruit then
+        { mem | head = newHead, tail = mem.head :: mem.tail }
+            |> randomizeFruit
+
+    else
+        { mem | head = newHead, tail = mem.head :: dropLast mem.tail }
 
 
 warpPosition : Int -> Int -> Pos -> Pos
