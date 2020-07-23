@@ -168,17 +168,11 @@ viewGrid mem =
         gg =
             GH.init mem.width mem.height 100
 
-        gw_ =
-            GH.size gg |> .width
-
-        gh_ =
-            GH.size gg |> .height
-
         gw =
-            toFloat (mem.width * 100)
+            GH.width gg
 
         gh =
-            toFloat (mem.height * 100)
+            GH.height gg
     in
     group
         [ rectangle gray gw gh
