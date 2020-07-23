@@ -241,12 +241,31 @@ view c mem =
     let
         cellWidth =
             computeCellWidth c.screen mem
+
+        fontSize =
+            1 / 16 * cellWidth
     in
     let
         gridHelper =
             GH.init mem.width mem.height cellWidth
     in
+    let
+        gameOver =
+            if not mem.over then
+                group
+                    [ words black "Game Over"
+                        |> scale (cellWidth / 16)
+                    , words black "Press ENTER"
+                        |> scale (cellWidth / 16 * 0.65)
+                        |> moveDown (cellWidth * 1.2)
+                    ]
+
+            else
+                group
+                    []
+    in
     [ viewGrid gridHelper mem
+    , gameOver
     ]
 
 
