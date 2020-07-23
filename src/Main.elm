@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import GridHelper as GH exposing (GridHelper)
 import Playground exposing (..)
+import Random exposing (Seed)
 
 
 main =
@@ -24,6 +25,7 @@ type alias Mem =
     --
     , inputDirection : Maybe Direction
     , ticks : Int
+    , seed : Seed
     }
 
 
@@ -64,6 +66,7 @@ initial =
     , direction = Right
     , inputDirection = Nothing
     , ticks = 0
+    , seed = Random.initialSeed 42
     }
 
 
