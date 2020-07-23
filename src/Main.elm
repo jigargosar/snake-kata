@@ -252,21 +252,28 @@ view c mem =
     let
         gameOver =
             if mem.over then
-                group
-                    [ words black "Game Over"
-                        |> scale (cellWidth / 16)
-                    , words black "Press ENTER"
-                        |> scale (cellWidth / 16 * 0.65)
-                        |> moveDown (cellWidth * 1.2)
-                    ]
+                viewGameOver cellWidth
 
             else
-                group
-                    []
+                viewNothing
     in
     [ viewGrid gridHelper mem
     , gameOver
     ]
+
+
+viewNothing =
+    group []
+
+
+viewGameOver cw =
+    group
+        [ words black "Game Over"
+            |> scale (cw / 16)
+        , words black "Press ENTER"
+            |> scale (cw / 16 * 0.65)
+            |> moveDown (cw * 1.2)
+        ]
 
 
 viewGrid : GridHelper -> Mem -> Shape
