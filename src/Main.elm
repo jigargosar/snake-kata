@@ -64,13 +64,15 @@ update : Computer -> Mem -> Mem
 update c mem =
     if modBy 10 mem.ticks == 0 then
         mem
-            |> updateDirectionFromCachedInputDirection
+            --|> cacheInputDirection c.keyboard
+            --|> updateDirectionFromCachedInputDirection
             |> step
-            |> cacheInputDirection c.keyboard
             |> incTicks
 
     else
-        cacheInputDirection c.keyboard mem
+        --cacheInputDirection c.keyboard mem
+        mem
+            |> updateDirection c.keyboard
             |> incTicks
 
 
@@ -113,6 +115,31 @@ step mem =
 incTicks : Mem -> Mem
 incTicks mem =
     { mem | ticks = mem.ticks + 1 }
+
+
+updateDirection : Keyboard -> Mem -> Mem
+updateDirection k mem =
+    let
+        d =
+            mem.direction
+
+        nd =
+            if k.left && d /= Right then
+                Left
+
+            else if k.right && d /= Left then
+                Right
+
+            else if k.up && d /= Down then
+                Up
+
+            else if k.down && d /= Up then
+                Down
+
+            else
+                d
+    in
+    { mem | direction = nd }
 
 
 cacheInputDirection : Keyboard -> Mem -> Mem
