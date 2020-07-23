@@ -17,7 +17,7 @@ init w h cw =
 
 
 size : GridHelper -> { width : Float, height : Float }
-size gg =
-    { width = toFloat gg.width * gg.cellWidth
-    , height = toFloat gg.height * gg.cellWidth
+size g =
+    { width = toFloat g.width * g.cellWidth
+    , height = toFloat g.height * g.cellWidth
     }

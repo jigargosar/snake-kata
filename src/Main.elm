@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import GridHelper as GG
+import GridHelper as GH
 import Playground exposing (..)
 
 
@@ -166,13 +166,13 @@ viewGrid : Mem -> Shape
 viewGrid mem =
     let
         gg =
-            GG.init mem.width mem.height 100
+            GH.init mem.width mem.height 100
 
         gw_ =
-            GG.size gg |> .width
+            GH.size gg |> .width
 
         gh_ =
-            GG.size gg |> .height
+            GH.size gg |> .height
 
         gw =
             toFloat (mem.width * 100)
