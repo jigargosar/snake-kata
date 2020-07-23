@@ -65,7 +65,7 @@ update c mem =
     if modBy 10 mem.ticks == 0 then
         mem
             |> updateDirectionFromInputDirection
-            |> stepSnake
+            |> updateSnake
             |> recordInputDirection c.keyboard
             |> incTicks
 
@@ -75,8 +75,12 @@ update c mem =
             |> incTicks
 
 
-stepSnake : Mem -> Mem
-stepSnake mem =
+
+-- UPDATE SNAKE
+
+
+updateSnake : Mem -> Mem
+updateSnake mem =
     let
         newHead =
             mem.head
