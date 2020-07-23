@@ -6,7 +6,7 @@ import Random exposing (Seed)
 
 
 main =
-    game view update initial
+    game view update (init (Random.initialSeed 42))
 
 
 type alias Mem =
@@ -75,12 +75,8 @@ init seed =
             , seed = seed
             }
     in
-    mem |> randomizeFruit
-
-
-initial : Mem
-initial =
-    init (Random.initialSeed 42)
+    mem
+        |> randomizeFruit
 
 
 fruitPositionGenerator : Mem -> Random.Generator Pos
@@ -105,7 +101,7 @@ update : Computer -> Mem -> Mem
 update c mem =
     if mem.over then
         if c.keyboard.enter then
-            initial
+            init mem.seed
 
         else
             mem
