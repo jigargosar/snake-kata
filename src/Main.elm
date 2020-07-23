@@ -131,9 +131,17 @@ dropLast =
     List.reverse >> List.drop 1 >> List.reverse
 
 
+
+-- UPDATE TICKS
+
+
 incTicks : Mem -> Mem
 incTicks mem =
     { mem | ticks = mem.ticks + 1 }
+
+
+
+-- UPDATE DIRECTION / INPUT DIRECTION
 
 
 recordInputDirection : Keyboard -> Mem -> Mem
@@ -174,6 +182,10 @@ updateDirectionFromInputDirection mem =
 
         Nothing ->
             mem
+
+
+
+-- VIEW
 
 
 view : Computer -> Mem -> List Shape
