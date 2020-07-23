@@ -187,18 +187,18 @@ viewGrid mem =
 
 
 viewHead =
-    viewCell2 red
+    viewCell red
 
 
 viewTail =
-    viewCell2 blue
+    viewCell blue
 
 
 viewFruit =
-    viewCell2 darkGreen
+    viewCell darkGreen
 
 
-viewCell2 color ( x, y ) =
+viewCell color ( x, y ) =
     let
         cx =
             toFloat (x * 100) + 50
