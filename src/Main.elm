@@ -64,20 +64,19 @@ update : Computer -> Mem -> Mem
 update c mem =
     if modBy 10 mem.ticks == 0 then
         mem
-            --|> cacheInputDirection c.keyboard
-            --|> updateDirectionFromCachedInputDirection
-            |> step
+            |> updateDirectionFromInputDirection
+            |> stepSnakeInCurrentDirection
+            |> recordInputDirection c.keyboard
             |> incTicks
 
     else
-        --cacheInputDirection c.keyboard mem
         mem
-            |> updateDirection c.keyboard
+            |> recordInputDirection c.keyboard
             |> incTicks
 
 
-step : Mem -> Mem
-step mem =
+stepSnakeInCurrentDirection : Mem -> Mem
+stepSnakeInCurrentDirection mem =
     let
         ( x, y ) =
             mem.head
@@ -117,33 +116,8 @@ incTicks mem =
     { mem | ticks = mem.ticks + 1 }
 
 
-updateDirection : Keyboard -> Mem -> Mem
-updateDirection k mem =
-    let
-        d =
-            mem.direction
-
-        nd =
-            if k.left && d /= Right then
-                Left
-
-            else if k.right && d /= Left then
-                Right
-
-            else if k.up && d /= Down then
-                Up
-
-            else if k.down && d /= Up then
-                Down
-
-            else
-                d
-    in
-    { mem | direction = nd }
-
-
-cacheInputDirection : Keyboard -> Mem -> Mem
-cacheInputDirection k mem =
+recordInputDirection : Keyboard -> Mem -> Mem
+recordInputDirection k mem =
     let
         inputDirection =
             if k.left then
@@ -164,8 +138,8 @@ cacheInputDirection k mem =
     { mem | inputDirection = inputDirection }
 
 
-updateDirectionFromCachedInputDirection : Mem -> Mem
-updateDirectionFromCachedInputDirection mem =
+updateDirectionFromInputDirection : Mem -> Mem
+updateDirectionFromInputDirection mem =
     case mem.inputDirection of
         Just inputDirection ->
             if areOrthogonal inputDirection mem.direction then
