@@ -118,24 +118,25 @@ incTicks mem =
 
 recordInputDirection : Keyboard -> Mem -> Mem
 recordInputDirection k mem =
-    let
-        inputDirection =
-            if k.left then
-                Just Left
+    { mem | inputDirection = toDirection k }
 
-            else if k.right then
-                Just Right
 
-            else if k.up then
-                Just Up
+toDirection : Keyboard -> Maybe Direction
+toDirection k =
+    if k.left then
+        Just Left
 
-            else if k.down then
-                Just Down
+    else if k.right then
+        Just Right
 
-            else
-                mem.inputDirection
-    in
-    { mem | inputDirection = inputDirection }
+    else if k.up then
+        Just Up
+
+    else if k.down then
+        Just Down
+
+    else
+        Nothing
 
 
 updateDirectionFromInputDirection : Mem -> Mem
