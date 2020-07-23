@@ -1,4 +1,10 @@
-module GridHelper exposing (GridHelper, init, size)
+module GridHelper exposing
+    ( GridHelper
+    , height
+    , init
+    , size
+    , width
+    )
 
 
 type alias GridHelper =
@@ -18,6 +24,16 @@ init w h cw =
 
 size : GridHelper -> { width : Float, height : Float }
 size g =
-    { width = toFloat g.width * g.cellWidth
-    , height = toFloat g.height * g.cellWidth
+    { width = width g
+    , height = height g
     }
+
+
+width : GridHelper -> Float
+width g =
+    toFloat g.width * g.cellWidth
+
+
+height : GridHelper -> Float
+height g =
+    toFloat g.height * g.cellWidth
