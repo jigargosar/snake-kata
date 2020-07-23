@@ -78,11 +78,10 @@ update c mem =
 stepSnake : Mem -> Mem
 stepSnake mem =
     let
-        ( x, y ) =
-            stepPosition mem.direction mem.head
-
         newHead =
-            ( x |> modBy mem.width, y |> modBy mem.height )
+            mem.head
+                |> stepPosition mem.direction
+                |> warpPosition mem.width mem.height
 
         newTail =
             if newHead == mem.fruit then
@@ -92,6 +91,11 @@ stepSnake mem =
                 mem.head :: dropLast mem.tail
     in
     { mem | head = newHead, tail = newTail }
+
+
+warpPosition : Int -> Int -> Pos -> Pos
+warpPosition w h ( x, y ) =
+    ( modBy w x, modBy h y )
 
 
 stepPosition : Direction -> Pos -> Pos
