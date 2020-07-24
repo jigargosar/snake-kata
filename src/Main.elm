@@ -114,13 +114,19 @@ createTail head opt =
     []
 
 
-times : Int -> (a -> a) -> a -> a
-times n f x =
-    if n <= 0 then
-        x
+applyN : Int -> (a -> a) -> a -> a
+applyN n f x0 =
+    until (\( ct, _ ) -> ct <= 0) (\( ct, x ) -> ( ct - 1, f x )) ( n, x0 )
+        |> (\( _, x ) -> x)
+
+
+until : (a -> Bool) -> (a -> a) -> a -> a
+until isOk alter val =
+    if isOk val then
+        val
 
     else
-        times (n - 1) f (f x)
+        until isOk alter (alter val)
 
 
 rangeN n =
