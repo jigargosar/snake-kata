@@ -96,22 +96,18 @@ init initialSeed =
 createTail : Pos -> { length : Int, direction : Direction } -> List Pos
 createTail head opt =
     let
-        _ =
-            rangeN opt.length
+        func ( n, pos, acc ) =
+            if n <= 0 then
+                Done acc
 
-        _ =
-            List.foldl
-                (\_ ( p, acc ) ->
-                    let
-                        np =
-                            stepPosition opt.direction p
-                    in
-                    ( np, np :: acc )
-                )
-                ( head, [] )
-                (rangeN opt.length)
+            else
+                let
+                    newPos =
+                        stepPosition opt.direction pos
+                in
+                Loop ( n - 1, newPos, newPos :: acc )
     in
-    []
+    loop func ( opt.length, head, [] )
 
 
 type Loop state result
