@@ -74,6 +74,9 @@ init initialSeed =
             [ ( 4, 5 ), ( 3, 5 ), ( 2, 5 ), ( 1, 5 ), ( 0, 5 ) ]
                 |> List.map (addPos (subPos head ( 5, 5 )) >> warpPosition width height)
 
+        tail2 =
+            createTail head { length = 4, direction = Right }
+
         fruit =
             ( width // 3, height // 3 )
     in
@@ -88,6 +91,48 @@ init initialSeed =
     , ticks = 0
     , seed = initialSeed
     }
+
+
+createTail : Pos -> { length : Int, direction : Direction } -> List Pos
+createTail head opt =
+    let
+        _ =
+            rangeN opt.length
+
+        _ =
+            List.foldl
+                (\_ ( p, acc ) ->
+                    let
+                        np =
+                            stepPosition opt.direction p
+                    in
+                    ( np, np :: acc )
+                )
+                ( head, [] )
+                (rangeN opt.length)
+    in
+    []
+
+
+times : Int -> (a -> a) -> a -> a
+times n f x =
+    if n <= 0 then
+        x
+
+    else
+        times (n - 1) f (f x)
+
+
+rangeN n =
+    List.range 0 (dec n)
+
+
+dec =
+    add -1
+
+
+add =
+    (+)
 
 
 subPos ( a, b ) ( c, d ) =
