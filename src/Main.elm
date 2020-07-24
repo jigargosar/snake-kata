@@ -214,6 +214,12 @@ randomizeFruit mem =
     { mem | fruit = fruit, seed = seed }
 
 
+generate : Generator a -> { b | seed : Seed } -> ( a, { b | seed : Seed } )
+generate gen seeded =
+    Random.step gen seeded.seed
+        |> Tuple.mapSecond (\seed -> { seeded | seed = seed })
+
+
 dropLast : List a -> List a
 dropLast =
     List.reverse >> List.drop 1 >> List.reverse
