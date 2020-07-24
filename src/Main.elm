@@ -124,23 +124,6 @@ memGenerator =
         Random.independentSeed
 
 
-createTail2 : Pos -> { length : Int, direction : Direction } -> List Pos
-createTail2 head opt =
-    let
-        func ( n, pos, reverseTail ) =
-            if n <= 0 then
-                Done (List.reverse reverseTail)
-
-            else
-                let
-                    newPos =
-                        stepPosition opt.direction pos
-                in
-                Loop ( n - 1, newPos, newPos :: reverseTail )
-    in
-    loop func ( opt.length, head, [] )
-
-
 createTail : Pos -> { length : Int, direction : Direction } -> List Pos
 createTail head opt =
     let
