@@ -175,6 +175,15 @@ unfoldHelp f seed0 reverseResults =
             List.reverse reverseResults
 
 
+times : number -> (a -> a) -> a -> a
+times n f x =
+    if n <= 0 then
+        x
+
+    else
+        times (n - 1) f (f x)
+
+
 randomizeFruit : Mem -> Mem
 randomizeFruit mem =
     let
