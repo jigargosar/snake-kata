@@ -1,4 +1,4 @@
-module Main exposing (Direction(..), createTail, main)
+module Main exposing (main)
 
 import GridHelper as GH exposing (GridHelper)
 import Playground exposing (..)
@@ -124,8 +124,8 @@ memGenerator =
         Random.independentSeed
 
 
-createTail : Pos -> { length : Int, direction : Direction } -> List Pos
-createTail head opt =
+createTail2 : Pos -> { length : Int, direction : Direction } -> List Pos
+createTail2 head opt =
     let
         func ( n, pos, reverseTail ) =
             if n <= 0 then
@@ -141,6 +141,23 @@ createTail head opt =
     loop func ( opt.length, head, [] )
 
 
+createTail : Pos -> { length : Int, direction : Direction } -> List Pos
+createTail head opt =
+    let
+        func ( n, pos ) =
+            if n <= 0 then
+                Unfolded
+
+            else
+                let
+                    newPos =
+                        stepPosition opt.direction pos
+                in
+                Unfold ( n - 1, newPos ) newPos
+    in
+    unfold func ( opt.length, head )
+
+
 type Loop state result
     = Loop state
     | Done result
@@ -154,6 +171,25 @@ loop f state0 =
 
         Done result ->
             result
+
+
+type Unfold seed result
+    = Unfold seed result
+    | Unfolded
+
+
+unfold : (seed -> Unfold seed result) -> seed -> List result
+unfold f seed0 =
+    unfoldHelp f seed0 []
+
+
+unfoldHelp f seed0 reverseResults =
+    case f seed0 of
+        Unfold seed result ->
+            unfoldHelp f seed (result :: reverseResults)
+
+        Unfolded ->
+            List.reverse reverseResults
 
 
 randomizeFruit : Mem -> Mem
