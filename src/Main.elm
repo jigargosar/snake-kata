@@ -141,49 +141,6 @@ createTail head opt =
     unfold func ( opt.length, head )
 
 
-type Loop state result
-    = Loop state
-    | Done result
-
-
-loop : (state -> Loop state result) -> state -> result
-loop f state0 =
-    case f state0 of
-        Loop state ->
-            loop f state
-
-        Done result ->
-            result
-
-
-type Unfold seed result
-    = Unfold seed result
-    | Unfolded
-
-
-unfold : (seed -> Unfold seed result) -> seed -> List result
-unfold f seed0 =
-    unfoldHelp f seed0 []
-
-
-unfoldHelp f seed0 reverseResults =
-    case f seed0 of
-        Unfold seed result ->
-            unfoldHelp f seed (result :: reverseResults)
-
-        Unfolded ->
-            List.reverse reverseResults
-
-
-times : number -> (a -> a) -> a -> a
-times n f x =
-    if n <= 0 then
-        x
-
-    else
-        times (n - 1) f (f x)
-
-
 randomizeFruit : Mem -> Mem
 randomizeFruit mem =
     let
@@ -455,3 +412,50 @@ computeCellWidth screen mem =
                 * 0.9
     in
     cellWidth
+
+
+
+-- SAFE RECURSION / LOOPS
+
+
+type Loop state result
+    = Loop state
+    | Done result
+
+
+loop : (state -> Loop state result) -> state -> result
+loop f state0 =
+    case f state0 of
+        Loop state ->
+            loop f state
+
+        Done result ->
+            result
+
+
+type Unfold seed result
+    = Unfold seed result
+    | Unfolded
+
+
+unfold : (seed -> Unfold seed result) -> seed -> List result
+unfold f seed0 =
+    unfoldHelp f seed0 []
+
+
+unfoldHelp f seed0 reverseResults =
+    case f seed0 of
+        Unfold seed result ->
+            unfoldHelp f seed (result :: reverseResults)
+
+        Unfolded ->
+            List.reverse reverseResults
+
+
+times : number -> (a -> a) -> a -> a
+times n f x =
+    if n <= 0 then
+        x
+
+    else
+        times (n - 1) f (f x)
