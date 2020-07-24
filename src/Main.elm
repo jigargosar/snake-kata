@@ -59,6 +59,11 @@ type alias Pos =
     ( Int, Int )
 
 
+randomPosition : Int -> Int -> Random.Generator Pos
+randomPosition w h =
+    Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
+
+
 init initialSeed =
     let
         width =
@@ -99,20 +104,16 @@ configGenerator width height =
                 , direction = opposite direction
                 }
                 |> List.map (warpPosition width height)
-
-        fruit =
-            ( width // 3, height // 3 )
     in
     let
-        initConfig direction =
+        initConfig direction fruit =
             { head = head
             , direction = direction
             , tail = initTail direction
             , fruit = fruit
             }
     in
-    randomDirection
-        |> Random.map initConfig
+    Random.map2 initConfig randomDirection (randomPosition width height)
 
 
 createTail : Pos -> { length : Int, direction : Direction } -> List Pos
@@ -147,26 +148,13 @@ loop f state0 =
             result
 
 
-subPos ( a, b ) ( c, d ) =
-    ( a - c, b - d )
-
-
-addPos ( a, b ) ( c, d ) =
-    ( a + c, b + d )
-
-
 randomizeFruit : Mem -> Mem
 randomizeFruit mem =
     let
         ( fruit, seed ) =
-            Random.step (positionGenerator mem) mem.seed
+            Random.step (randomPosition mem.width mem.height) mem.seed
     in
     { mem | fruit = fruit, seed = seed }
-
-
-positionGenerator : Mem -> Random.Generator Pos
-positionGenerator mem =
-    Random.pair (Random.int 0 (mem.width - 1)) (Random.int 0 (mem.height - 1))
 
 
 
