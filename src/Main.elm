@@ -2,7 +2,7 @@ module Main exposing (Direction(..), createTail, main)
 
 import GridHelper as GH exposing (GridHelper)
 import Playground exposing (..)
-import Random exposing (Seed)
+import Random exposing (Generator, Seed)
 
 
 main =
@@ -94,6 +94,38 @@ init initialSeed =
     , ticks = 0
     , seed = initialSeed
     }
+
+
+randomDirection =
+    Random.uniform Up [ Down, Left, Right ]
+
+
+configGenerator : Int -> Int -> Generator { head : Pos, direction : Direction, tail : List Pos, fruit : Pos }
+configGenerator width height =
+    let
+        head =
+            ( width // 2, height // 2 )
+
+        initTail direction =
+            createTail head
+                { length = min width height // 2
+                , direction = opposite direction
+                }
+                |> List.map (warpPosition width height)
+
+        fruit =
+            ( width // 3, height // 3 )
+    in
+    let
+        initConfig direction =
+            { head = head
+            , direction = direction
+            , tail = initTail direction
+            , fruit = fruit
+            }
+    in
+    randomDirection
+        |> Random.map initConfig
 
 
 createTail : Pos -> { length : Int, direction : Direction } -> List Pos
