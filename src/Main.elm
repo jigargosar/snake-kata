@@ -69,27 +69,8 @@ randomPosition w h =
 
 
 init initialSeed =
-    let
-        width =
-            10
-
-        height =
-            20
-
-        ( config, seed ) =
-            Random.step (configGenerator width height) initialSeed
-    in
-    { width = width
-    , height = height
-    , head = config.head
-    , direction = config.direction
-    , tail = config.tail
-    , fruit = config.fruit
-    , over = False
-    , inputDirection = Nothing
-    , ticks = 0
-    , seed = seed
-    }
+    Random.step memGenerator initialSeed
+        |> Tuple.first
 
 
 configGenerator : Int -> Int -> Generator { head : Pos, direction : Direction, tail : List Pos, fruit : Pos }
@@ -114,6 +95,33 @@ configGenerator width height =
         (randomPosition width height)
         randomDirection
         (randomPosition width height)
+
+
+memGenerator : Generator Mem
+memGenerator =
+    let
+        width =
+            10
+
+        height =
+            20
+    in
+    Random.map2
+        (\config seed ->
+            { width = width
+            , height = height
+            , head = config.head
+            , direction = config.direction
+            , tail = config.tail
+            , fruit = config.fruit
+            , over = False
+            , inputDirection = Nothing
+            , ticks = 0
+            , seed = seed
+            }
+        )
+        (configGenerator width height)
+        Random.independentSeed
 
 
 createTail : Pos -> { length : Int, direction : Direction } -> List Pos
