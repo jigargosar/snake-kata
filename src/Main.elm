@@ -95,21 +95,18 @@ initTail width height head headDirection =
         tailLength =
             min width height // 2
 
-        tailDirection =
-            opposite headDirection
-
-        func ( n, pos ) =
+        next ( n, pos ) =
             if n <= 0 then
                 Unfolded
 
             else
                 let
                     newPos =
-                        stepPosition tailDirection pos
+                        stepPosition (opposite headDirection) pos
                 in
                 Unfold ( n - 1, newPos ) newPos
     in
-    unfold func ( tailLength, head )
+    unfold next ( tailLength, head )
         |> List.map (warpPosition width height)
 
 
