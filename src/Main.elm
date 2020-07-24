@@ -90,6 +90,20 @@ memGenerator =
         Random.independentSeed
 
 
+initMem width height head direction fruit seed =
+    { width = width
+    , height = height
+    , head = head
+    , direction = direction
+    , tail = initTail width height head direction
+    , fruit = fruit
+    , over = False
+    , inputDirection = Nothing
+    , ticks = 0
+    , seed = seed
+    }
+
+
 initTail width height head headDirection =
     let
         tailLength =
@@ -108,20 +122,6 @@ initTail width height head headDirection =
     in
     unfold next ( tailLength, head )
         |> List.map (warpPosition width height)
-
-
-initMem width height head direction fruit seed =
-    { width = width
-    , height = height
-    , head = head
-    , direction = direction
-    , tail = initTail width height head direction
-    , fruit = fruit
-    , over = False
-    , inputDirection = Nothing
-    , ticks = 0
-    , seed = seed
-    }
 
 
 randomizeFruit : Mem -> Mem
