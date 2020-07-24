@@ -199,19 +199,21 @@ updateSnake mem =
 
     else if newHead == mem.fruit then
         { mem | head = newHead, tail = mem.head :: mem.tail }
-            |> randomizeFruit
+            |> generate (randomPosition mem.width mem.height)
+            |> uncurry setFruit
 
     else
         { mem | head = newHead, tail = mem.head :: dropLast mem.tail }
 
 
-randomizeFruit : Mem -> Mem
-randomizeFruit mem =
-    let
-        ( fruit, seed ) =
-            Random.step (randomPosition mem.width mem.height) mem.seed
-    in
-    { mem | fruit = fruit, seed = seed }
+uncurry : (a -> b -> c) -> ( a, b ) -> c
+uncurry f ( a, b ) =
+    f a b
+
+
+setFruit : Pos -> Mem -> Mem
+setFruit fruit model =
+    { model | fruit = fruit }
 
 
 generate : Generator a -> { b | seed : Seed } -> ( a, { b | seed : Seed } )
