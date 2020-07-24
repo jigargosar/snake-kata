@@ -70,12 +70,12 @@ init initialSeed =
         head =
             ( width // 2, height // 2 )
 
-        tail =
-            [ ( 4, 5 ), ( 3, 5 ), ( 2, 5 ), ( 1, 5 ), ( 0, 5 ) ]
-                |> List.map (addPos (subPos head ( 5, 5 )) >> warpPosition width height)
+        direction =
+            Right
 
-        tail2 =
-            createTail head { length = 4, direction = Right }
+        tail =
+            createTail head { length = min width height // 2, direction = opposite direction }
+                |> List.map (warpPosition width height)
 
         fruit =
             ( width // 3, height // 3 )
@@ -83,7 +83,7 @@ init initialSeed =
     { width = width
     , height = height
     , head = head
-    , direction = Right
+    , direction = direction
     , tail = tail
     , fruit = fruit
     , over = False
