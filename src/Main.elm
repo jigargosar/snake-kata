@@ -90,11 +90,26 @@ memGenerator =
         Random.independentSeed
 
 
-initTail width height head direction =
-    createTail head
-        { length = min width height // 2
-        , direction = opposite direction
-        }
+initTail width height head headDirection =
+    let
+        tailLength =
+            min width height // 2
+
+        tailDirection =
+            opposite headDirection
+
+        func ( n, pos ) =
+            if n <= 0 then
+                Unfolded
+
+            else
+                let
+                    newPos =
+                        stepPosition tailDirection pos
+                in
+                Unfold ( n - 1, newPos ) newPos
+    in
+    unfold func ( tailLength, head )
         |> List.map (warpPosition width height)
 
 
@@ -110,23 +125,6 @@ initMem width height head direction fruit seed =
     , ticks = 0
     , seed = seed
     }
-
-
-createTail : Pos -> { length : Int, direction : Direction } -> List Pos
-createTail head opt =
-    let
-        func ( n, pos ) =
-            if n <= 0 then
-                Unfolded
-
-            else
-                let
-                    newPos =
-                        stepPosition opt.direction pos
-                in
-                Unfold ( n - 1, newPos ) newPos
-    in
-    unfold func ( opt.length, head )
 
 
 randomizeFruit : Mem -> Mem
