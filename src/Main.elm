@@ -67,32 +67,19 @@ init initialSeed =
         height =
             20
 
-        head =
-            ( width // 2, height // 2 )
-
-        direction =
-            Right
-
-        tail =
-            createTail head
-                { length = min width height // 2
-                , direction = opposite direction
-                }
-                |> List.map (warpPosition width height)
-
-        fruit =
-            ( width // 3, height // 3 )
+        ( config, seed ) =
+            Random.step (configGenerator width height) initialSeed
     in
     { width = width
     , height = height
-    , head = head
-    , direction = direction
-    , tail = tail
-    , fruit = fruit
+    , head = config.head
+    , direction = config.direction
+    , tail = config.tail
+    , fruit = config.fruit
     , over = False
     , inputDirection = Nothing
     , ticks = 0
-    , seed = initialSeed
+    , seed = seed
     }
 
 
