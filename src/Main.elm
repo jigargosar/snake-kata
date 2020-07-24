@@ -95,10 +95,7 @@ randomDirection =
 configGenerator : Int -> Int -> Generator { head : Pos, direction : Direction, tail : List Pos, fruit : Pos }
 configGenerator width height =
     let
-        head =
-            ( width // 2, height // 2 )
-
-        initTail direction =
+        initTail head direction =
             createTail head
                 { length = min width height // 2
                 , direction = opposite direction
@@ -106,14 +103,17 @@ configGenerator width height =
                 |> List.map (warpPosition width height)
     in
     let
-        initConfig direction fruit =
+        initConfig head direction fruit =
             { head = head
             , direction = direction
-            , tail = initTail direction
+            , tail = initTail head direction
             , fruit = fruit
             }
     in
-    Random.map2 initConfig randomDirection (randomPosition width height)
+    Random.map3 initConfig
+        (randomPosition width height)
+        randomDirection
+        (randomPosition width height)
 
 
 createTail : Pos -> { length : Int, direction : Direction } -> List Pos
