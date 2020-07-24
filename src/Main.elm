@@ -74,7 +74,10 @@ init initialSeed =
             Right
 
         tail =
-            createTail head { length = min width height // 2, direction = opposite direction }
+            createTail head
+                { length = min width height // 2
+                , direction = opposite direction
+                }
                 |> List.map (warpPosition width height)
 
         fruit =
