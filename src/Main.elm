@@ -114,10 +114,32 @@ createTail head opt =
     []
 
 
+type Loop state result
+    = Loop state
+    | Done result
+
+
+loop : (state -> Loop state result) -> state -> result
+loop f state0 =
+    case f state0 of
+        Loop state ->
+            loop f state
+
+        Done result ->
+            result
+
+
 applyN : Int -> (a -> a) -> a -> a
-applyN n f x0 =
-    until (\( ct, _ ) -> ct <= 0) (\( ct, x ) -> ( ct - 1, f x )) ( n, x0 )
-        |> (\( _, x ) -> x)
+applyN n0 alter x0 =
+    let
+        func ( n, x ) =
+            if n <= 0 then
+                Done x
+
+            else
+                Loop ( n - 1, alter x )
+    in
+    loop func ( n0, x0 )
 
 
 until : (a -> Bool) -> (a -> a) -> a -> a
