@@ -450,10 +450,10 @@ unfoldHelp f seed0 reverseResults =
             List.reverse reverseResults
 
 
-times : number -> (a -> a) -> a -> a
-times n f x =
+applyNTimes : number -> (a -> a) -> a -> a
+applyNTimes n f x =
     if n <= 0 then
         x
 
     else
-        times (n - 1) f (f x)
+        applyNTimes (n - 1) f (f x)
