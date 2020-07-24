@@ -73,55 +73,43 @@ init initialSeed =
         |> Tuple.first
 
 
-configGenerator : Int -> Int -> Generator { head : Pos, direction : Direction, tail : List Pos, fruit : Pos }
-configGenerator width height =
-    let
-        initTail head direction =
-            createTail head
-                { length = min width height // 2
-                , direction = opposite direction
-                }
-                |> List.map (warpPosition width height)
-    in
-    let
-        initConfig head direction fruit =
-            { head = head
-            , direction = direction
-            , tail = initTail head direction
-            , fruit = fruit
-            }
-    in
-    Random.map3 initConfig
-        (randomPosition width height)
-        randomDirection
-        (randomPosition width height)
-
-
 memGenerator : Generator Mem
 memGenerator =
     let
         width =
             10
-
+    in
+    let
         height =
             20
     in
-    Random.map2
-        (\config seed ->
-            { width = width
-            , height = height
-            , head = config.head
-            , direction = config.direction
-            , tail = config.tail
-            , fruit = config.fruit
-            , over = False
-            , inputDirection = Nothing
-            , ticks = 0
-            , seed = seed
-            }
-        )
-        (configGenerator width height)
+    Random.map4 (initMem width height)
+        (randomPosition width height)
+        randomDirection
+        (randomPosition width height)
         Random.independentSeed
+
+
+initTail width height head direction =
+    createTail head
+        { length = min width height // 2
+        , direction = opposite direction
+        }
+        |> List.map (warpPosition width height)
+
+
+initMem width height head direction fruit seed =
+    { width = width
+    , height = height
+    , head = head
+    , direction = direction
+    , tail = initTail width height head direction
+    , fruit = fruit
+    , over = False
+    , inputDirection = Nothing
+    , ticks = 0
+    , seed = seed
+    }
 
 
 createTail : Pos -> { length : Int, direction : Direction } -> List Pos
