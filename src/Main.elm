@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (Direction(..), createTail, main)
 
 import GridHelper as GH exposing (GridHelper)
 import Playground exposing (..)
@@ -96,16 +96,16 @@ init initialSeed =
 createTail : Pos -> { length : Int, direction : Direction } -> List Pos
 createTail head opt =
     let
-        func ( n, pos, acc ) =
+        func ( n, pos, reverseTail ) =
             if n <= 0 then
-                Done acc
+                Done (List.reverse reverseTail)
 
             else
                 let
                     newPos =
                         stepPosition opt.direction pos
                 in
-                Loop ( n - 1, newPos, newPos :: acc )
+                Loop ( n - 1, newPos, newPos :: reverseTail )
     in
     loop func ( opt.length, head, [] )
 
@@ -123,40 +123,6 @@ loop f state0 =
 
         Done result ->
             result
-
-
-applyN : Int -> (a -> a) -> a -> a
-applyN n0 alter x0 =
-    let
-        func ( n, x ) =
-            if n <= 0 then
-                Done x
-
-            else
-                Loop ( n - 1, alter x )
-    in
-    loop func ( n0, x0 )
-
-
-until : (a -> Bool) -> (a -> a) -> a -> a
-until isOk alter val =
-    if isOk val then
-        val
-
-    else
-        until isOk alter (alter val)
-
-
-rangeN n =
-    List.range 0 (dec n)
-
-
-dec =
-    add -1
-
-
-add =
-    (+)
 
 
 subPos ( a, b ) ( c, d ) =
