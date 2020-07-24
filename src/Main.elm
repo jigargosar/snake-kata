@@ -9,27 +9,8 @@ main =
     game view update (init (Random.initialSeed 42))
 
 
-type alias Mem =
-    { -- WORLD
-      width : Int
-    , height : Int
 
-    -- SNAKE
-    , head : Pos
-    , direction : Direction
-    , tail : List Pos
-
-    --
-    , fruit : Pos
-
-    --
-    , over : Bool
-
-    --
-    , inputDirection : Maybe Direction
-    , ticks : Int
-    , seed : Seed
-    }
+-- DIRECTION
 
 
 type Direction
@@ -59,6 +40,10 @@ randomDirection =
     Random.uniform Up [ Down, Left, Right ]
 
 
+
+-- POS
+
+
 type alias Pos =
     ( Int, Int )
 
@@ -68,6 +53,59 @@ randomPosition w h =
     Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
 
 
+warpPosition : Int -> Int -> Pos -> Pos
+warpPosition w h ( x, y ) =
+    ( modBy w x, modBy h y )
+
+
+stepPosition : Direction -> Pos -> Pos
+stepPosition direction ( x, y ) =
+    let
+        ( dx, dy ) =
+            case direction of
+                Up ->
+                    ( 0, 1 )
+
+                Down ->
+                    ( 0, -1 )
+
+                Left ->
+                    ( -1, 0 )
+
+                Right ->
+                    ( 1, 0 )
+    in
+    ( x + dx, y + dy )
+
+
+
+-- MEM
+
+
+type alias Mem =
+    { -- WORLD
+      width : Int
+    , height : Int
+
+    -- SNAKE
+    , head : Pos
+    , direction : Direction
+    , tail : List Pos
+
+    --
+    , fruit : Pos
+
+    --
+    , over : Bool
+
+    --
+    , inputDirection : Maybe Direction
+    , ticks : Int
+    , seed : Seed
+    }
+
+
+init : Seed -> Mem
 init initialSeed =
     Random.step memGenerator initialSeed
         |> Tuple.first
@@ -90,6 +128,7 @@ memGenerator =
         Random.independentSeed
 
 
+initMem : Int -> Int -> Pos -> Direction -> Pos -> Seed -> Mem
 initMem width height head direction fruit seed =
     { width = width
     , height = height
@@ -104,6 +143,7 @@ initMem width height head direction fruit seed =
     }
 
 
+initTail : Int -> Int -> Pos -> Direction -> List Pos
 initTail width height head headDirection =
     let
         tailLength =
@@ -122,15 +162,6 @@ initTail width height head headDirection =
     in
     unfold next ( tailLength, head )
         |> List.map (warpPosition width height)
-
-
-randomizeFruit : Mem -> Mem
-randomizeFruit mem =
-    let
-        ( fruit, seed ) =
-            Random.step (randomPosition mem.width mem.height) mem.seed
-    in
-    { mem | fruit = fruit, seed = seed }
 
 
 
@@ -182,29 +213,13 @@ updateSnake mem =
         { mem | head = newHead, tail = mem.head :: dropLast mem.tail }
 
 
-warpPosition : Int -> Int -> Pos -> Pos
-warpPosition w h ( x, y ) =
-    ( modBy w x, modBy h y )
-
-
-stepPosition : Direction -> Pos -> Pos
-stepPosition direction ( x, y ) =
+randomizeFruit : Mem -> Mem
+randomizeFruit mem =
     let
-        ( dx, dy ) =
-            case direction of
-                Up ->
-                    ( 0, 1 )
-
-                Down ->
-                    ( 0, -1 )
-
-                Left ->
-                    ( -1, 0 )
-
-                Right ->
-                    ( 1, 0 )
+        ( fruit, seed ) =
+            Random.step (randomPosition mem.width mem.height) mem.seed
     in
-    ( x + dx, y + dy )
+    { mem | fruit = fruit, seed = seed }
 
 
 dropLast : List a -> List a
