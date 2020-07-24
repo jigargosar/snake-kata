@@ -183,7 +183,7 @@ update c mem =
 
 
 
--- UPDATE SNAKE
+-- UPDATE SNAKE & FRUIT
 
 
 updateSnake : Mem -> Mem
