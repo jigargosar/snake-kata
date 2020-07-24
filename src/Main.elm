@@ -149,18 +149,10 @@ initTail width height head headDirection =
         tailLength =
             min width height // 2
 
-        next ( n, pos ) =
-            if n <= 0 then
-                Unfolded
-
-            else
-                let
-                    newPos =
-                        stepPosition (opposite headDirection) pos
-                in
-                Unfold ( n - 1, newPos ) newPos
+        next pos =
+            stepPosition (opposite headDirection) pos
     in
-    unfold next ( tailLength, head )
+    iterateN tailLength next head
         |> List.map (warpPosition width height)
 
 
@@ -450,10 +442,28 @@ unfoldHelp f seed0 reverseResults =
             List.reverse reverseResults
 
 
-applyNTimes : number -> (a -> a) -> a -> a
-applyNTimes n f x =
+applyN : Int -> (a -> a) -> a -> a
+applyN n f x =
     if n <= 0 then
         x
 
     else
-        applyNTimes (n - 1) f (f x)
+        applyN (n - 1) f (f x)
+
+
+iterateN : Int -> (a -> a) -> a -> List a
+iterateN n f x =
+    iterateNHelp n f x []
+
+
+iterateNHelp : Int -> (a -> a) -> a -> List a -> List a
+iterateNHelp n f x reverseXS =
+    if n <= 0 then
+        List.reverse reverseXS
+
+    else
+        let
+            nextX =
+                f x
+        in
+        iterateNHelp (n - 1) f nextX (nextX :: reverseXS)
