@@ -55,6 +55,10 @@ opposite direction =
             Left
 
 
+randomDirection =
+    Random.uniform Up [ Down, Left, Right ]
+
+
 type alias Pos =
     ( Int, Int )
 
@@ -86,10 +90,6 @@ init initialSeed =
     , ticks = 0
     , seed = seed
     }
-
-
-randomDirection =
-    Random.uniform Up [ Down, Left, Right ]
 
 
 configGenerator : Int -> Int -> Generator { head : Pos, direction : Direction, tail : List Pos, fruit : Pos }
