@@ -233,15 +233,16 @@ updateSnakeAndFruitAndGameOver mem =
             stepSnakeHead mem.width mem.height mem.direction mem.head
     in
     if List.member newHead mem.tail then
-        -- Check for game over
+        -- Tail Collision: Game Over
         { mem | over = True }
 
     else if newHead == mem.fruit then
+        -- Fruit Collision: Eat And Grow Tail
         { mem | head = newHead, tail = mem.head :: mem.tail }
-            |> generate (randomPosition mem.width mem.height)
-            |> uncurry setFruit
+            |> generateNewFruit
 
     else
+        -- Otherwise: Just Move
         { mem | head = newHead, tail = mem.head :: dropLast mem.tail }
 
 
