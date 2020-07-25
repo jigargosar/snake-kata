@@ -244,6 +244,15 @@ type alias TickState b =
 
 onGameTick : TickContext a -> TickState b -> Generator (TickState b)
 onGameTick context state =
+    let
+        newHead =
+            stepSnakeHead2 context state.head
+    in
+    Debug.todo "impl"
+
+
+stepSnakeHead2 : TickContext a -> Pos -> Pos
+stepSnakeHead2 context headPos =
     Debug.todo "impl"
 
 
