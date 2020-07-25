@@ -216,7 +216,7 @@ update c mem =
 
 
                 * GenerateNewFruit:
-                    needs: Seed
+                    needs: w,h, Seed
                     changes: fruit, seed
 
            otherwise ->
