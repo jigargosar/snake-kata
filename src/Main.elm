@@ -226,60 +226,50 @@ update c mem =
 -}
 
 
-type alias TickContext a =
-    { a
-        | width : Int
-        , height : Int
-        , direction : Direction
-    }
+stepSnakeHead2 context headPos =
+    Debug.todo "impl"
 
 
-type alias TickState b =
-    { b
-        | head : Pos
-        , tail : List Pos
-        , fruit : Pos
-    }
+type alias Context =
+    {}
 
 
-type TickResult a
-    = NextState (TickState a)
-    | GameOver
+type alias State =
+    { fruit : Pos, head : Pos, tail : List Pos }
 
 
-onGameTick : TickContext a -> TickState b -> Generator (TickResult b)
+onGameTick : { a | height : Int, width : Int } -> State -> Generator ( Bool, State )
 onGameTick context state =
     let
         newHead =
             stepSnakeHead2 context state.head
     in
-    if
-        -- check tail collision
-        List.member newHead state.tail
-    then
-        Random.constant GameOver
+    if List.member newHead state.tail then
+        -- Tail Collision : Game Over
+        Random.constant ( True, state )
 
-    else if
-        -- check fruit collision
-        newHead == state.fruit
-    then
-        -- Generate new Fruit and Grow Snake
+    else if newHead == state.fruit then
+        -- Fruit Collision: Grow Snake & Generate Fruit
         fruitGenerator context
             |> Random.map
                 (\newFruit ->
-                    NextState
-                        { state
-                            | head = newHead
-                            , tail = state.head :: state.tail
-                            , fruit = newFruit
-                        }
+                    ( False
+                    , { state
+                        | head = newHead
+                        , tail = state.head :: state.tail
+                        , fruit = newFruit
+                      }
+                    )
                 )
 
     else
-        -- move snake
+        -- Otherwise: move snake
         Random.constant
-            (NextState
-                { state | head = newHead, tail = state.head :: dropLast state.tail }
+            ( False
+            , { state
+                | head = newHead
+                , tail = state.head :: dropLast state.tail
+              }
             )
 
 
@@ -303,11 +293,6 @@ generateNewFruitAndGrowSnake context newHead state =
 fruitGenerator : { a | width : Int, height : Int } -> Generator Pos
 fruitGenerator context =
     randomPosition context.width context.height
-
-
-stepSnakeHead2 : TickContext a -> Pos -> Pos
-stepSnakeHead2 context headPos =
-    Debug.todo "impl"
 
 
 updateSnakeAndFruitAndGameOver : Mem -> Mem
