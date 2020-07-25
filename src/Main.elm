@@ -172,7 +172,7 @@ update c mem =
     else if modBy 10 mem.ticks == 0 then
         mem
             |> updateDirectionFromInputDirection
-            |> updateSnakeAndFruitAndGameOver
+            |> updateGameOnTick
             |> recordInputDirection c.keyboard
             |> incTicks
 
@@ -226,8 +226,8 @@ update c mem =
 -}
 
 
-updateSnakeAndFruitAndGameOver : Mem -> Mem
-updateSnakeAndFruitAndGameOver mem =
+updateGameOnTick : Mem -> Mem
+updateGameOnTick mem =
     let
         newHead =
             stepSnakeHead mem.width mem.height mem.direction mem.head
