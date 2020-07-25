@@ -226,6 +226,25 @@ update c mem =
 -}
 
 
+type alias Context =
+    { width : Int
+    , height : Int
+    , direction : Direction
+    }
+
+
+type alias Model =
+    { head : Pos
+    , tail : List Pos
+    , fruit : Pos
+    }
+
+
+onGameTick : Context -> Model -> Generator Model
+onGameTick context model =
+    Debug.todo "impl"
+
+
 updateSnakeAndFruitAndGameOver : Mem -> Mem
 updateSnakeAndFruitAndGameOver mem =
     let
