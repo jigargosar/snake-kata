@@ -242,13 +242,67 @@ type alias TickState b =
     }
 
 
-onGameTick : TickContext a -> TickState b -> Generator (TickState b)
+type TickResult a
+    = NextState (TickState a)
+    | GameOver
+
+
+onGameTick : TickContext a -> TickState b -> Generator (TickResult b)
 onGameTick context state =
     let
         newHead =
             stepSnakeHead2 context state.head
     in
-    Debug.todo "impl"
+    if
+        -- check tail collision
+        List.member newHead state.tail
+    then
+        Random.constant GameOver
+
+    else if
+        -- check fruit collision
+        newHead == state.fruit
+    then
+        -- Generate new Fruit and Grow Snake
+        fruitGenerator context
+            |> Random.map
+                (\newFruit ->
+                    NextState
+                        { state
+                            | head = newHead
+                            , tail = state.head :: state.tail
+                            , fruit = newFruit
+                        }
+                )
+
+    else
+        -- move snake
+        Random.constant
+            (NextState
+                { state | head = newHead, tail = state.head :: dropLast state.tail }
+            )
+
+
+generateNewFruitAndGrowSnake :
+    { a | width : Int, height : Int }
+    -> Pos
+    -> { c | head : Pos, tail : List Pos, fruit : Pos }
+    -> Generator { c | head : Pos, tail : List Pos, fruit : Pos }
+generateNewFruitAndGrowSnake context newHead state =
+    fruitGenerator context
+        |> Random.map
+            (\newFruit ->
+                { state
+                    | head = newHead
+                    , tail = state.head :: state.tail
+                    , fruit = newFruit
+                }
+            )
+
+
+fruitGenerator : { a | width : Int, height : Int } -> Generator Pos
+fruitGenerator context =
+    randomPosition context.width context.height
 
 
 stepSnakeHead2 : TickContext a -> Pos -> Pos
