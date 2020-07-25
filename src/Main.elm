@@ -193,6 +193,7 @@ updateSnake mem =
             stepSnakeHead mem.width mem.height mem.direction mem.head
     in
     if List.member newHead mem.tail then
+        -- Check for game over
         { mem | over = True }
 
     else if newHead == mem.fruit then
