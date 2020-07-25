@@ -226,22 +226,24 @@ update c mem =
 -}
 
 
-type alias Context =
-    { width : Int
-    , height : Int
-    , direction : Direction
+type alias TickContext a =
+    { a
+        | width : Int
+        , height : Int
+        , direction : Direction
     }
 
 
-type alias Model =
-    { head : Pos
-    , tail : List Pos
-    , fruit : Pos
+type alias TickState b =
+    { b
+        | head : Pos
+        , tail : List Pos
+        , fruit : Pos
     }
 
 
-onGameTick : Context -> Model -> Generator Model
-onGameTick context model =
+onGameTick : TickContext a -> TickState b -> Generator (TickState b)
+onGameTick context state =
     Debug.todo "impl"
 
 
