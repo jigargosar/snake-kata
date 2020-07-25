@@ -190,9 +190,7 @@ updateSnake : Mem -> Mem
 updateSnake mem =
     let
         newHead =
-            mem.head
-                |> stepPosition mem.direction
-                |> warpPosition mem.width mem.height
+            stepSnakeHead mem.width mem.height mem.direction mem.head
     in
     if List.member newHead mem.tail then
         { mem | over = True }
@@ -204,6 +202,13 @@ updateSnake mem =
 
     else
         { mem | head = newHead, tail = mem.head :: dropLast mem.tail }
+
+
+stepSnakeHead : Int -> Int -> Direction -> Pos -> Pos
+stepSnakeHead w h direction headPos =
+    headPos
+        |> stepPosition direction
+        |> warpPosition w h
 
 
 uncurry : (a -> b -> c) -> ( a, b ) -> c
