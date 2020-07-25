@@ -245,6 +245,17 @@ updateSnakeAndFruitAndGameOver mem =
         { mem | head = newHead, tail = mem.head :: dropLast mem.tail }
 
 
+generateNewFruit :
+    { a | width : Int, height : Int, seed : Seed, fruit : Pos }
+    -> { a | width : Int, height : Int, seed : Seed, fruit : Pos }
+generateNewFruit mem =
+    let
+        ( fruit, seed ) =
+            Random.step (randomPosition mem.width mem.height) mem.seed
+    in
+    { mem | fruit = fruit, seed = seed }
+
+
 stepSnakeHead : Int -> Int -> Direction -> Pos -> Pos
 stepSnakeHead w h direction headPos =
     headPos
@@ -257,7 +268,6 @@ uncurry f ( a, b ) =
     f a b
 
 
-setFruit : Pos -> Mem -> Mem
 setFruit fruit model =
     { model | fruit = fruit }
 
