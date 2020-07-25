@@ -202,7 +202,7 @@ update c mem =
        updates/maps: head, tail, fruit, seed.
 
        * compute `newHead`, warp if out of bounds.
-            needs: w,h,d,h
+            needs: w,h,direction,head
 
 
 
