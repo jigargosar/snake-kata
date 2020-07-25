@@ -182,50 +182,6 @@ update c mem =
             |> incTicks
 
 
-
--- UPDATE SNAKE & FRUIT
-{-
-   GridSize -> width height
-   SnakeHead -> (x,y) always within grid size
-   SnakeTail -> List (x,y) always within grid size
-   Fruit -> (x,y) always within grid size.
-
-   SnakeDirection -> used to step snake head. and display current orientation.
-                  -> can never point to first position of tail.
-                  -> can be changed by user.
-
-
-   Behaviour
-
-   onTick ->
-       dependencies:  width, height, direction.
-       updates/maps: head, tail, fruit, seed.
-
-       * compute `newHead`, warp if out of bounds.
-            needs: w,h,direction,head
-
-
-
-       * match newHead:
-           tail collision -> GameOver (no change in snake)
-           fruit collision ->
-                perform following two order independent updates
-                * GrowSnake
-                    needs: newHead, oldHead, oldTail
-                    changes: head, tail.
-
-
-                * GenerateNewFruit:
-                    needs: w,h, Seed
-                    changes: fruit, seed
-
-           otherwise ->
-                MoveSnake:
-                    needs: newHead, oldHead, oldTail
-                    changes: head, tail
--}
-
-
 updateGameOnTick : Mem -> Mem
 updateGameOnTick mem =
     let
