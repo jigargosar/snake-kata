@@ -238,7 +238,7 @@ type alias State =
     { fruit : Pos, head : Pos, tail : List Pos }
 
 
-onGameTick : { a | height : Int, width : Int } -> State -> Generator ( Bool, State )
+onGameTick : { a | height : Int, width : Int } -> State -> Maybe (Generator State)
 onGameTick context state =
     let
         newHead =
@@ -246,31 +246,29 @@ onGameTick context state =
     in
     if List.member newHead state.tail then
         -- Tail Collision : Game Over
-        Random.constant ( True, state )
+        Nothing
 
     else if newHead == state.fruit then
         -- Fruit Collision: Grow Snake & Generate Fruit
         fruitGenerator context
             |> Random.map
                 (\newFruit ->
-                    ( False
-                    , { state
+                    { state
                         | head = newHead
                         , tail = state.head :: state.tail
                         , fruit = newFruit
-                      }
-                    )
+                    }
                 )
+            |> Just
 
     else
         -- Otherwise: move snake
         Random.constant
-            ( False
-            , { state
+            { state
                 | head = newHead
                 , tail = state.head :: dropLast state.tail
-              }
-            )
+            }
+            |> Just
 
 
 generateNewFruitAndGrowSnake :
