@@ -223,8 +223,6 @@ update c mem =
                 MoveSnake:
                     needs: newHead, oldHead, oldTail
                     changes: head, tail
-
-
 -}
 
 
