@@ -149,22 +149,23 @@ initTail width height head headDirection =
         tailLength =
             min width height // 2
 
-        next pos =
+        nextPosition : Pos -> Pos
+        nextPosition pos =
             stepPosition (opposite headDirection) pos
+                |> warpPosition width height
     in
-    iterateN tailLength next head []
-        |> List.map (warpPosition width height)
+    iterateN tailLength nextPosition head []
 
 
 iterateN : Int -> (a -> a) -> a -> List a -> List a
-iterateN n f x reverseXS =
+iterateN n f seed reverseXS =
     if n <= 0 then
         List.reverse reverseXS
 
     else
         let
             nextX =
-                f x
+                f seed
         in
         iterateN (n - 1) f nextX (nextX :: reverseXS)
 
