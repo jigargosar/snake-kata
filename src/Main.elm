@@ -203,17 +203,33 @@ updateGameOnTick mem =
             stepSnakeHead mem.width mem.height mem.direction mem.head
     in
     if List.member newHead mem.tail then
-        -- Tail Collision: Game Over
+        -- Tail Collision
         { mem | over = True }
 
     else if newHead == mem.fruit then
-        -- Fruit Collision: Eat And Grow Tail
-        { mem | head = newHead, tail = mem.head :: mem.tail }
+        -- Fruit Collision
+        mem
+            |> growTail newHead
             |> generateNewFruit
 
     else
-        -- Otherwise: Just Move
-        { mem | head = newHead, tail = mem.head :: dropLast mem.tail }
+        mem
+            |> moveSnake newHead
+
+
+stepSnakeHead : Int -> Int -> Direction -> Pos -> Pos
+stepSnakeHead w h direction headPos =
+    headPos
+        |> stepPosition direction
+        |> warpPosition w h
+
+
+growTail :
+    Pos
+    -> { a | head : Pos, tail : List Pos }
+    -> { a | head : Pos, tail : List Pos }
+growTail newHead mem =
+    { mem | head = newHead, tail = mem.head :: mem.tail }
 
 
 generateNewFruit :
@@ -227,11 +243,12 @@ generateNewFruit mem =
     { mem | fruit = fruit, seed = seed }
 
 
-stepSnakeHead : Int -> Int -> Direction -> Pos -> Pos
-stepSnakeHead w h direction headPos =
-    headPos
-        |> stepPosition direction
-        |> warpPosition w h
+moveSnake :
+    Pos
+    -> { a | head : Pos, tail : List Pos }
+    -> { a | head : Pos, tail : List Pos }
+moveSnake newHead mem =
+    { mem | head = newHead, tail = mem.head :: dropLast mem.tail }
 
 
 dropLast : List a -> List a
