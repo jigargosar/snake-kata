@@ -152,8 +152,21 @@ initTail width height head headDirection =
         next pos =
             stepPosition (opposite headDirection) pos
     in
-    iterateN tailLength next head
+    iterateN tailLength next head []
         |> List.map (warpPosition width height)
+
+
+iterateN : Int -> (a -> a) -> a -> List a -> List a
+iterateN n f x reverseXS =
+    if n <= 0 then
+        List.reverse reverseXS
+
+    else
+        let
+            nextX =
+                f x
+        in
+        iterateN (n - 1) f nextX (nextX :: reverseXS)
 
 
 
@@ -408,25 +421,3 @@ computeCellWidth screen mem =
                 * 0.9
     in
     cellWidth
-
-
-
--- SAFE RECURSION / LOOPS
-
-
-iterateN : Int -> (a -> a) -> a -> List a
-iterateN n f x =
-    iterateNHelp n f x []
-
-
-iterateNHelp : Int -> (a -> a) -> a -> List a -> List a
-iterateNHelp n f x reverseXS =
-    if n <= 0 then
-        List.reverse reverseXS
-
-    else
-        let
-            nextX =
-                f x
-        in
-        iterateNHelp (n - 1) f nextX (nextX :: reverseXS)
