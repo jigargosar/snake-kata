@@ -158,16 +158,16 @@ initTail width height head headDirection =
 
 
 iterateN : Int -> (a -> a) -> a -> List a -> List a
-iterateN n f seed reverseXS =
+iterateN n next seed reverseXS =
     if n <= 0 then
         List.reverse reverseXS
 
     else
         let
-            nextX =
-                f seed
+            x =
+                next seed
         in
-        iterateN (n - 1) f nextX (nextX :: reverseXS)
+        iterateN (n - 1) next x (x :: reverseXS)
 
 
 
