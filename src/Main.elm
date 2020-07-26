@@ -331,7 +331,7 @@ view c mem =
         gridHelper =
             GH.init mem.width mem.height cellWidth
     in
-    [ viewGrid gridHelper mem
+    [ viewGameGrid gridHelper mem
     , viewIf mem.over (viewGameOver cellWidth)
     ]
 
@@ -358,8 +358,8 @@ viewGameOver cw =
         ]
 
 
-viewGrid : GridHelper -> Mem -> Shape
-viewGrid gridHelper mem =
+viewGameGrid : GridHelper -> Mem -> Shape
+viewGameGrid gridHelper mem =
     group
         [ viewGridBackground gridHelper
         , group
