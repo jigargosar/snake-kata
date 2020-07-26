@@ -414,49 +414,6 @@ computeCellWidth screen mem =
 -- SAFE RECURSION / LOOPS
 
 
-type Loop state result
-    = Loop state
-    | Done result
-
-
-loop : (state -> Loop state result) -> state -> result
-loop f state0 =
-    case f state0 of
-        Loop state ->
-            loop f state
-
-        Done result ->
-            result
-
-
-type Unfold seed result
-    = Unfold seed result
-    | Unfolded
-
-
-unfold : (seed -> Unfold seed result) -> seed -> List result
-unfold f seed0 =
-    unfoldHelp f seed0 []
-
-
-unfoldHelp f seed0 reverseResults =
-    case f seed0 of
-        Unfold seed result ->
-            unfoldHelp f seed (result :: reverseResults)
-
-        Unfolded ->
-            List.reverse reverseResults
-
-
-applyN : Int -> (a -> a) -> a -> a
-applyN n f x =
-    if n <= 0 then
-        x
-
-    else
-        applyN (n - 1) f (f x)
-
-
 iterateN : Int -> (a -> a) -> a -> List a
 iterateN n f x =
     iterateNHelp n f x []
