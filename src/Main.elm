@@ -200,7 +200,7 @@ updateGameOnTick : Mem -> Mem
 updateGameOnTick mem =
     let
         newHead =
-            stepSnakeHead mem.width mem.height mem.direction mem.head
+            stepSnakeHead mem
     in
     if List.member newHead mem.tail then
         -- Tail Collision
@@ -217,11 +217,13 @@ updateGameOnTick mem =
             |> moveSnake newHead
 
 
-stepSnakeHead : Int -> Int -> Direction -> Pos -> Pos
-stepSnakeHead w h direction head =
-    head
-        |> stepPosition direction
-        |> warpPosition w h
+stepSnakeHead :
+    { a | width : Int, height : Int, direction : Direction, head : Pos }
+    -> Pos
+stepSnakeHead mem =
+    mem.head
+        |> stepPosition mem.direction
+        |> warpPosition mem.width mem.height
 
 
 growTail :
