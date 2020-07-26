@@ -218,8 +218,8 @@ updateGameOnTick mem =
 
 
 stepSnakeHead : Int -> Int -> Direction -> Pos -> Pos
-stepSnakeHead w h direction headPos =
-    headPos
+stepSnakeHead w h direction head =
+    head
         |> stepPosition direction
         |> warpPosition w h
 
