@@ -6,7 +6,7 @@ import Random exposing (Generator, Seed)
 
 
 main =
-    game view update (initMemWithSeed (Random.initialSeed 42))
+    game view update (initMem (Random.initialSeed 42))
 
 
 
@@ -114,8 +114,8 @@ type alias Mem =
     }
 
 
-initMemWithSeed : Seed -> Mem
-initMemWithSeed initialSeed =
+initMem : Seed -> Mem
+initMem initialSeed =
     Random.step memGenerator initialSeed
         |> Tuple.first
 
@@ -187,7 +187,7 @@ update : Computer -> Mem -> Mem
 update c mem =
     if mem.over then
         if c.keyboard.enter then
-            initMemWithSeed mem.seed
+            initMem mem.seed
 
         else
             mem
