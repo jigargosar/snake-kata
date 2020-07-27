@@ -120,9 +120,9 @@ updateGameState computer gameState =
                     }
                     mem
 
-        Over mem0 ->
+        Over mem ->
             if computer.keyboard.enter then
-                initGameState mem0.seed
+                initGameState mem.seed
 
             else
                 gameState
