@@ -89,7 +89,7 @@ type alias Mem =
 
     -- SNAKE
     , head : Pos
-    , direction : Direction
+    , prevDir : Direction
     , nextDir : Direction
     , tail : List Pos
 
@@ -133,7 +133,7 @@ initMem width height head direction fruit seed =
     { width = width
     , height = height
     , head = head
-    , direction = direction
+    , prevDir = direction
     , nextDir = direction
     , tail = initTail width height head direction
     , fruit = fruit
@@ -201,7 +201,7 @@ updateNextDir keyboard mem =
     toDirection keyboard
         |> Maybe.map
             (\d ->
-                if d /= opposite mem.direction then
+                if d /= opposite mem.prevDir then
                     { mem | nextDir = d }
 
                 else
@@ -224,7 +224,7 @@ updateGameOnTick mem =
     if List.member newHead mem.tail then
         -- Tail Collision
         { mem
-            | direction = newDir
+            | prevDir = newDir
             , over = True
         }
 
@@ -235,7 +235,7 @@ updateGameOnTick mem =
                 Random.step (randomPosition mem.width mem.height) mem.seed
         in
         { mem
-            | direction = newDir
+            | prevDir = newDir
             , head = newHead
             , tail = mem.head :: mem.tail
             , fruit = fruit
@@ -244,7 +244,7 @@ updateGameOnTick mem =
 
     else
         { mem
-            | direction = newDir
+            | prevDir = newDir
             , head = newHead
             , tail = mem.head :: dropLast mem.tail
         }
@@ -332,7 +332,7 @@ viewGameGrid gridHelper mem =
     group
         [ viewGridBackground gridHelper
         , group
-            (viewHead gridHelper mem.direction mem.head
+            (viewHead gridHelper mem.prevDir mem.head
                 :: viewFruit gridHelper mem.fruit
                 :: List.map (viewTail gridHelper) mem.tail
                 |> List.reverse
