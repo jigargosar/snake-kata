@@ -6,7 +6,7 @@ import Random exposing (Generator, Seed)
 
 
 main =
-    game viewGameState updateGameState (initGameState (Random.initialSeed 42))
+    game view update (init (Random.initialSeed 42))
 
 
 
@@ -79,76 +79,6 @@ stepPosition direction ( x, y ) =
 
 
 
--- GAME STATE
-
-
-type GameState
-    = Running { inputDirection : Maybe Direction, ticks : Int } Mem
-    | Over Mem
-
-
-initGameState : Seed -> GameState
-initGameState initialSeed =
-    Running { inputDirection = Nothing, ticks = 0 } (initMem initialSeed)
-
-
-updateGameState : Computer -> GameState -> GameState
-updateGameState computer gameState =
-    case gameState of
-        Running runState mem ->
-            let
-                inputDirection =
-                    updateInputDirectionFromKeyboard computer.keyboard runState.inputDirection
-            in
-            if modBy 10 runState.ticks == 0 then
-                let
-                    memWithUpdatedDirection =
-                        updateDirectionFromInputDirection inputDirection mem
-                in
-                case memWithUpdatedDirection |> updateGameOnTick of
-                    Nothing ->
-                        Over memWithUpdatedDirection
-
-                    Just runningMem ->
-                        Running { inputDirection = Nothing, ticks = runState.ticks + 1 }
-                            runningMem
-
-            else
-                Running
-                    { inputDirection = inputDirection
-                    , ticks = runState.ticks + 1
-                    }
-                    mem
-
-        Over mem ->
-            if computer.keyboard.enter then
-                initGameState mem.seed
-
-            else
-                gameState
-
-
-updateInputDirectionFromKeyboard : Keyboard -> Maybe Direction -> Maybe Direction
-updateInputDirectionFromKeyboard keyboard maybeDirection =
-    case toDirection keyboard of
-        Just newDirection ->
-            Just newDirection
-
-        Nothing ->
-            maybeDirection
-
-
-viewGameState : Computer -> GameState -> List Shape
-viewGameState computer gameState =
-    case gameState of
-        Running _ mem ->
-            view computer mem
-
-        Over mem ->
-            view computer mem
-
-
-
 -- MEM
 
 
@@ -169,12 +99,14 @@ type alias Mem =
     , over : Bool
 
     --
+    , inputDirection : Maybe Direction
+    , ticks : Int
     , seed : Seed
     }
 
 
-initMem : Seed -> Mem
-initMem initialSeed =
+init : Seed -> Mem
+init initialSeed =
     Random.step memGenerator initialSeed
         |> Tuple.first
 
@@ -189,15 +121,15 @@ memGenerator =
         height =
             20
     in
-    Random.map4 (initMemHelp width height)
+    Random.map4 (initMem width height)
         (randomPosition width height)
         randomDirection
         (randomPosition width height)
         Random.independentSeed
 
 
-initMemHelp : Int -> Int -> Pos -> Direction -> Pos -> Seed -> Mem
-initMemHelp width height head direction fruit seed =
+initMem : Int -> Int -> Pos -> Direction -> Pos -> Seed -> Mem
+initMem width height head direction fruit seed =
     { width = width
     , height = height
     , head = head
@@ -205,6 +137,8 @@ initMemHelp width height head direction fruit seed =
     , tail = initTail width height head direction
     , fruit = fruit
     , over = False
+    , inputDirection = Nothing
+    , ticks = 0
     , seed = seed
     }
 
@@ -240,7 +174,29 @@ iterateN n next seed reverseXS =
 -- UPDATE
 
 
-updateGameOnTick : Mem -> Maybe Mem
+update : Computer -> Mem -> Mem
+update c mem =
+    if mem.over then
+        if c.keyboard.enter then
+            init mem.seed
+
+        else
+            mem
+
+    else if modBy 10 mem.ticks == 0 then
+        mem
+            |> updateDirectionFromInputDirection
+            |> updateGameOnTick
+            |> recordInputDirection c.keyboard
+            |> incTicks
+
+    else
+        mem
+            |> recordInputDirection c.keyboard
+            |> incTicks
+
+
+updateGameOnTick : Mem -> Mem
 updateGameOnTick mem =
     let
         newHead =
@@ -248,19 +204,17 @@ updateGameOnTick mem =
     in
     if List.member newHead mem.tail then
         -- Tail Collision
-        Nothing
+        { mem | over = True }
 
     else if newHead == mem.fruit then
         -- Fruit Collision
         mem
             |> growTail newHead
             |> generateNewFruit
-            |> Just
 
     else
         mem
             |> moveSnake newHead
-            |> Just
 
 
 stepSnakeHead :
@@ -305,7 +259,27 @@ dropLast =
 
 
 
+-- UPDATE TICKS
+
+
+incTicks : Mem -> Mem
+incTicks mem =
+    { mem | ticks = mem.ticks + 1 }
+
+
+
 -- UPDATE DIRECTION / INPUT DIRECTION
+
+
+recordInputDirection : Keyboard -> Mem -> Mem
+recordInputDirection k mem =
+    case toDirection k of
+        Nothing ->
+            -- Preserve Last Direction
+            mem
+
+        Just d ->
+            { mem | inputDirection = Just d }
 
 
 toDirection : Keyboard -> Maybe Direction
@@ -326,13 +300,14 @@ toDirection k =
         Nothing
 
 
-updateDirectionFromInputDirection : Maybe Direction -> Mem -> Mem
-updateDirectionFromInputDirection inputDirection mem =
-    case inputDirection of
+updateDirectionFromInputDirection : Mem -> Mem
+updateDirectionFromInputDirection mem =
+    case mem.inputDirection of
         Just requestedDirection ->
             if requestedDirection /= opposite mem.direction then
                 { mem
                     | direction = requestedDirection
+                    , inputDirection = Nothing
                 }
 
             else
