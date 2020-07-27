@@ -83,7 +83,8 @@ stepPosition direction ( x, y ) =
 
 
 type State
-    = State Int Int Pos (List Pos) Direction Direction Pos Bool Int Seed
+    = Running Int Int Pos (List Pos) Direction Direction Pos Int Seed
+    | Over Int Int Pos (List Pos) Direction Pos Seed
 
 
 init2 : Seed -> State
@@ -101,7 +102,7 @@ init2 seed =
         gen =
             Random.map4
                 (\head direction fruit ->
-                    State
+                    Running
                         width
                         height
                         head
@@ -109,7 +110,6 @@ init2 seed =
                         direction
                         direction
                         fruit
-                        False
                         0
                 )
                 (randomPosition width height)
@@ -122,8 +122,21 @@ init2 seed =
 
 
 update2 : Computer -> State -> State
-update2 =
-    Debug.todo "impl"
+update2 { keyboard } state =
+    case state of
+        Running w h head tail prevDir nextDir fruit ticks seed ->
+            if modBy 10 ticks == 0 then
+                Debug.todo "impl"
+
+            else
+                Debug.todo "impl"
+
+        Over w h head tail direction fruit seed ->
+            if keyboard.enter then
+                init2 seed
+
+            else
+                state
 
 
 
