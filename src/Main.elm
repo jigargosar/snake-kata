@@ -185,7 +185,7 @@ update c mem =
 
     else
         mem
-            |> updateNextDir c.keyboard
+            |> updateDirection c.keyboard
             |> incTicks
             |> (\m ->
                     if modBy 10 m.ticks == 0 then
@@ -198,8 +198,8 @@ update c mem =
                )
 
 
-updateNextDir : Keyboard -> Mem -> Mem
-updateNextDir keyboard mem =
+updateDirection : Keyboard -> Mem -> Mem
+updateDirection keyboard mem =
     toDirection keyboard
         |> Maybe.map
             (\d ->
