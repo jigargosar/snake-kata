@@ -90,6 +90,7 @@ type alias Mem =
     -- SNAKE
     , head : Pos
     , direction : Direction
+    , nextDir : Direction
     , tail : List Pos
 
     --
@@ -99,7 +100,6 @@ type alias Mem =
     , over : Bool
 
     --
-    , inputDirection : Maybe Direction
     , ticks : Int
     , seed : Seed
     }
@@ -134,10 +134,10 @@ initMem width height head direction fruit seed =
     , height = height
     , head = head
     , direction = direction
+    , nextDir = direction
     , tail = initTail width height head direction
     , fruit = fruit
     , over = False
-    , inputDirection = Nothing
     , ticks = 0
     , seed = seed
     }
@@ -183,74 +183,71 @@ update c mem =
         else
             mem
 
-    else if modBy 10 mem.ticks == 0 then
-        mem
-            |> updateDirectionFromInputDirection
-            |> updateGameOnTick
-            |> recordInputDirection c.keyboard
-            |> incTicks
-
     else
         mem
-            |> recordInputDirection c.keyboard
+            |> updateNextDir c.keyboard
             |> incTicks
+            |> (\m ->
+                    if modBy 10 m.ticks == 0 then
+                        updateGameOnTick m
+
+                    else
+                        m
+               )
+
+
+updateNextDir : Keyboard -> Mem -> Mem
+updateNextDir keyboard mem =
+    toDirection keyboard
+        |> Maybe.map
+            (\d ->
+                if d /= opposite mem.direction then
+                    { mem | nextDir = d }
+
+                else
+                    mem
+            )
+        |> Maybe.withDefault mem
 
 
 updateGameOnTick : Mem -> Mem
 updateGameOnTick mem =
     let
+        newDir =
+            mem.nextDir
+
         newHead =
-            stepSnakeHead mem
+            mem.head
+                |> stepPosition newDir
+                |> warpPosition mem.width mem.height
     in
     if List.member newHead mem.tail then
         -- Tail Collision
-        { mem | over = True }
+        { mem
+            | direction = newDir
+            , over = True
+        }
 
     else if newHead == mem.fruit then
         -- Fruit Collision
-        mem
-            |> growTail newHead
-            |> generateNewFruit
+        let
+            ( fruit, seed ) =
+                Random.step (randomPosition mem.width mem.height) mem.seed
+        in
+        { mem
+            | direction = newDir
+            , head = newHead
+            , tail = mem.head :: mem.tail
+            , fruit = fruit
+            , seed = seed
+        }
 
     else
-        mem
-            |> moveSnake newHead
-
-
-stepSnakeHead :
-    { a | width : Int, height : Int, direction : Direction, head : Pos }
-    -> Pos
-stepSnakeHead mem =
-    mem.head
-        |> stepPosition mem.direction
-        |> warpPosition mem.width mem.height
-
-
-growTail :
-    Pos
-    -> { a | head : Pos, tail : List Pos }
-    -> { a | head : Pos, tail : List Pos }
-growTail newHead mem =
-    { mem | head = newHead, tail = mem.head :: mem.tail }
-
-
-generateNewFruit :
-    { a | width : Int, height : Int, seed : Seed, fruit : Pos }
-    -> { a | width : Int, height : Int, seed : Seed, fruit : Pos }
-generateNewFruit mem =
-    let
-        ( fruit, seed ) =
-            Random.step (randomPosition mem.width mem.height) mem.seed
-    in
-    { mem | fruit = fruit, seed = seed }
-
-
-moveSnake :
-    Pos
-    -> { a | head : Pos, tail : List Pos }
-    -> { a | head : Pos, tail : List Pos }
-moveSnake newHead mem =
-    { mem | head = newHead, tail = mem.head :: dropLast mem.tail }
+        { mem
+            | direction = newDir
+            , head = newHead
+            , tail = mem.head :: dropLast mem.tail
+        }
 
 
 dropLast : List a -> List a
@@ -271,17 +268,6 @@ incTicks mem =
 -- UPDATE DIRECTION / INPUT DIRECTION
 
 
-recordInputDirection : Keyboard -> Mem -> Mem
-recordInputDirection k mem =
-    case toDirection k of
-        Nothing ->
-            -- Preserve Last Direction
-            mem
-
-        Just d ->
-            { mem | inputDirection = Just d }
-
-
 toDirection : Keyboard -> Maybe Direction
 toDirection k =
     if k.left then
@@ -298,23 +284,6 @@ toDirection k =
 
     else
         Nothing
-
-
-updateDirectionFromInputDirection : Mem -> Mem
-updateDirectionFromInputDirection mem =
-    case mem.inputDirection of
-        Just requestedDirection ->
-            if requestedDirection /= opposite mem.direction then
-                { mem
-                    | direction = requestedDirection
-                    , inputDirection = Nothing
-                }
-
-            else
-                mem
-
-        Nothing ->
-            mem
 
 
 
