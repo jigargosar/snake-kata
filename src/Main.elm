@@ -96,28 +96,26 @@ updateGameState : Computer -> GameState -> GameState
 updateGameState computer gameState =
     case gameState of
         Running runState mem ->
+            let
+                inputDirection =
+                    updateInputDirectionFromKeyboard computer.keyboard runState.inputDirection
+            in
             if modBy 10 runState.ticks == 0 then
                 let
                     memWithUpdatedDirection =
-                        updateDirectionFromInputDirection runState.inputDirection mem
+                        updateDirectionFromInputDirection inputDirection mem
                 in
                 case memWithUpdatedDirection |> updateGameOnTick of
                     Nothing ->
                         Over memWithUpdatedDirection
 
                     Just runningMem ->
-                        Running { inputDirection = toDirection computer.keyboard, ticks = runState.ticks + 1 }
+                        Running { inputDirection = Nothing, ticks = runState.ticks + 1 }
                             runningMem
 
             else
                 Running
-                    { inputDirection =
-                        case toDirection computer.keyboard of
-                            Nothing ->
-                                runState.inputDirection
-
-                            d ->
-                                d
+                    { inputDirection = inputDirection
                     , ticks = runState.ticks + 1
                     }
                     mem
@@ -128,6 +126,16 @@ updateGameState computer gameState =
 
             else
                 gameState
+
+
+updateInputDirectionFromKeyboard : Keyboard -> Maybe Direction -> Maybe Direction
+updateInputDirectionFromKeyboard keyboard maybeDirection =
+    case toDirection keyboard of
+        Just newDirection ->
+            Just newDirection
+
+        Nothing ->
+            maybeDirection
 
 
 viewGameState : Computer -> GameState -> List Shape
