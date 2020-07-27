@@ -83,46 +83,57 @@ stepPosition direction ( x, y ) =
 
 
 type GameState
-    = Running Mem
+    = Running { inputDirection : Maybe Direction, ticks : Int } Mem
     | Over Mem
 
 
 initGameState : Seed -> GameState
 initGameState initialSeed =
-    initMem initialSeed
-        |> Running
+    Running { inputDirection = Nothing, ticks = 0 } (initMem initialSeed)
 
 
 updateGameState : Computer -> GameState -> GameState
 updateGameState computer gameState =
     case gameState of
-        Running mem0 ->
-            let
-                newMem =
-                    update computer mem0
-            in
-            if newMem.over then
-                Over newMem
+        Running runState mem ->
+            if modBy 10 runState.ticks == 0 then
+                let
+                    memWithUpdatedDirection =
+                        updateDirectionFromInputDirection runState.inputDirection mem
+                in
+                case memWithUpdatedDirection |> updateGameOnTick of
+                    Nothing ->
+                        Over memWithUpdatedDirection
+
+                    Just runningMem ->
+                        Running { inputDirection = toDirection computer.keyboard, ticks = runState.ticks + 1 }
+                            runningMem
 
             else
-                Running newMem
+                Running
+                    { inputDirection =
+                        case toDirection computer.keyboard of
+                            Nothing ->
+                                runState.inputDirection
+
+                            d ->
+                                d
+                    , ticks = runState.ticks + 1
+                    }
+                    mem
 
         Over mem0 ->
-            let
-                newMem =
-                    update computer mem0
-            in
-            if newMem.over then
-                Over newMem
+            if computer.keyboard.enter then
+                initGameState mem0.seed
 
             else
-                Running newMem
+                gameState
 
 
 viewGameState : Computer -> GameState -> List Shape
 viewGameState computer gameState =
     case gameState of
-        Running mem ->
+        Running _ mem ->
             view computer mem
 
         Over mem ->
@@ -150,8 +161,6 @@ type alias Mem =
     , over : Bool
 
     --
-    , inputDirection : Maybe Direction
-    , ticks : Int
     , seed : Seed
     }
 
@@ -188,8 +197,6 @@ initMemHelp width height head direction fruit seed =
     , tail = initTail width height head direction
     , fruit = fruit
     , over = False
-    , inputDirection = Nothing
-    , ticks = 0
     , seed = seed
     }
 
@@ -225,29 +232,7 @@ iterateN n next seed reverseXS =
 -- UPDATE
 
 
-update : Computer -> Mem -> Mem
-update c mem =
-    if mem.over then
-        if c.keyboard.enter then
-            initMem mem.seed
-
-        else
-            mem
-
-    else if modBy 10 mem.ticks == 0 then
-        mem
-            |> updateDirectionFromInputDirection
-            |> updateGameOnTick
-            |> recordInputDirection c.keyboard
-            |> incTicks
-
-    else
-        mem
-            |> recordInputDirection c.keyboard
-            |> incTicks
-
-
-updateGameOnTick : Mem -> Mem
+updateGameOnTick : Mem -> Maybe Mem
 updateGameOnTick mem =
     let
         newHead =
@@ -255,17 +240,19 @@ updateGameOnTick mem =
     in
     if List.member newHead mem.tail then
         -- Tail Collision
-        { mem | over = True }
+        Nothing
 
     else if newHead == mem.fruit then
         -- Fruit Collision
         mem
             |> growTail newHead
             |> generateNewFruit
+            |> Just
 
     else
         mem
             |> moveSnake newHead
+            |> Just
 
 
 stepSnakeHead :
@@ -310,27 +297,7 @@ dropLast =
 
 
 
--- UPDATE TICKS
-
-
-incTicks : Mem -> Mem
-incTicks mem =
-    { mem | ticks = mem.ticks + 1 }
-
-
-
 -- UPDATE DIRECTION / INPUT DIRECTION
-
-
-recordInputDirection : Keyboard -> Mem -> Mem
-recordInputDirection k mem =
-    case toDirection k of
-        Nothing ->
-            -- Preserve Last Direction
-            mem
-
-        Just d ->
-            { mem | inputDirection = Just d }
 
 
 toDirection : Keyboard -> Maybe Direction
@@ -351,14 +318,13 @@ toDirection k =
         Nothing
 
 
-updateDirectionFromInputDirection : Mem -> Mem
-updateDirectionFromInputDirection mem =
-    case mem.inputDirection of
+updateDirectionFromInputDirection : Maybe Direction -> Mem -> Mem
+updateDirectionFromInputDirection inputDirection mem =
+    case inputDirection of
         Just requestedDirection ->
             if requestedDirection /= opposite mem.direction then
                 { mem
                     | direction = requestedDirection
-                    , inputDirection = Nothing
                 }
 
             else
