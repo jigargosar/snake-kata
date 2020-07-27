@@ -6,7 +6,7 @@ import Random exposing (Generator, Seed)
 
 
 main =
-    game view update (initMem (Random.initialSeed 42))
+    game viewGameState updateGameState (initGameState (Random.initialSeed 42))
 
 
 
@@ -85,6 +85,48 @@ stepPosition direction ( x, y ) =
 type GameState
     = Running Mem
     | Over Mem
+
+
+initGameState : Seed -> GameState
+initGameState initialSeed =
+    initMem initialSeed
+        |> Running
+
+
+updateGameState : Computer -> GameState -> GameState
+updateGameState computer gameState =
+    case gameState of
+        Running mem0 ->
+            let
+                newMem =
+                    update computer mem0
+            in
+            if newMem.over then
+                Over newMem
+
+            else
+                Running newMem
+
+        Over mem0 ->
+            let
+                newMem =
+                    update computer mem0
+            in
+            if newMem.over then
+                Over newMem
+
+            else
+                Running newMem
+
+
+viewGameState : Computer -> GameState -> List Shape
+viewGameState computer gameState =
+    case gameState of
+        Running mem ->
+            view computer mem
+
+        Over mem ->
+            view computer mem
 
 
 
