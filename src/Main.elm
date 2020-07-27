@@ -79,6 +79,24 @@ stepPosition direction ( x, y ) =
 
 
 
+-- State
+
+
+type State
+    = State Int Int Pos (List Pos) Direction Direction Pos Bool Int Seed
+
+
+init2 : Seed -> State
+init2 =
+    Debug.todo "impl"
+
+
+update2 : Computer -> State -> State
+update2 =
+    Debug.todo "impl"
+
+
+
 -- MEM
 
 
