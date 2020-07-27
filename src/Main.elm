@@ -90,7 +90,7 @@ type alias Mem =
     -- SNAKE
     , head : Pos
     , prevDir : Direction
-    , nextDir : Direction
+    , direction : Direction
     , tail : List Pos
 
     --
@@ -134,7 +134,7 @@ initMem width height head direction fruit seed =
     , height = height
     , head = head
     , prevDir = direction
-    , nextDir = direction
+    , direction = direction
     , tail = initTail width height head direction
     , fruit = fruit
     , over = False
@@ -189,7 +189,9 @@ update c mem =
             |> incTicks
             |> (\m ->
                     if modBy 10 m.ticks == 0 then
-                        updateGameOnTick m
+                        m
+                            |> updateGameOnTick
+                            |> (\m2 -> { m2 | prevDir = m.direction })
 
                     else
                         m
@@ -202,7 +204,7 @@ updateNextDir keyboard mem =
         |> Maybe.map
             (\d ->
                 if d /= opposite mem.prevDir then
-                    { mem | nextDir = d }
+                    { mem | direction = d }
 
                 else
                     mem
@@ -213,20 +215,14 @@ updateNextDir keyboard mem =
 updateGameOnTick : Mem -> Mem
 updateGameOnTick mem =
     let
-        newDir =
-            mem.nextDir
-
         newHead =
             mem.head
-                |> stepPosition newDir
+                |> stepPosition mem.direction
                 |> warpPosition mem.width mem.height
     in
     if List.member newHead mem.tail then
         -- Tail Collision
-        { mem
-            | prevDir = newDir
-            , over = True
-        }
+        { mem | over = True }
 
     else if newHead == mem.fruit then
         -- Fruit Collision
@@ -235,8 +231,7 @@ updateGameOnTick mem =
                 Random.step (randomPosition mem.width mem.height) mem.seed
         in
         { mem
-            | prevDir = newDir
-            , head = newHead
+            | head = newHead
             , tail = mem.head :: mem.tail
             , fruit = fruit
             , seed = seed
@@ -244,8 +239,7 @@ updateGameOnTick mem =
 
     else
         { mem
-            | prevDir = newDir
-            , head = newHead
+            | head = newHead
             , tail = mem.head :: dropLast mem.tail
         }
 
