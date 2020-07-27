@@ -87,8 +87,38 @@ type State
 
 
 init2 : Seed -> State
-init2 =
-    Debug.todo "impl"
+init2 seed =
+    let
+        width =
+            10
+    in
+    let
+        height =
+            20
+    in
+    let
+        gen : Generator State
+        gen =
+            Random.map4
+                (\head direction fruit ->
+                    State
+                        width
+                        height
+                        head
+                        (initTail width height head direction)
+                        direction
+                        direction
+                        fruit
+                        False
+                        0
+                )
+                (randomPosition width height)
+                randomDirection
+                (randomPosition width height)
+                Random.independentSeed
+    in
+    Random.step gen seed
+        |> Tuple.first
 
 
 update2 : Computer -> State -> State
