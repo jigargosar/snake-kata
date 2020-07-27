@@ -130,15 +130,15 @@ memGenerator =
         height =
             20
     in
-    Random.map4 (initMem width height)
+    Random.map4 (initMemHelp width height)
         (randomPosition width height)
         randomDirection
         (randomPosition width height)
         Random.independentSeed
 
 
-initMem : Int -> Int -> Pos -> Direction -> Pos -> Seed -> Mem
-initMem width height head direction fruit seed =
+initMemHelp : Int -> Int -> Pos -> Direction -> Pos -> Seed -> Mem
+initMemHelp width height head direction fruit seed =
     { width = width
     , height = height
     , head = head
