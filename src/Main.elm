@@ -251,25 +251,7 @@ renderGrid cw w h head dir tail fruit =
             |> moveCell cw w h fruit
 
         -- Head
-        , group
-            [ square red cw
-            , let
-                headAngle =
-                    case dir of
-                        Up ->
-                            0
-
-                        Down ->
-                            180
-
-                        Left ->
-                            90
-
-                        Right ->
-                            -90
-              in
-              triangle black (cw * 0.3) |> rotate headAngle
-            ]
+        , headShape cw dir
             |> scaleCell
             |> fadeCell
             |> moveCell cw w h head
@@ -289,6 +271,28 @@ moveCell cw w h ( x, y ) =
     move
         (toFloat x * cw + cw / 2 + (toFloat w * cw / -2))
         (toFloat y * cw + cw / 2 + (toFloat h * cw / -2))
+
+
+headShape cw dir =
+    group
+        [ square red cw
+        , let
+            headAngle =
+                case dir of
+                    Up ->
+                        0
+
+                    Down ->
+                        180
+
+                    Left ->
+                        90
+
+                    Right ->
+                        -90
+          in
+          triangle black (cw * 0.3) |> rotate headAngle
+        ]
 
 
 
