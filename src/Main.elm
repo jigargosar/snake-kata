@@ -197,9 +197,16 @@ view2 { screen } state =
                         |> fade 0.9
                         |> mv pos
             in
-            [ rectangle gray gw gh
+            [ -- Background
+              rectangle gray gw gh
+
+            -- Tail
             , group (List.map (\pos -> square darkGreen cw |> renderCellAt pos) tail)
+
+            -- Fruit
             , square blue cw |> renderCellAt fruit
+
+            -- Head
             , square red cw |> renderCellAt head
             ]
 
