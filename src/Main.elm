@@ -189,7 +189,9 @@ view2 { screen } state =
                     toFloat h * cw
 
                 mv ( x, y ) =
-                    move (toFloat x * cw + cw / 2 + (gw / -2)) (toFloat y * cw + cw / 2 + (gh / -2))
+                    move
+                        (toFloat x * cw + cw / 2 + (toFloat w * cw / -2))
+                        (toFloat y * cw + cw / 2 + (toFloat h * cw / -2))
 
                 renderCellAt pos shape =
                     shape
