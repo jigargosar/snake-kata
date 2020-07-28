@@ -6,7 +6,8 @@ import Random exposing (Generator, Seed)
 
 
 main =
-    game view update (init (Random.initialSeed 42))
+    --game view update (init (Random.initialSeed 42))
+    game view2 update2 (init2 (Random.initialSeed 42))
 
 
 
@@ -215,10 +216,10 @@ view2 { screen } state =
               rectangle gray gw gh
 
             -- Tail
-            , group (List.map (\pos -> square darkGreen cw |> renderCellAt pos) tail)
+            , group (List.map (\pos -> square blue cw |> renderCellAt pos) tail)
 
             -- Fruit
-            , square blue cw |> renderCellAt fruit
+            , square darkGreen cw |> renderCellAt fruit
 
             -- Head
             , group [ square red cw, triangle black (cw * 0.3) |> rotate headAngle ] |> renderCellAt head
