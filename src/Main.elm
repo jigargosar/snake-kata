@@ -228,21 +228,6 @@ view { screen } state =
 
 renderGrid : Float -> Int -> Int -> Pos -> Direction -> List Pos -> Pos -> Shape
 renderGrid cw w h head dir tail fruit =
-    let
-        headAngle =
-            case dir of
-                Up ->
-                    0
-
-                Down ->
-                    180
-
-                Left ->
-                    90
-
-                Right ->
-                    -90
-    in
     group
         [ -- Background
           rectangle gray (toFloat w * cw) (toFloat h * cw)
@@ -266,7 +251,25 @@ renderGrid cw w h head dir tail fruit =
             |> moveCell cw w h fruit
 
         -- Head
-        , group [ square red cw, triangle black (cw * 0.3) |> rotate headAngle ]
+        , group
+            [ square red cw
+            , let
+                headAngle =
+                    case dir of
+                        Up ->
+                            0
+
+                        Down ->
+                            180
+
+                        Left ->
+                            90
+
+                        Right ->
+                            -90
+              in
+              triangle black (cw * 0.3) |> rotate headAngle
+            ]
             |> scaleCell
             |> fadeCell
             |> moveCell cw w h head
