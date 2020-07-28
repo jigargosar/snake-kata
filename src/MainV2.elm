@@ -13,11 +13,11 @@ main =
         [ h1 [] [ text "View: css grid layout" ]
         , div
             [ style "display" "grid"
-            , style "grid-template" "1fr 1fr / 1fr 1fr"
+            , style "grid-template" " 1fr 2fr 3fr  / 1fr 1fr "
             , style "gap" "20px"
             , style "padding" "20px"
             ]
-            (viewNCells 11)
+            (viewNCells 21)
         ]
 
 
