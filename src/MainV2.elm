@@ -11,8 +11,20 @@ import Html.Attributes exposing (style)
 main =
     div []
         [ h1 [] [ text "View: css grid layout" ]
-        , div [ style "display" "grid", style "grid-template" "1fr" ]
-            [ text "Cell 1"
-            , text "Cell 2"
+        , div
+            [ style "display" "grid"
+            , style "grid-template" "1fr 1fr / 1fr 1fr"
+            , style "gap" "20px"
+            , style "padding" "20px"
             ]
+            (viewNCells 10)
         ]
+
+
+viewNCells n =
+    let
+        viewNthCell nth =
+            div [ style "border" "1px dashed" ] [ text ("Cell " ++ String.fromInt nth) ]
+    in
+    List.range 1 n
+        |> List.map viewNthCell
