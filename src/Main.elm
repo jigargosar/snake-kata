@@ -78,21 +78,21 @@ stepPosition direction ( x, y ) =
 
 
 
--- State
+-- Model
 
 
-type State
+type Model
     = Running Int Int Pos (List Pos) Direction Direction Pos Int Seed
     | Over Int Int Pos (List Pos) Direction Pos Seed
 
 
-init : Seed -> State
+init : Seed -> Model
 init seed =
-    Random.step stateGen seed |> Tuple.first
+    Random.step modelGen seed |> Tuple.first
 
 
-stateGen : Generator State
-stateGen =
+modelGen : Generator Model
+modelGen =
     let
         width =
             10
@@ -149,9 +149,9 @@ iterateN n next seed reverseXS =
 -- UPDATE
 
 
-update : Computer -> State -> State
-update { keyboard } state =
-    case state of
+update : Computer -> Model -> Model
+update { keyboard } model =
+    case model of
         Running w h head tail prevDir nextDir fruit ticks seed ->
             let
                 dir =
@@ -194,17 +194,17 @@ update { keyboard } state =
                 init seed
 
             else
-                state
+                model
 
 
-view : Computer -> State -> List Shape
-view { screen } state =
+view : Computer -> Model -> List Shape
+view { screen } model =
     let
         cellWidth w h =
             min (screen.width / toFloat w) (screen.height / toFloat h)
                 * 0.9
     in
-    case state of
+    case model of
         Running w h head tail dir _ fruit _ _ ->
             let
                 cw =
