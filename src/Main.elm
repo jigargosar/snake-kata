@@ -91,7 +91,7 @@ type World
 
 type Model
     = Running Int Int Pos (List Pos) Direction Direction Pos Int Seed
-    | Over Int Int Pos (List Pos) Direction Pos Seed
+    | Over World Seed
 
 
 init : Seed -> Model
@@ -182,7 +182,7 @@ update { keyboard } model =
                             |> warpPosition w h
                 in
                 if List.member newHead tail then
-                    Over w h head tail dir fruit seed
+                    Over (World w h head dir tail fruit) seed
 
                 else if newHead == fruit then
                     let
@@ -197,7 +197,7 @@ update { keyboard } model =
             else
                 Running w h head tail prevDir dir fruit (ticks + 1) seed
 
-        Over w h head tail direction fruit seed ->
+        Over _ seed ->
             if keyboard.enter then
                 init seed
 
@@ -220,7 +220,7 @@ view { screen } model =
             in
             [ renderGrid cw w h head dir tail fruit ]
 
-        Over w h head tail dir fruit _ ->
+        Over (World w h head dir tail fruit) _ ->
             let
                 cw =
                     cellWidth w h
