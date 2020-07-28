@@ -207,23 +207,18 @@ update { keyboard } model =
 
 view : Computer -> Model -> List Shape
 view { screen } model =
-    let
-        cellWidth w h =
-            min (screen.width / toFloat w) (screen.height / toFloat h)
-                * 0.9
-    in
     case model of
         Running w h head tail dir _ fruit _ _ ->
             let
                 cw =
-                    cellWidth w h
+                    computeCellWidth w h screen
             in
             [ renderGrid cw w h head dir tail fruit ]
 
         Over (World w h head dir tail fruit) _ ->
             let
                 cw =
-                    cellWidth w h
+                    computeCellWidth w h screen
             in
             [ renderGrid cw w h head dir tail fruit
             , group
@@ -234,6 +229,12 @@ view { screen } model =
                     |> moveDown (cw * 1.2)
                 ]
             ]
+
+
+computeCellWidth : Int -> Int -> Screen -> Float
+computeCellWidth w h screen =
+    min (screen.width / toFloat w) (screen.height / toFloat h)
+        * 0.9
 
 
 renderGrid : Float -> Int -> Int -> Pos -> Direction -> List Pos -> Pos -> Shape
