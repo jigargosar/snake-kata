@@ -196,6 +196,20 @@ view2 { screen } state =
                         |> scale 0.95
                         |> fade 0.9
                         |> mv pos
+
+                headAngle =
+                    case dir of
+                        Up ->
+                            0
+
+                        Down ->
+                            180
+
+                        Left ->
+                            90
+
+                        Right ->
+                            -90
             in
             [ -- Background
               rectangle gray gw gh
@@ -207,7 +221,7 @@ view2 { screen } state =
             , square blue cw |> renderCellAt fruit
 
             -- Head
-            , square red cw |> renderCellAt head
+            , group [ square red cw, triangle black (cw * 0.3) |> rotate headAngle ] |> renderCellAt head
             ]
 
         Over w h head tail dir fruit _ ->
