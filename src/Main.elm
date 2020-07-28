@@ -206,15 +206,27 @@ view2 { screen } state =
               renderBackground cw w h
 
             -- Tail
-            , group (List.map (\pos -> square blue cw |> renderCellAt pos) tail)
+            , group
+                (List.map
+                    (\tailPos ->
+                        square blue cw
+                            |> scaleCell
+                            |> fadeCell
+                            |> moveCell cw w h tailPos
+                    )
+                    tail
+                )
 
             -- Fruit
-            , square darkGreen cw |> renderCellAt fruit
+            , square darkGreen cw
+                |> scaleCell
+                |> fadeCell
+                |> moveCell cw w h fruit
 
             -- Head
             , group [ square red cw, triangle black (cw * 0.3) |> rotate headAngle ]
-                |> scale 0.95
-                |> fade 0.9
+                |> scaleCell
+                |> fadeCell
                 |> moveCell cw w h head
             ]
 
@@ -236,6 +248,14 @@ view2 { screen } state =
 renderBackground : Float -> Int -> Int -> Shape
 renderBackground cw w h =
     rectangle gray (toFloat w * cw) (toFloat h * cw)
+
+
+scaleCell =
+    scale 0.95
+
+
+fadeCell =
+    fade 0.9
 
 
 moveCell : Float -> Int -> Int -> Pos -> Shape -> Shape
