@@ -88,36 +88,34 @@ type State
 
 init : Seed -> State
 init seed =
+    Random.step stateGen seed |> Tuple.first
+
+
+stateGen : Generator State
+stateGen =
     let
         width =
             10
-    in
-    let
+
         height =
             20
     in
-    let
-        gen : Generator State
-        gen =
-            Random.map4
-                (\head direction fruit ->
-                    Running
-                        width
-                        height
-                        head
-                        (initTail width height head direction)
-                        direction
-                        direction
-                        fruit
-                        0
-                )
-                (randomPosition width height)
-                randomDirection
-                (randomPosition width height)
-                Random.independentSeed
-    in
-    Random.step gen seed
-        |> Tuple.first
+    Random.map4
+        (\head direction fruit ->
+            Running
+                width
+                height
+                head
+                (initTail width height head direction)
+                direction
+                direction
+                fruit
+                0
+        )
+        (randomPosition width height)
+        randomDirection
+        (randomPosition width height)
+        Random.independentSeed
 
 
 initTail : Int -> Int -> Pos -> Direction -> List Pos
