@@ -145,6 +145,10 @@ iterateN n next seed reverseXS =
         iterateN (n - 1) next x (x :: reverseXS)
 
 
+
+-- UPDATE
+
+
 update : Computer -> State -> State
 update { keyboard } state =
     case state of
