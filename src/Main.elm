@@ -212,7 +212,10 @@ view2 { screen } state =
             , square darkGreen cw |> renderCellAt fruit
 
             -- Head
-            , group [ square red cw, triangle black (cw * 0.3) |> rotate headAngle ] |> renderCellAt head
+            , group [ square red cw, triangle black (cw * 0.3) |> rotate headAngle ]
+                |> scale 0.95
+                |> fade 0.9
+                |> moveCell cw w h head
             ]
 
         Over w h head tail dir fruit _ ->
