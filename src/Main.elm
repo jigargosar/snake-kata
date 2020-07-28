@@ -162,7 +162,7 @@ iterateN n next seed reverseXS =
 update : Computer -> Model -> Model
 update { keyboard } model =
     case model of
-        Running ((World w h head prevDir tail fruit) as world) nextDir ticks seed ->
+        Running ((World w h head prevDir tail fruit) as world) inputDirection ticks seed ->
             let
                 dir =
                     toDirection keyboard
@@ -174,7 +174,7 @@ update { keyboard } model =
                                 else
                                     Nothing
                             )
-                        |> Maybe.withDefault nextDir
+                        |> Maybe.withDefault inputDirection
             in
             if modBy 10 ticks == 0 then
                 let
