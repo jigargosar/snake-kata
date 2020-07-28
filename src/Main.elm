@@ -182,12 +182,6 @@ view2 { screen } state =
                 cw =
                     cellWidth w h
 
-                renderCellAt pos shape =
-                    shape
-                        |> scale 0.95
-                        |> fade 0.9
-                        |> moveCell cw w h pos
-
                 headAngle =
                     case dir of
                         Up ->
