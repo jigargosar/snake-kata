@@ -125,11 +125,34 @@ update2 : Computer -> State -> State
 update2 { keyboard } state =
     case state of
         Running w h head tail prevDir nextDir fruit ticks seed ->
+            let
+                dir =
+                    toDirection keyboard
+                        |> Maybe.andThen
+                            (\kDir ->
+                                if kDir /= opposite prevDir then
+                                    Just kDir
+
+                                else
+                                    Nothing
+                            )
+                        |> Maybe.withDefault nextDir
+            in
             if modBy 10 ticks == 0 then
-                Debug.todo "impl"
+                let
+                    newHead =
+                        head
+                            |> stepPosition dir
+                            |> warpPosition w h
+                in
+                if List.member newHead tail then
+                    Over w h head tail dir fruit seed
+
+                else
+                    Debug.todo "impl"
 
             else
-                Debug.todo "impl"
+                Running w h head tail prevDir dir fruit (ticks + 1) seed
 
         Over w h head tail direction fruit seed ->
             if keyboard.enter then
