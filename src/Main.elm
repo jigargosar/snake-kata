@@ -207,55 +207,16 @@ view { screen } state =
             let
                 cw =
                     cellWidth w h
-
-                headAngle =
-                    case dir of
-                        Up ->
-                            0
-
-                        Down ->
-                            180
-
-                        Left ->
-                            90
-
-                        Right ->
-                            -90
             in
-            [ -- Background
-              renderGridBackground cw w h
-
-            -- Tail
-            , group
-                (List.map
-                    (\tailPos ->
-                        square blue cw
-                            |> scaleCell
-                            |> fadeCell
-                            |> moveCell cw w h tailPos
-                    )
-                    tail
-                )
-
-            -- Fruit
-            , square darkGreen cw
-                |> scaleCell
-                |> fadeCell
-                |> moveCell cw w h fruit
-
-            -- Head
-            , group [ square red cw, triangle black (cw * 0.3) |> rotate headAngle ]
-                |> scaleCell
-                |> fadeCell
-                |> moveCell cw w h head
-            ]
+            [ renderGrid cw w h head dir tail fruit ]
 
         Over w h head tail dir fruit _ ->
             let
                 cw =
                     cellWidth w h
             in
-            [ group
+            [ renderGrid cw w h head dir tail fruit
+            , group
                 [ words black "Game Over"
                     |> scale (cw / 16)
                 , words black "Press ENTER"
@@ -263,6 +224,53 @@ view { screen } state =
                     |> moveDown (cw * 1.2)
                 ]
             ]
+
+
+renderGrid : Float -> Int -> Int -> Pos -> Direction -> List Pos -> Pos -> Shape
+renderGrid cw w h head dir tail fruit =
+    let
+        headAngle =
+            case dir of
+                Up ->
+                    0
+
+                Down ->
+                    180
+
+                Left ->
+                    90
+
+                Right ->
+                    -90
+    in
+    group
+        [ -- Background
+          renderGridBackground cw w h
+
+        -- Tail
+        , group
+            (List.map
+                (\tailPos ->
+                    square blue cw
+                        |> scaleCell
+                        |> fadeCell
+                        |> moveCell cw w h tailPos
+                )
+                tail
+            )
+
+        -- Fruit
+        , square darkGreen cw
+            |> scaleCell
+            |> fadeCell
+            |> moveCell cw w h fruit
+
+        -- Head
+        , group [ square red cw, triangle black (cw * 0.3) |> rotate headAngle ]
+            |> scaleCell
+            |> fadeCell
+            |> moveCell cw w h head
+        ]
 
 
 renderGridBackground : Float -> Int -> Int -> Shape
