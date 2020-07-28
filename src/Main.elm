@@ -245,7 +245,7 @@ renderGrid cw w h head dir tail fruit =
     in
     group
         [ -- Background
-          renderGridBackground cw w h
+          rectangle gray (toFloat w * cw) (toFloat h * cw)
 
         -- Tail
         , group
@@ -271,11 +271,6 @@ renderGrid cw w h head dir tail fruit =
             |> fadeCell
             |> moveCell cw w h head
         ]
-
-
-renderGridBackground : Float -> Int -> Int -> Shape
-renderGridBackground cw w h =
-    rectangle gray (toFloat w * cw) (toFloat h * cw)
 
 
 scaleCell =
