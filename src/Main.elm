@@ -223,7 +223,7 @@ view { screen } state =
                             -90
             in
             [ -- Background
-              renderBackground cw w h
+              renderGridBackground cw w h
 
             -- Tail
             , group
@@ -265,8 +265,8 @@ view { screen } state =
             ]
 
 
-renderBackground : Float -> Int -> Int -> Shape
-renderBackground cw w h =
+renderGridBackground : Float -> Int -> Int -> Shape
+renderGridBackground cw w h =
     rectangle gray (toFloat w * cw) (toFloat h * cw)
 
 
