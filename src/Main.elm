@@ -5,8 +5,7 @@ import Random exposing (Generator, Seed)
 
 
 main =
-    --game view update (init (Random.initialSeed 42))
-    game view2 update2 (init2 (Random.initialSeed 42))
+    game view update (init (Random.initialSeed 42))
 
 
 
@@ -87,8 +86,8 @@ type State
     | Over Int Int Pos (List Pos) Direction Pos Seed
 
 
-init2 : Seed -> State
-init2 seed =
+init : Seed -> State
+init seed =
     let
         width =
             10
@@ -148,8 +147,8 @@ iterateN n next seed reverseXS =
         iterateN (n - 1) next x (x :: reverseXS)
 
 
-update2 : Computer -> State -> State
-update2 { keyboard } state =
+update : Computer -> State -> State
+update { keyboard } state =
     case state of
         Running w h head tail prevDir nextDir fruit ticks seed ->
             let
@@ -190,14 +189,14 @@ update2 { keyboard } state =
 
         Over w h head tail direction fruit seed ->
             if keyboard.enter then
-                init2 seed
+                init seed
 
             else
                 state
 
 
-view2 : Computer -> State -> List Shape
-view2 { screen } state =
+view : Computer -> State -> List Shape
+view { screen } state =
     let
         cellWidth w h =
             min (screen.width / toFloat w) (screen.height / toFloat h)
