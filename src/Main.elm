@@ -121,6 +121,33 @@ init2 seed =
         |> Tuple.first
 
 
+initTail : Int -> Int -> Pos -> Direction -> List Pos
+initTail width height head headDirection =
+    let
+        tailLength =
+            min width height // 2
+
+        nextPosition : Pos -> Pos
+        nextPosition pos =
+            stepPosition (opposite headDirection) pos
+                |> warpPosition width height
+    in
+    iterateN tailLength nextPosition head []
+
+
+iterateN : Int -> (a -> a) -> a -> List a -> List a
+iterateN n next seed reverseXS =
+    if n <= 0 then
+        List.reverse reverseXS
+
+    else
+        let
+            x =
+                next seed
+        in
+        iterateN (n - 1) next x (x :: reverseXS)
+
+
 update2 : Computer -> State -> State
 update2 { keyboard } state =
     case state of
@@ -259,44 +286,13 @@ moveCell cw w h ( x, y ) =
         (toFloat y * cw + cw / 2 + (toFloat h * cw / -2))
 
 
-initTail : Int -> Int -> Pos -> Direction -> List Pos
-initTail width height head headDirection =
-    let
-        tailLength =
-            min width height // 2
 
-        nextPosition : Pos -> Pos
-        nextPosition pos =
-            stepPosition (opposite headDirection) pos
-                |> warpPosition width height
-    in
-    iterateN tailLength nextPosition head []
-
-
-iterateN : Int -> (a -> a) -> a -> List a -> List a
-iterateN n next seed reverseXS =
-    if n <= 0 then
-        List.reverse reverseXS
-
-    else
-        let
-            x =
-                next seed
-        in
-        iterateN (n - 1) next x (x :: reverseXS)
-
-
-
--- UPDATE
+-- UTIL
 
 
 dropLast : List a -> List a
 dropLast =
     List.reverse >> List.drop 1 >> List.reverse
-
-
-
--- UPDATE DIRECTION / INPUT DIRECTION
 
 
 toDirection : Keyboard -> Maybe Direction
