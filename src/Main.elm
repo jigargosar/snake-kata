@@ -182,16 +182,13 @@ view2 { screen } state =
                 cw =
                     cellWidth w h
 
-                mv ( x, y ) =
-                    move
-                        (toFloat x * cw + cw / 2 + (toFloat w * cw / -2))
-                        (toFloat y * cw + cw / 2 + (toFloat h * cw / -2))
-
-                renderCellAt pos shape =
+                renderCellAt ( x, y ) shape =
                     shape
                         |> scale 0.95
                         |> fade 0.9
-                        |> mv pos
+                        |> move
+                            (toFloat x * cw + cw / 2 + (toFloat w * cw / -2))
+                            (toFloat y * cw + cw / 2 + (toFloat h * cw / -2))
 
                 headAngle =
                     case dir of
@@ -208,7 +205,7 @@ view2 { screen } state =
                             -90
             in
             [ -- Background
-              rectangle gray (toFloat w * cw) (toFloat h * cw)
+              renderBackground cw w h
 
             -- Tail
             , group (List.map (\pos -> square blue cw |> renderCellAt pos) tail)
@@ -233,6 +230,11 @@ view2 { screen } state =
                     |> moveDown (cw * 1.2)
                 ]
             ]
+
+
+renderBackground : Float -> Int -> Int -> Shape
+renderBackground cw w h =
+    rectangle gray (toFloat w * cw) (toFloat h * cw)
 
 
 initTail : Int -> Int -> Pos -> Direction -> List Pos
