@@ -17,7 +17,7 @@ main =
             , style "gap" "20px"
             , style "padding" "20px"
             ]
-            (viewNCells 10)
+            (viewNCells 11)
         ]
 
 
