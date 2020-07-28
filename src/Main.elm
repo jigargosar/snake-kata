@@ -182,9 +182,6 @@ view2 { screen } state =
                 cw =
                     cellWidth w h
 
-                gh =
-                    toFloat h * cw
-
                 mv ( x, y ) =
                     move
                         (toFloat x * cw + cw / 2 + (toFloat w * cw / -2))
