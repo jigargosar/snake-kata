@@ -182,9 +182,6 @@ view2 { screen } state =
                 cw =
                     cellWidth w h
 
-                gw =
-                    toFloat w * cw
-
                 gh =
                     toFloat h * cw
 
@@ -214,7 +211,7 @@ view2 { screen } state =
                             -90
             in
             [ -- Background
-              rectangle gray gw gh
+              rectangle gray (toFloat w * cw) (toFloat h * cw)
 
             -- Tail
             , group (List.map (\pos -> square blue cw |> renderCellAt pos) tail)
