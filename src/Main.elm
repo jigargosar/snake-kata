@@ -169,6 +169,44 @@ update2 { keyboard } state =
                 state
 
 
+view2 : Computer -> State -> List Shape
+view2 { screen } state =
+    let
+        cellWidth w h =
+            min (screen.width / toFloat w) (screen.height / toFloat h)
+                * 0.9
+    in
+    case state of
+        Running w h head tail dir _ fruit _ _ ->
+            let
+                cw =
+                    cellWidth w h
+
+                gw =
+                    toFloat w * cw
+
+                gh =
+                    toFloat h * cw
+
+                mv ( x, y ) =
+                    move (toFloat x * cw + cw / 2 + (gw / -2)) (toFloat y * cw + cw / 2 + (gh / -2))
+
+                renderCellAt pos shape =
+                    shape
+                        |> scale 0.95
+                        |> fade 0.9
+                        |> mv pos
+            in
+            [ rectangle gray gw gh
+            , group (List.map (\pos -> square darkGreen cw |> renderCellAt pos) tail)
+            , square blue cw |> renderCellAt fruit
+            , square red cw |> renderCellAt head
+            ]
+
+        Over w h head tail dir fruit _ ->
+            []
+
+
 
 -- MEM
 
@@ -487,7 +525,7 @@ viewCell color gridHelper ( x, y ) =
         ]
 
 
-computeCellWidth : Screen -> Mem -> Float
+computeCellWidth : { a | width : Float, height : Float } -> { b | width : Int, height : Int } -> Float
 computeCellWidth screen mem =
     let
         cellWidth =
