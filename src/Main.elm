@@ -90,7 +90,7 @@ type World
 
 
 type Model
-    = Running Int Int Pos (List Pos) Direction Direction Pos Int Seed
+    = Running World Direction Int Seed
     | Over World Seed
 
 
@@ -111,13 +111,15 @@ modelGen =
     Random.map4
         (\head direction fruit ->
             Running
-                width
-                height
-                head
-                (initTail width height head direction)
+                (World
+                    width
+                    height
+                    head
+                    direction
+                    (initTail width height head direction)
+                    fruit
+                )
                 direction
-                direction
-                fruit
                 0
         )
         (randomPosition width height)
@@ -160,7 +162,7 @@ iterateN n next seed reverseXS =
 update : Computer -> Model -> Model
 update { keyboard } model =
     case model of
-        Running w h head tail prevDir nextDir fruit ticks seed ->
+        Running ((World w h head prevDir tail fruit) as world) nextDir ticks seed ->
             let
                 dir =
                     toDirection keyboard
@@ -189,13 +191,13 @@ update { keyboard } model =
                         ( newFruit, newSeed ) =
                             Random.step (randomPosition w h) seed
                     in
-                    Running w h newHead (head :: tail) dir dir newFruit (ticks + 1) newSeed
+                    Running (World w h newHead dir (head :: tail) newFruit) dir (ticks + 1) newSeed
 
                 else
-                    Running w h newHead (head :: dropLast tail) dir dir fruit (ticks + 1) seed
+                    Running (World w h newHead dir (head :: dropLast tail) fruit) dir (ticks + 1) seed
 
             else
-                Running w h head tail prevDir dir fruit (ticks + 1) seed
+                Running world dir (ticks + 1) seed
 
         Over _ seed ->
             if keyboard.enter then
@@ -208,7 +210,7 @@ update { keyboard } model =
 view : Computer -> Model -> List Shape
 view { screen } model =
     case model of
-        Running w h head tail dir _ fruit _ _ ->
+        Running (World w h head dir tail fruit) _ _ _ ->
             let
                 cw =
                     computeCellWidth w h screen
