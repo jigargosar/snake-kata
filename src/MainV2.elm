@@ -1,6 +1,7 @@
 module MainV2 exposing (main)
 
-import Html exposing (text)
+import Html exposing (div, h1, text)
+import Html.Attributes exposing (style)
 
 
 
@@ -8,4 +9,10 @@ import Html exposing (text)
 
 
 main =
-    text "View Grid"
+    div []
+        [ h1 [] [ text "View: css grid layout" ]
+        , div [ style "display" "grid", style "grid-template" "1fr" ]
+            [ text "Cell 1"
+            , text "Cell 2"
+            ]
+        ]
