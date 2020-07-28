@@ -148,8 +148,15 @@ update2 { keyboard } state =
                 if List.member newHead tail then
                     Over w h head tail dir fruit seed
 
+                else if newHead == fruit then
+                    let
+                        ( newFruit, newSeed ) =
+                            Random.step (randomPosition w h) seed
+                    in
+                    Running w h newHead (head :: tail) dir dir newFruit (ticks + 1) newSeed
+
                 else
-                    Debug.todo "impl"
+                    Running w h newHead (head :: dropLast tail) dir dir fruit (ticks + 1) seed
 
             else
                 Running w h head tail prevDir dir fruit (ticks + 1) seed
