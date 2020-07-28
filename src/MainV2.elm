@@ -8,4 +8,4 @@ import Html exposing (text)
 
 
 main =
-    text "HW"
+    text "View Grid"
