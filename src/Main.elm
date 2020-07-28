@@ -78,6 +78,14 @@ stepPosition direction ( x, y ) =
 
 
 
+-- World
+
+
+type World
+    = World Int Int Pos Direction (List Pos) Pos
+
+
+
 -- Model
 
 
