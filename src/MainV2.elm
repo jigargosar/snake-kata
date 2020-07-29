@@ -29,7 +29,6 @@ main =
             , style "grid-template-rows" (" repeat(" ++ String.fromInt h ++ ", " ++ String.fromFloat cw ++ "px) ")
             , style "grid-template-columns" (" repeat(" ++ String.fromInt w ++ ", " ++ String.fromFloat cw ++ "px) ")
             , style "gap" "1px"
-            , style "padding" "20px"
             , style "background-color" "#ddd"
             ]
             --(viewNCells (w * h))
@@ -52,7 +51,9 @@ viewGridCells w h =
                 , style "grid-column" (String.fromInt x)
                 , style "background-color" "#444"
                 , style "color" "#fff"
-                , style "border-radius" "20%"
+                , style "color" "transparent"
+
+                --, style "border-radius" "20%"
                 , style "font-size" "75%"
                 ]
                 [ text "("
