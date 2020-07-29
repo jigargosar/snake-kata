@@ -18,9 +18,6 @@ main =
 
         cw =
             50
-
-        _ =
-            "" ++ "/" ++ ""
     in
     div []
         [ h1 [] [ text "View: css grid layout" ]
@@ -31,9 +28,8 @@ main =
             , style "gap" "20px"
             , style "padding" "20px"
             ]
-            (viewNCells (w * h))
-
-        --(viewGridCells w h)
+            --(viewNCells (w * h))
+            (viewGridCells w h)
         ]
 
 
