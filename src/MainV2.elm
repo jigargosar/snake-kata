@@ -41,14 +41,20 @@ viewGridCells w h =
 
         viewXYCell ( x, y ) =
             div
-                [ style "overflow" "hidden"
+                [ style "display" "grid"
+                , style "place-items" "center"
+                , style "overflow" "hidden"
                 , style "grid-row" (String.fromInt y)
                 , style "grid-column" (String.fromInt x)
                 , style "background-color" "#444"
                 , style "color" "#fff"
                 , style "border-radius" "20%"
                 ]
-                [ text (String.fromInt x ++ ", " ++ String.fromInt y)
+                [ text "("
+                , text (String.fromInt x)
+                , text ","
+                , text (String.fromInt y)
+                , text ")"
                 ]
     in
     List.map viewXYCell positions
