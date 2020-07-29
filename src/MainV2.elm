@@ -34,8 +34,17 @@ main =
             , style "gap" "1px"
             , style "background-color" "#ddd"
             ]
-            (viewGridBackgroundCells w h)
+            (viewGridBackgroundCells w h ++ [ viewHead head ])
         ]
+
+
+viewHead ( x, y ) =
+    div
+        [ style "grid-row" (String.fromInt y)
+        , style "grid-column" (String.fromInt x)
+        , style "background-color" "hsl(0deg 85% 60%)"
+        ]
+        []
 
 
 viewGridBackgroundCells w h =
