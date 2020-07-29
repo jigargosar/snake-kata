@@ -18,6 +18,9 @@ main =
 
         cw =
             40
+
+        head =
+            ( 3, 3 )
     in
     div
         [ style "display" "grid"
