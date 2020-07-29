@@ -20,7 +20,7 @@ main =
             40
 
         head =
-            ( 3, 3 )
+            ( 5, 9 )
     in
     div
         [ style "display" "grid"
