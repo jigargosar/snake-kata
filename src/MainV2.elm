@@ -34,11 +34,11 @@ main =
             , style "gap" "1px"
             , style "background-color" "#ddd"
             ]
-            (viewGridCells w h)
+            (viewGridBackgroundCells w h)
         ]
 
 
-viewGridCells w h =
+viewGridBackgroundCells w h =
     let
         positions =
             List.range 1 w
