@@ -9,22 +9,35 @@ import Html.Attributes exposing (style)
 
 
 main =
+    let
+        w =
+            10
+
+        h =
+            20
+    in
     div []
         [ h1 [] [ text "View: css grid layout" ]
         , div
             [ style "display" "grid"
-            , style "grid-template" " 1fr 2fr 3fr  / 1fr 1fr "
+            , style "grid-template" " repeat(20, 50px) / repeat(10, 50px) "
             , style "gap" "20px"
             , style "padding" "20px"
             ]
-            (viewNCells 21)
+            (viewNCells (w * h))
         ]
 
 
 viewNCells n =
     let
         viewNthCell nth =
-            div [ style "border" "1px dashed" ] [ text ("Cell " ++ String.fromInt nth) ]
+            div
+                [ style "border" "1px dashed"
+                , style "overflow" "hidden"
+                ]
+                [ text ("Cell " ++ String.fromInt nth)
+                , text "More text to check overflow and sizing"
+                ]
     in
     List.range 1 n
         |> List.map viewNthCell
