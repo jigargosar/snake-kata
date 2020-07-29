@@ -1,5 +1,6 @@
 module MainV2 exposing (main)
 
+import Browser
 import Html exposing (div, h1, text)
 import Html.Attributes exposing (style)
 
@@ -8,7 +9,21 @@ import Html.Attributes exposing (style)
 -- KATA 2: Without Elm Playground
 
 
+main : Program () Model msg
 main =
+    Browser.element
+        { init = \_ -> ( { ticks = 0 }, Cmd.none )
+        , update = \_ m -> ( m, Cmd.none )
+        , subscriptions = \_ -> Sub.none
+        , view = view
+        }
+
+
+type alias Model =
+    { ticks : Int }
+
+
+view _ =
     let
         w =
             10
