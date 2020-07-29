@@ -49,8 +49,10 @@ viewGridCells w h =
             div
                 [ style "border" "1px dashed"
                 , style "overflow" "hidden"
-                , style "grid-row" (String.fromInt y)
-                , style "grid-column" (String.fromInt x)
+                , style "grid-area" (String.fromInt y ++ "/" ++ String.fromInt x)
+
+                --, style "grid-row" (String.fromInt y)
+                --, style "grid-column" (String.fromInt x)
                 ]
                 [ text (String.fromInt x ++ ", " ++ String.fromInt y)
                 ]
