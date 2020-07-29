@@ -21,6 +21,13 @@ main =
 
         head =
             ( 5, 9 )
+
+        tail =
+            [ ( 5, 10 )
+            , ( 5, 11 )
+            , ( 5, 12 )
+            , ( 5, 13 )
+            ]
     in
     div
         [ style "display" "grid"
@@ -34,7 +41,7 @@ main =
             , style "gap" "1px"
             , style "background-color" "#ddd"
             ]
-            (viewGridBackgroundCells w h ++ [ viewHead head ])
+            (viewGridBackgroundCells w h ++ [ viewHead head ] ++ viewTail tail)
         ]
 
 
@@ -45,6 +52,19 @@ viewHead ( x, y ) =
         , style "background-color" "hsl(0deg 85% 60%)"
         ]
         []
+
+
+viewTail =
+    let
+        viewTailCell ( x, y ) =
+            div
+                [ style "grid-row" (String.fromInt y)
+                , style "grid-column" (String.fromInt x)
+                , style "background-color" "hsl(206deg 85% 60%)"
+                ]
+                []
+    in
+    List.map viewTailCell
 
 
 viewGridBackgroundCells w h =
