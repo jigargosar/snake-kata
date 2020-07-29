@@ -41,10 +41,12 @@ viewGridCells w h =
 
         viewXYCell ( x, y ) =
             div
-                [ style "border" "1px dashed"
-                , style "overflow" "hidden"
+                [ style "overflow" "hidden"
                 , style "grid-row" (String.fromInt y)
                 , style "grid-column" (String.fromInt x)
+                , style "background-color" "#444"
+                , style "color" "#fff"
+                , style "border-radius" "20%"
                 ]
                 [ text (String.fromInt x ++ ", " ++ String.fromInt y)
                 ]
