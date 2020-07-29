@@ -31,7 +31,6 @@ main =
             , style "gap" "1px"
             , style "background-color" "#ddd"
             ]
-            --(viewNCells (w * h))
             (viewGridCells w h)
         ]
 
@@ -64,17 +63,3 @@ viewGridCells w h =
                 ]
     in
     List.map viewXYCell positions
-
-
-viewNCells n =
-    let
-        viewNthCell nth =
-            div
-                [ style "border" "1px dashed"
-                , style "overflow" "hidden"
-                ]
-                [ text (String.fromInt nth)
-                ]
-    in
-    List.range 1 n
-        |> List.map viewNthCell
