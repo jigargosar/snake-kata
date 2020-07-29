@@ -26,11 +26,8 @@ main =
         [ h1 [] [ text "View: css grid layout" ]
         , div
             [ style "display" "grid"
-            , style "grid-template"
-                ((" repeat(" ++ String.fromInt h ++ ", " ++ String.fromFloat cw ++ "px) ")
-                    ++ " / "
-                    ++ (" repeat(" ++ String.fromInt w ++ ", " ++ String.fromFloat cw ++ "px) ")
-                )
+            , style "grid-template-rows" (" repeat(" ++ String.fromInt h ++ ", " ++ String.fromFloat cw ++ "px) ")
+            , style "grid-template-columns" (" repeat(" ++ String.fromInt w ++ ", " ++ String.fromFloat cw ++ "px) ")
             , style "gap" "20px"
             , style "padding" "20px"
             ]
