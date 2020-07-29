@@ -41,7 +41,10 @@ main =
             , style "gap" "1px"
             , style "background-color" "#ddd"
             ]
-            (viewGridBackgroundCells w h ++ [ viewHead head ] ++ viewTail tail)
+            (viewGridBackgroundCells w h
+                ++ [ viewHead head ]
+                ++ viewTail tail
+            )
         ]
 
 
@@ -51,6 +54,7 @@ viewHead ( x, y ) =
         , style "grid-column" (String.fromInt x)
         , style "background-color" "hsl(0deg 85% 60%)"
         , style "transform" "rotate(45deg)"
+        , style "z-index" "0"
         ]
         []
 
@@ -62,6 +66,7 @@ viewTail =
                 [ style "grid-row" (String.fromInt y)
                 , style "grid-column" (String.fromInt x)
                 , style "background-color" "hsl(206deg 85% 60%)"
+                , style "z-index" "1"
                 ]
                 []
     in
