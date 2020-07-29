@@ -50,6 +50,7 @@ viewHead ( x, y ) =
         [ style "grid-row" (String.fromInt y)
         , style "grid-column" (String.fromInt x)
         , style "background-color" "hsl(0deg 85% 60%)"
+        , style "transform" "rotate(45deg)"
         ]
         []
 
