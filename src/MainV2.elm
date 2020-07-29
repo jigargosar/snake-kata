@@ -19,7 +19,10 @@ main =
         cw =
             40
     in
-    div []
+    div
+        [ style "display" "grid"
+        , style "place-items" "center"
+        ]
         [ h1 [] [ text "View: css grid layout" ]
         , div
             [ style "display" "grid"
@@ -27,6 +30,7 @@ main =
             , style "grid-template-columns" (" repeat(" ++ String.fromInt w ++ ", " ++ String.fromFloat cw ++ "px) ")
             , style "gap" "1px"
             , style "padding" "20px"
+            , style "background-color" "#ddd"
             ]
             --(viewNCells (w * h))
             (viewGridCells w h)
