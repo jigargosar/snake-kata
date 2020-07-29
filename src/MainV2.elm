@@ -34,8 +34,9 @@ main =
             , style "gap" "20px"
             , style "padding" "20px"
             ]
-            --(viewNCells (w * h))
-            (viewGridCells w h)
+            (viewNCells (w * h))
+
+        --(viewGridCells w h)
         ]
 
 
@@ -49,10 +50,8 @@ viewGridCells w h =
             div
                 [ style "border" "1px dashed"
                 , style "overflow" "hidden"
-                , style "grid-area" (String.fromInt y ++ "/" ++ String.fromInt x)
-
-                --, style "grid-row" (String.fromInt y)
-                --, style "grid-column" (String.fromInt x)
+                , style "grid-row" (String.fromInt y)
+                , style "grid-column" (String.fromInt x)
                 ]
                 [ text (String.fromInt x ++ ", " ++ String.fromInt y)
                 ]
@@ -67,8 +66,7 @@ viewNCells n =
                 [ style "border" "1px dashed"
                 , style "overflow" "hidden"
                 ]
-                [ text ("Cell " ++ String.fromInt nth)
-                , text "More text to check overflow and sizing"
+                [ text (String.fromInt nth)
                 ]
     in
     List.range 1 n
