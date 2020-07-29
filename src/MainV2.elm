@@ -17,7 +17,7 @@ main =
             20
 
         cw =
-            50
+            40
     in
     div []
         [ h1 [] [ text "View: css grid layout" ]
@@ -49,6 +49,7 @@ viewGridCells w h =
                 , style "background-color" "#444"
                 , style "color" "#fff"
                 , style "border-radius" "20%"
+                , style "font-size" "75%"
                 ]
                 [ text "("
                 , text (String.fromInt x)
