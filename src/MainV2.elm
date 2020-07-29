@@ -25,7 +25,7 @@ main =
             [ style "display" "grid"
             , style "grid-template-rows" (" repeat(" ++ String.fromInt h ++ ", " ++ String.fromFloat cw ++ "px) ")
             , style "grid-template-columns" (" repeat(" ++ String.fromInt w ++ ", " ++ String.fromFloat cw ++ "px) ")
-            , style "gap" "20px"
+            , style "gap" "1px"
             , style "padding" "20px"
             ]
             --(viewNCells (w * h))
