@@ -131,7 +131,7 @@ type Snake
     = Snake Int Int Direction Pos (List Pos) Pos
 
 
-moveSnake : Direction -> Snake -> Generator Snake
+moveSnake : Direction -> Snake -> Maybe (Generator Snake)
 moveSnake d (Snake w h _ hd t f) =
     let
         newHead =
@@ -140,10 +140,12 @@ moveSnake d (Snake w h _ hd t f) =
     if newHead == f then
         randomPosition w h
             |> Random.map (Snake w h d newHead (hd :: t))
+            |> Just
 
     else
         Snake w h d newHead (hd :: dropLast t) f
             |> Random.constant
+            |> Just
 
 
 randomPosition : Int -> Int -> Random.Generator Pos
@@ -166,11 +168,16 @@ update msg (Model snake nextDir ticks seed) =
     case msg of
         Tick ->
             if modBy 10 ticks == 0 then
-                let
-                    ( newSnake, newSeed ) =
-                        Random.step (moveSnake nextDir snake) seed
-                in
-                Model newSnake nextDir (ticks + 1) newSeed
+                case moveSnake nextDir snake of
+                    Just snakeGenerator ->
+                        let
+                            ( newSnake, newSeed ) =
+                                Random.step snakeGenerator seed
+                        in
+                        Model newSnake nextDir (ticks + 1) newSeed
+
+                    Nothing ->
+                        Debug.todo "impl"
 
             else
                 Model snake nextDir (ticks + 1) seed
