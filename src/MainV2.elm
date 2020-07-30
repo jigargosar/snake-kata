@@ -328,7 +328,7 @@ triangleUpSvg color =
         , style "height" "100%"
         , SA.viewBox "-50 -50 100 100"
         ]
-        [ Svg.polygon [ SA.points (toNgonPoints 0 5 (100 / 2) ""), SA.stroke "none", SA.fill color ] [] ]
+        [ Svg.polygon [ SA.points (toNgonPoints 0 3 (100 / 2) ""), SA.stroke "none", SA.fill color ] [] ]
 
 
 toNgonPoints : Int -> Int -> Float -> String -> String
