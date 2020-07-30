@@ -4,6 +4,7 @@ import Browser
 import Browser.Events
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (style)
+import Json.Decode as JD
 
 
 
@@ -85,7 +86,7 @@ main =
     Browser.element
         { init = \_ -> ( init, Cmd.none )
         , update = \msg model -> ( update msg model, Cmd.none )
-        , subscriptions = \_ -> Browser.Events.onAnimationFrameDelta (\_ -> Tick)
+        , subscriptions = subscriptions
         , view = view
         }
 
@@ -95,12 +96,31 @@ main =
 
 
 type Model
-    = Model Snake Int
+    = Model Snake Direction Int
 
 
 init : Model
 init =
-    Model (initSnake 10 20) 0
+    let
+        w =
+            10
+
+        h =
+            20
+
+        head =
+            ( 6, 9 ) |> warp w h
+
+        dir =
+            Right
+
+        tail =
+            List.repeat 5 head |> List.indexedMap tailHelp
+
+        tailHelp i =
+            applyN (i + 1) (step (opposite dir)) >> warp w h
+    in
+    Model (Snake w h dir head tail) dir 0
 
 
 type Snake
@@ -132,21 +152,66 @@ moveSnake (Snake w h d hd t) =
 
 type Msg
     = Tick
+    | OnKeyDown String
 
 
 update : Msg -> Model -> Model
-update msg (Model s ticks) =
+update msg ((Model s nextDir ticks) as model) =
     case msg of
         Tick ->
             if modBy 10 ticks == 0 then
-                Model (moveSnake s) (ticks + 1)
+                Model (moveSnake s) nextDir (ticks + 1)
 
             else
-                Model s (ticks + 1)
+                Model s nextDir (ticks + 1)
+
+        OnKeyDown key ->
+            let
+                dir =
+                    toDirection key
+                        |> Maybe.andThen (validateDirection s)
+                        |> Maybe.withDefault nextDir
+            in
+            Model s dir ticks
+
+
+validateDirection : Snake -> Direction -> Maybe Direction
+validateDirection (Snake _ _ currentDir _ _) nextDir =
+    if nextDir /= opposite currentDir then
+        Just nextDir
+
+    else
+        Nothing
+
+
+toDirection : String -> Maybe Direction
+toDirection key =
+    case key of
+        "ArrowUp" ->
+            Just Up
+
+        "ArrowDown" ->
+            Just Down
+
+        "ArrowLeft" ->
+            Just Left
+
+        "ArrowRight" ->
+            Just Right
+
+        _ ->
+            Nothing
+
+
+subscriptions _ =
+    Sub.batch
+        [ Browser.Events.onAnimationFrameDelta (\_ -> Tick)
+        , Browser.Events.onKeyDown (JD.field "key" JD.string |> JD.map OnKeyDown)
+        ]
 
 
 view : Model -> Html Msg
-view (Model (Snake w h _ head tail) _) =
+view (Model (Snake w h _ head tail) _ _) =
     let
         cw =
             40
