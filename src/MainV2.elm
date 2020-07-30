@@ -138,7 +138,11 @@ update : Msg -> Model -> Model
 update msg (Model s ticks) =
     case msg of
         Tick ->
-            Model s (ticks + 1)
+            if modBy 10 ticks == 0 then
+                Model (moveSnake s) (ticks + 1)
+
+            else
+                Model s (ticks + 1)
 
 
 view : Model -> Html Msg
