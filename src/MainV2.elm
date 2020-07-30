@@ -245,12 +245,21 @@ view : Model -> Html Msg
 view model =
     case model of
         Running snake _ _ _ ->
-            viewBoard snake
+            div
+                [ style "display" "grid"
+                , style "place-items" "center"
+                ]
+                [ h1 [] [ text "Running" ]
+                , viewBoard snake
+                ]
 
         Over snake _ ->
-            div []
-                [ viewBoard snake
-                , text "Game Over"
+            div
+                [ style "display" "grid"
+                , style "place-items" "center"
+                ]
+                [ h1 [] [ text "Game Over" ]
+                , viewBoard snake
                 ]
 
 
@@ -264,8 +273,7 @@ viewBoard (Snake w h _ head tail fruit) =
         [ style "display" "grid"
         , style "place-items" "center"
         ]
-        [ h1 [] [ text "View: css grid layout" ]
-        , div
+        [ div
             [ style "display" "grid"
             , style "grid-template-rows" (" repeat(" ++ String.fromInt h ++ ", " ++ String.fromFloat cw ++ "px) ")
             , style "grid-template-columns" (" repeat(" ++ String.fromInt w ++ ", " ++ String.fromFloat cw ++ "px) ")
