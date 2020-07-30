@@ -46,8 +46,11 @@ view model =
         cw =
             40
 
+        dy =
+            -(model.ticks // 20)
+
         head =
-            ( 5, 9 )
+            ( 5, (9 + dy) |> modBy h )
 
         tail =
             [ ( 5, 10 )
