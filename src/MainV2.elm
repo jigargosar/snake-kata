@@ -57,7 +57,11 @@ initialSnake w h =
 
 moveSnake : Snake -> Snake
 moveSnake (Snake w h d hd t) =
-    Snake w h d (step d hd |> warp w h) (List.map (step d >> warp w h) t)
+    Snake w h d (stepWarp d w h hd) (List.map (stepWarp d w h) t)
+
+
+stepWarp d w h p =
+    step d p |> warp w h
 
 
 warp w h ( x, y ) =
