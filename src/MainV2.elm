@@ -1,6 +1,7 @@
 module MainV2 exposing (main)
 
 import Browser
+import Browser.Events
 import Html exposing (div, h1, text)
 import Html.Attributes exposing (style)
 
@@ -14,7 +15,7 @@ main =
     Browser.element
         { init = \_ -> ( { ticks = 0 }, Cmd.none )
         , update = \msg model -> ( update msg model, Cmd.none )
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = \_ -> Browser.Events.onAnimationFrameDelta (\_ -> Tick)
         , view = view
         }
 
@@ -29,10 +30,12 @@ type Msg
 
 update : Msg -> Model -> Model
 update msg model =
-    model
+    case msg of
+        Tick ->
+            { model | ticks = model.ticks + 1 }
 
 
-view _ =
+view model =
     let
         w =
             10
