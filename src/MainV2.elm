@@ -8,7 +8,6 @@ import Json.Decode as JD
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
-import TypedSvg.Attributes as S
 
 
 
@@ -300,7 +299,7 @@ viewHead dir ( x, y ) =
         , style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
         , style "z-index" "0"
         ]
-        [ triangleRightSvg "hsl(0deg 85% 60%)" ]
+        [ triangleUpSvg "hsl(0deg 85% 60%)" ]
 
 
 toDegrees : Direction -> Int
@@ -319,17 +318,6 @@ toDegrees direction =
             0
 
 
-triangleRight color =
-    div
-        [ style "width" "0"
-        , style "height" "0"
-        , style "border-top" "50px solid transparent"
-        , style "border-left" ("100px solid " ++ color)
-        , style "border-bottom" "50px solid transparent"
-        ]
-        []
-
-
 triangleRightSvg color =
     Svg.svg
         [ style "width" "100%"
@@ -337,6 +325,34 @@ triangleRightSvg color =
         , SA.viewBox "0 0 460.5 531.74"
         ]
         [ Svg.polygon [ SA.points "0.5,0.866 459.5,265.87 0.5,530.874", SA.stroke "none", SA.fill color ] [] ]
+
+
+triangleUpSvg color =
+    Svg.svg
+        [ style "width" "100%"
+        , style "height" "100%"
+        , SA.viewBox "-50 -50 100 100"
+        ]
+        [ Svg.polygon [ SA.points (toNgonPoints 0 3 60 ""), SA.stroke "none", SA.fill color ] [] ]
+
+
+toNgonPoints : Int -> Int -> Float -> String -> String
+toNgonPoints i n radius string =
+    if i == n then
+        string
+
+    else
+        let
+            a =
+                turns (toFloat i / toFloat n - 0.25)
+
+            x =
+                radius * cos a
+
+            y =
+                radius * sin a
+        in
+        toNgonPoints (i + 1) n radius (string ++ String.fromFloat x ++ "," ++ String.fromFloat y ++ " ")
 
 
 viewFruit ( x, y ) =
