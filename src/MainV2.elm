@@ -317,6 +317,17 @@ viewHead dir ( x, y ) =
         []
 
 
+triangleRight color =
+    div
+        [ style "width" "0"
+        , style "height" "0"
+        , style "border-top" "50px solid transparent"
+        , style "border-left" ("100px solid " ++ color)
+        , style "border-bottom" "50px solid transparent"
+        ]
+        []
+
+
 viewFruit ( x, y ) =
     div
         [ gridRow (y + 1)
