@@ -97,7 +97,8 @@ main =
 
 
 type Model
-    = Model Snake Direction Int Seed
+    = Running Snake Direction Int Seed
+    | Over Snake Seed
 
 
 init : Model
@@ -124,7 +125,7 @@ init =
         fruit =
             ( 7, 8 )
     in
-    Model (Snake w h dir head tail fruit) dir 0 (Random.initialSeed 43)
+    Running (Snake w h dir head tail fruit) dir 0 (Random.initialSeed 43)
 
 
 type Snake
@@ -167,32 +168,42 @@ type Msg
 
 
 update : Msg -> Model -> Model
-update msg (Model snake nextDir ticks seed) =
+update msg model =
     case msg of
         Tick ->
-            if modBy 10 ticks == 0 then
-                case moveSnake nextDir snake of
-                    Just snakeGenerator ->
-                        let
-                            ( newSnake, newSeed ) =
-                                Random.step snakeGenerator seed
-                        in
-                        Model newSnake nextDir (ticks + 1) newSeed
+            case model of
+                Running snake nextDir ticks seed ->
+                    if modBy 10 ticks == 0 then
+                        case moveSnake nextDir snake of
+                            Just snakeGenerator ->
+                                let
+                                    ( newSnake, newSeed ) =
+                                        Random.step snakeGenerator seed
+                                in
+                                Running newSnake nextDir (ticks + 1) newSeed
 
-                    Nothing ->
-                        Debug.todo "impl"
+                            Nothing ->
+                                Debug.todo "impl"
 
-            else
-                Model snake nextDir (ticks + 1) seed
+                    else
+                        Running snake nextDir (ticks + 1) seed
+
+                _ ->
+                    model
 
         OnKeyDown key ->
-            let
-                dir =
-                    toDirection key
-                        |> Maybe.andThen (validateDirection snake)
-                        |> Maybe.withDefault nextDir
-            in
-            Model snake dir ticks seed
+            case model of
+                Running snake nextDir ticks seed ->
+                    let
+                        dir =
+                            toDirection key
+                                |> Maybe.andThen (validateDirection snake)
+                                |> Maybe.withDefault nextDir
+                    in
+                    Running snake dir ticks seed
+
+                _ ->
+                    model
 
 
 validateDirection : Snake -> Direction -> Maybe Direction
@@ -231,7 +242,7 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view (Model (Snake w h _ head tail fruit) _ _ _) =
+view (Running (Snake w h _ head tail fruit) _ _ _) =
     let
         cw =
             40
