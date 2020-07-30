@@ -36,7 +36,7 @@ update msg model =
 
 
 type Snake
-    = Snake Direction Pos (List Pos)
+    = Snake Int Int Direction Pos (List Pos)
 
 
 initialSnake : Int -> Int -> Snake
@@ -52,12 +52,12 @@ initialSnake w h =
             List.repeat 5 initialHead
                 |> List.indexedMap (\i -> stepN (i + 1) (opposite initialDirection) >> warp w h)
     in
-    Snake initialDirection initialHead initialTail
+    Snake w h initialDirection initialHead initialTail
 
 
 moveSnake : Int -> Int -> Snake -> Snake
-moveSnake w h (Snake d hd t) =
-    Snake d (step d hd |> warp w h) (List.map (step d >> warp w h) t)
+moveSnake _ _ (Snake w h d hd t) =
+    Snake w h d (step d hd |> warp w h) (List.map (step d >> warp w h) t)
 
 
 warp w h ( x, y ) =
@@ -130,7 +130,7 @@ view model =
         dt =
             model.ticks // 30
 
-        (Snake _ head tail) =
+        (Snake _ _ _ head tail) =
             initialSnake w h
     in
     div
