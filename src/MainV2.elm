@@ -242,7 +242,17 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view (Running (Snake w h _ head tail fruit) _ _ _) =
+view model =
+    case model of
+        Running snake _ _ _ ->
+            viewSnake snake
+
+        Over snake _ ->
+            viewSnake snake
+
+
+viewSnake : Snake -> Html Msg
+viewSnake (Snake w h _ head tail fruit) =
     let
         cw =
             40
