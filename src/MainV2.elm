@@ -39,29 +39,29 @@ type Snake
     = Snake Direction Pos (List Pos)
 
 
-initialSnake : Snake
-initialSnake =
+initialSnake : Int -> Int -> Snake
+initialSnake w h =
     let
         initialHead =
-            ( 5, 9 )
+            ( 5, 9 ) |> warp w h
 
         initialDirection =
             Right
 
         initialTail =
             List.repeat 5 initialHead
-                |> List.indexedMap (\i -> stepN (i + 1) (opposite initialDirection))
+                |> List.indexedMap (\i -> stepN (i + 1) (opposite initialDirection) >> warp w h)
     in
     Snake initialDirection initialHead initialTail
 
 
 moveSnake : Int -> Int -> Snake -> Snake
 moveSnake w h (Snake d hd t) =
-    let
-        warp ( x, y ) =
-            ( modBy w x + 1, modBy h y + 1 )
-    in
-    Snake d (step d hd |> warp) (List.map (step d >> warp) t)
+    Snake d (step d hd |> warp w h) (List.map (step d >> warp w h) t)
+
+
+warp w h ( x, y ) =
+    ( modBy w x, modBy h y )
 
 
 type Direction
@@ -131,7 +131,7 @@ view model =
             model.ticks // 30
 
         (Snake _ head tail) =
-            initialSnake
+            initialSnake w h
     in
     div
         [ style "display" "grid"
