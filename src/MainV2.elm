@@ -300,10 +300,10 @@ viewHead dir ( x, y ) =
         , gridColumn (x + 1)
 
         --, style "background-color" "hsl(0deg 85% 60%)"
-        --, style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
+        , style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
         , style "z-index" "0"
         ]
-        [ triangleUpSvg "hsl(0deg 85% 60%)" ]
+        [ triangleRightSvg "hsl(0deg 85% 60%)" ]
 
 
 toDegrees : Direction -> Int
@@ -322,13 +322,14 @@ toDegrees direction =
             0
 
 
-triangleUpSvg color =
+triangleRightSvg color =
     Svg.svg
         [ style "width" "100%"
         , style "height" "100%"
         , SA.viewBox "-50 -50 100 100"
+        , style "transform" "rotate(90deg)"
         ]
-        [ Svg.polygon [ SA.points (toTrianglePoints 20), SA.stroke "none", SA.fill color ] [] ]
+        [ Svg.polygon [ SA.points (toTrianglePoints 50), SA.stroke "none", SA.fill color ] [] ]
 
 
 toTrianglePoints radius =
