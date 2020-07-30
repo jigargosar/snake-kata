@@ -35,6 +35,15 @@ update msg model =
             { model | ticks = model.ticks + 1 }
 
 
+initialHead =
+    ( 5, 9 )
+
+
+initialTail =
+    List.repeat 5 initialHead
+        |> List.indexedMap (\i ( x, y ) -> ( x - i - 1, y ))
+
+
 view model =
     let
         w =
@@ -46,19 +55,22 @@ view model =
         cw =
             40
 
+        wrap ( x, y ) =
+            ( modBy w x + 1, modBy h y + 1 )
+
+        dt =
+            model.ticks // 30
+
         mv ( x, y ) =
-            ( x, modBy h (y + -(model.ticks // 30)) + 1 )
+            ( x + dt, y )
+                |> wrap
 
         head =
-            ( 5, 9 )
+            initialHead
                 |> mv
 
         tail =
-            [ ( 5, 10 )
-            , ( 5, 11 )
-            , ( 5, 12 )
-            , ( 5, 13 )
-            ]
+            initialTail
                 |> List.map mv
     in
     div
