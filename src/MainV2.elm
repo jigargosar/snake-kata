@@ -35,17 +35,33 @@ update msg model =
             { model | ticks = model.ticks + 1 }
 
 
-initialHead =
-    ( 5, 9 )
+type Snake
+    = Snake Direction Pos (List Pos)
 
 
-initialDirection =
-    Right
+initialSnake : Snake
+initialSnake =
+    let
+        initialHead =
+            ( 5, 9 )
+
+        initialDirection =
+            Right
+
+        initialTail =
+            List.repeat 5 initialHead
+                |> List.indexedMap (\i -> stepN (i + 1) (opposite initialDirection))
+    in
+    Snake initialDirection initialHead initialTail
 
 
-initialTail =
-    List.repeat 5 initialHead
-        |> List.indexedMap (\i -> stepN (i + 1) (opposite initialDirection))
+moveSnake : Int -> Int -> Snake -> Snake
+moveSnake w h (Snake d hd t) =
+    let
+        warp ( x, y ) =
+            ( modBy w x + 1, modBy h y + 1 )
+    in
+    Snake d (step d hd |> warp) (List.map (step d >> warp) t)
 
 
 type Direction
@@ -111,22 +127,11 @@ view model =
         cw =
             40
 
-        wrap ( x, y ) =
-            ( modBy w x + 1, modBy h y + 1 )
-
         dt =
             model.ticks // 30
 
-        mv =
-            stepN dt initialDirection >> wrap
-
-        head =
-            initialHead
-                |> mv
-
-        tail =
-            initialTail
-                |> List.map mv
+        (Snake _ head tail) =
+            initialSnake
     in
     div
         [ style "display" "grid"
