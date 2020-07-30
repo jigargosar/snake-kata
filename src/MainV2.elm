@@ -2,7 +2,7 @@ module MainV2 exposing (main)
 
 import Browser
 import Browser.Events
-import Html exposing (div, h1, text)
+import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (style)
 
 
@@ -83,7 +83,7 @@ applyN n f x =
 main : Program () Model Msg
 main =
     Browser.element
-        { init = \_ -> ( { ticks = 0 }, Cmd.none )
+        { init = \_ -> ( init, Cmd.none )
         , update = \msg model -> ( update msg model, Cmd.none )
         , subscriptions = \_ -> Browser.Events.onAnimationFrameDelta (\_ -> Tick)
         , view = view
@@ -94,30 +94,35 @@ main =
 -- MODEL
 
 
-type alias Model =
-    { ticks : Int }
+type Model
+    = Model Snake Int
+
+
+init : Model
+init =
+    Model (initSnake 10 20) 0
 
 
 type Snake
     = Snake Int Int Direction Pos (List Pos)
 
 
-initialSnake : Int -> Int -> Snake
-initialSnake w h =
+initSnake : Int -> Int -> Snake
+initSnake w h =
     let
-        initialHead =
+        head =
             ( 6, 9 ) |> warp w h
 
-        initialDirection =
+        dir =
             Right
 
-        initialTail =
-            List.repeat 5 initialHead |> List.indexedMap tailHelp
+        tail =
+            List.repeat 5 head |> List.indexedMap tailHelp
 
         tailHelp i =
-            applyN (i + 1) (step (opposite initialDirection)) >> warp w h
+            applyN (i + 1) (step (opposite dir)) >> warp w h
     in
-    Snake w h initialDirection initialHead initialTail
+    Snake w h dir head tail
 
 
 moveSnake : Snake -> Snake
@@ -130,29 +135,17 @@ type Msg
 
 
 update : Msg -> Model -> Model
-update msg model =
+update msg (Model s ticks) =
     case msg of
         Tick ->
-            { model | ticks = model.ticks + 1 }
+            Model s (ticks + 1)
 
 
-view model =
+view : Model -> Html Msg
+view (Model (Snake w h _ head tail) _) =
     let
-        w =
-            10
-
-        h =
-            20
-
         cw =
             40
-
-        dt =
-            model.ticks // 10
-
-        (Snake _ _ _ head tail) =
-            initialSnake w h
-                |> applyN dt moveSnake
     in
     div
         [ style "display" "grid"
