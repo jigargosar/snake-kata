@@ -113,15 +113,6 @@ step direction ( x, y ) =
             ( x + 1, y )
 
 
-stepN : Int -> Direction -> Pos -> Pos
-stepN n d p =
-    if n <= 0 then
-        p
-
-    else
-        stepN (n - 1) d (step d p)
-
-
 applyN n f x =
     if n <= 0 then
         x
