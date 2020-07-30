@@ -23,6 +23,15 @@ type alias Model =
     { ticks : Int }
 
 
+type Msg
+    = Tick
+
+
+update : Msg -> Model -> Model
+update msg model =
+    model
+
+
 view _ =
     let
         w =
