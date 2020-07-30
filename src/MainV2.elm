@@ -245,14 +245,14 @@ view : Model -> Html Msg
 view model =
     case model of
         Running snake _ _ _ ->
-            viewSnake snake
+            viewBoard snake
 
         Over snake _ ->
-            viewSnake snake
+            viewBoard snake
 
 
-viewSnake : Snake -> Html Msg
-viewSnake (Snake w h _ head tail fruit) =
+viewBoard : Snake -> Html Msg
+viewBoard (Snake w h _ head tail fruit) =
     let
         cw =
             40
