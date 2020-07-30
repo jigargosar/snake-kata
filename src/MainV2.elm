@@ -169,13 +169,17 @@ type Msg
     | OnKeyDown String
 
 
+delay =
+    1000
+
+
 update : Msg -> Model -> Model
 update msg model =
     case msg of
         Tick ->
             case model of
                 Running snake nextDir ticks seed ->
-                    if modBy 10 ticks == 0 then
+                    if modBy delay ticks == 0 then
                         case moveSnake nextDir snake of
                             Just snakeGenerator ->
                                 let
@@ -296,7 +300,7 @@ viewHead dir ( x, y ) =
         , gridColumn (x + 1)
 
         --, style "background-color" "hsl(0deg 85% 60%)"
-        , style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
+        --, style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
         , style "z-index" "0"
         ]
         [ triangleUpSvg "hsl(0deg 85% 60%)" ]
@@ -318,22 +322,13 @@ toDegrees direction =
             0
 
 
-triangleRightSvg color =
-    Svg.svg
-        [ style "width" "100%"
-        , style "height" "100%"
-        , SA.viewBox "0 0 460.5 531.74"
-        ]
-        [ Svg.polygon [ SA.points "0.5,0.866 459.5,265.87 0.5,530.874", SA.stroke "none", SA.fill color ] [] ]
-
-
 triangleUpSvg color =
     Svg.svg
         [ style "width" "100%"
         , style "height" "100%"
         , SA.viewBox "-50 -50 100 100"
         ]
-        [ Svg.polygon [ SA.points (toNgonPoints 0 3 60 ""), SA.stroke "none", SA.fill color ] [] ]
+        [ Svg.polygon [ SA.points (toNgonPoints 0 5 (100 / 2) ""), SA.stroke "none", SA.fill color ] [] ]
 
 
 toNgonPoints : Int -> Int -> Float -> String -> String
@@ -343,8 +338,12 @@ toNgonPoints i n radius string =
 
     else
         let
+            turnOffset =
+                -0.25
+
+            --0
             a =
-                turns (toFloat i / toFloat n - 0.25)
+                turns (toFloat i / toFloat n + turnOffset)
 
             x =
                 radius * cos a
