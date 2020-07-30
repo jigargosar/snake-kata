@@ -134,24 +134,29 @@ type Snake
     = Snake Int Int Direction Pos (List Pos) Pos
 
 
-moveSnake : Direction -> Snake -> Maybe (Generator Snake)
+type SnakeResult
+    = SnakeAlive (Generator Snake)
+    | SnakeDead Snake
+
+
+moveSnake : Direction -> Snake -> SnakeResult
 moveSnake d (Snake w h _ hd t f) =
     let
         newHead =
             stepWarp d w h hd
     in
     if List.member newHead t then
-        Nothing
+        SnakeDead (Snake w h d hd t f)
 
     else if newHead == f then
         randomPosition w h
             |> Random.map (Snake w h d newHead (hd :: t))
-            |> Just
+            |> SnakeAlive
 
     else
         Snake w h d newHead (hd :: dropLast t) f
             |> Random.constant
-            |> Just
+            |> SnakeAlive
 
 
 randomPosition : Int -> Int -> Random.Generator Pos
@@ -181,15 +186,15 @@ update msg model =
                 Running snake nextDir ticks seed ->
                     if modBy delay ticks == 0 then
                         case moveSnake nextDir snake of
-                            Just snakeGenerator ->
+                            SnakeAlive snakeGenerator ->
                                 let
                                     ( newSnake, newSeed ) =
                                         Random.step snakeGenerator seed
                                 in
                                 Running newSnake nextDir (ticks + 1) newSeed
 
-                            Nothing ->
-                                Over snake seed
+                            SnakeDead newSnake ->
+                                Over newSnake seed
 
                     else
                         Running snake nextDir (ticks + 1) seed
