@@ -264,7 +264,7 @@ view model =
 
 
 viewBoard : Snake -> Html Msg
-viewBoard (Snake w h _ head tail fruit) =
+viewBoard (Snake w h dir head tail fruit) =
     let
         cw =
             40
@@ -282,18 +282,36 @@ viewBoard (Snake w h _ head tail fruit) =
             ]
             (viewGridBackgroundCells w h
                 ++ [ viewFruit fruit ]
-                ++ [ viewHead head ]
+                ++ [ viewHead dir head ]
                 ++ viewTail tail
             )
         ]
 
 
-viewHead ( x, y ) =
+viewHead dir ( x, y ) =
+    let
+        headAngle =
+            case dir of
+                Up ->
+                    0
+
+                Down ->
+                    180
+
+                Left ->
+                    90
+
+                Right ->
+                    -90
+
+        _ =
+            "" ++ "" ++ ""
+    in
     div
         [ gridRow (y + 1)
         , gridColumn (x + 1)
         , style "background-color" "hsl(0deg 85% 60%)"
-        , style "transform" "rotate(45deg)"
+        , style "transform" ("rotate(" ++ String.fromInt headAngle ++ "deg)")
         , style "z-index" "0"
         ]
         []
