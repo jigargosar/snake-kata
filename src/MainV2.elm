@@ -49,8 +49,12 @@ view model =
         dy =
             -(model.ticks // 20)
 
+        mv ( x, y ) =
+            ( x, y + dy |> modBy h )
+
         head =
-            ( 5, (9 + dy) |> modBy h )
+            ( 5, 9 )
+                |> mv
 
         tail =
             [ ( 5, 10 )
@@ -58,6 +62,7 @@ view model =
             , ( 5, 12 )
             , ( 5, 13 )
             ]
+                |> List.map mv
     in
     div
         [ style "display" "grid"
