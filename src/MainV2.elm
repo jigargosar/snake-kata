@@ -55,8 +55,8 @@ initialSnake w h =
     Snake w h initialDirection initialHead initialTail
 
 
-moveSnake : Int -> Int -> Snake -> Snake
-moveSnake _ _ (Snake w h d hd t) =
+moveSnake : Snake -> Snake
+moveSnake (Snake w h d hd t) =
     Snake w h d (step d hd |> warp w h) (List.map (step d >> warp w h) t)
 
 
@@ -116,6 +116,14 @@ stepN n d p =
         stepN (n - 1) d (step d p)
 
 
+applyN n f x =
+    if n <= 0 then
+        x
+
+    else
+        applyN (n - 1) f (f x)
+
+
 view model =
     let
         w =
@@ -128,10 +136,11 @@ view model =
             40
 
         dt =
-            model.ticks // 30
+            model.ticks // 10
 
         (Snake _ _ _ head tail) =
             initialSnake w h
+                |> applyN dt moveSnake
     in
     div
         [ style "display" "grid"
