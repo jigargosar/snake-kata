@@ -310,11 +310,28 @@ viewHead dir ( x, y ) =
     div
         [ gridRow (y + 1)
         , gridColumn (x + 1)
-        , style "background-color" "hsl(0deg 85% 60%)"
-        , style "transform" ("rotate(" ++ String.fromInt headAngle ++ "deg)")
+
+        --, style "background-color" "hsl(0deg 85% 60%)"
+        , style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
         , style "z-index" "0"
         ]
-        []
+        [ triangleRight "hsl(0deg 85% 60%)" ]
+
+
+toDegrees : Direction -> Int
+toDegrees direction =
+    case direction of
+        Up ->
+            -90
+
+        Down ->
+            90
+
+        Left ->
+            180
+
+        Right ->
+            0
 
 
 triangleRight color =
