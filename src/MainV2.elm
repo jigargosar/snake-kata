@@ -6,6 +6,9 @@ import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (style)
 import Json.Decode as JD
 import Random exposing (Generator, Seed)
+import Svg
+import Svg.Attributes as SA
+import TypedSvg.Attributes as S
 
 
 
@@ -289,24 +292,6 @@ viewBoard (Snake w h dir head tail fruit) =
 
 
 viewHead dir ( x, y ) =
-    let
-        headAngle =
-            case dir of
-                Up ->
-                    0
-
-                Down ->
-                    180
-
-                Left ->
-                    90
-
-                Right ->
-                    -90
-
-        _ =
-            "" ++ "" ++ ""
-    in
     div
         [ gridRow (y + 1)
         , gridColumn (x + 1)
@@ -315,7 +300,7 @@ viewHead dir ( x, y ) =
         , style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
         , style "z-index" "0"
         ]
-        [ triangleRight "hsl(0deg 85% 60%)" ]
+        [ triangleRightSvg "hsl(0deg 85% 60%)" ]
 
 
 toDegrees : Direction -> Int
@@ -343,6 +328,15 @@ triangleRight color =
         , style "border-bottom" "50px solid transparent"
         ]
         []
+
+
+triangleRightSvg color =
+    Svg.svg
+        [ style "width" "100%"
+        , style "height" "100%"
+        , SA.viewBox "0 0 460.5 531.74"
+        ]
+        [ Svg.polygon [ SA.points "0.5,0.866 459.5,265.87 0.5,530.874", SA.stroke "none", SA.fill color ] [] ]
 
 
 viewFruit ( x, y ) =
