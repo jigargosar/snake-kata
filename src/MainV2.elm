@@ -39,9 +39,65 @@ initialHead =
     ( 5, 9 )
 
 
+initialDirection =
+    Right
+
+
 initialTail =
     List.repeat 5 initialHead
-        |> List.indexedMap (\i ( x, y ) -> ( x - i - 1, y ))
+        |> List.indexedMap (\i -> stepN (i + 1) (opposite initialDirection))
+
+
+type Direction
+    = Up
+    | Down
+    | Left
+    | Right
+
+
+opposite : Direction -> Direction
+opposite direction =
+    case direction of
+        Up ->
+            Down
+
+        Down ->
+            Up
+
+        Left ->
+            Right
+
+        Right ->
+            Left
+
+
+type alias Pos =
+    ( Int, Int )
+
+
+step : Direction -> Pos -> Pos
+step direction ( x, y ) =
+    case direction of
+        Up ->
+            ( x, y - 1 )
+
+        Down ->
+            ( x, y + 1 )
+
+        Left ->
+            ( x - 1, y )
+
+        Right ->
+            ( x + 1, y )
+
+
+stepN : Int -> Direction -> Pos -> Pos
+stepN n d p =
+    if n <= 0 then
+        p
+
+    else
+        stepN (n - 1) d (step d p)
 
 
 view model =
@@ -61,9 +117,8 @@ view model =
         dt =
             model.ticks // 30
 
-        mv ( x, y ) =
-            ( x + dt, y )
-                |> wrap
+        mv =
+            stepN dt initialDirection >> wrap
 
         head =
             initialHead
