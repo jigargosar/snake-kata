@@ -132,7 +132,15 @@ type Snake
 
 moveSnake : Direction -> Snake -> Snake
 moveSnake d (Snake w h _ hd t f) =
-    Snake w h d (stepWarp d w h hd) (hd :: dropLast t) f
+    let
+        newHead =
+            stepWarp d w h hd
+    in
+    if newHead == f then
+        Snake w h d newHead (hd :: t) f
+
+    else
+        Snake w h d newHead (hd :: dropLast t) f
 
 
 dropLast : List a -> List a
