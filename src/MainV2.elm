@@ -49,8 +49,10 @@ initialSnake w h =
             Right
 
         initialTail =
-            List.repeat 5 initialHead
-                |> List.indexedMap (\i -> stepN (i + 1) (opposite initialDirection) >> warp w h)
+            List.repeat 5 initialHead |> List.indexedMap tailHelp
+
+        tailHelp i =
+            applyN (i + 1) (step (opposite initialDirection)) >> warp w h
     in
     Snake w h initialDirection initialHead initialTail
 
