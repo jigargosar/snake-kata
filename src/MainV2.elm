@@ -129,7 +129,12 @@ type Snake
 
 moveSnake : Direction -> Snake -> Snake
 moveSnake d (Snake w h _ hd t) =
-    Snake w h d (stepWarp d w h hd) (List.map (stepWarp d w h) t)
+    Snake w h d (stepWarp d w h hd) (hd :: dropLast t)
+
+
+dropLast : List a -> List a
+dropLast =
+    List.reverse >> List.drop 1 >> List.reverse
 
 
 type Msg
