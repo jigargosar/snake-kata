@@ -170,7 +170,7 @@ type Msg
 
 
 delay =
-    1000
+    20
 
 
 update : Msg -> Model -> Model
@@ -298,14 +298,19 @@ viewHead dir ( x, y ) =
     div
         [ gridRow (y + 1)
         , gridColumn (x + 1)
+        , style "background-color" "hsl(0deg 85% 60%)"
 
-        --, style "background-color" "hsl(0deg 85% 60%)"
-        , style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
+        --, style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
         , style "z-index" "0"
         ]
         [ div
-            [ style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)") ]
-            [ triangleRightSvg "hsl(0deg 85% 60%)" ]
+            [ style "width" "100%"
+            , style "height" "100%"
+            , style "transform" ("scale(0.8) rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
+            ]
+            [ --triangleRightSvg "hsl(0deg 85% 60%)"
+              triangleRightSvg "black"
+            ]
         ]
 
 
