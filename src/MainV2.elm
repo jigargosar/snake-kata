@@ -127,8 +127,8 @@ type Snake
     = Snake Int Int Direction Pos (List Pos)
 
 
-moveSnake : Snake -> Snake
-moveSnake (Snake w h d hd t) =
+moveSnake : Direction -> Snake -> Snake
+moveSnake d (Snake w h _ hd t) =
     Snake w h d (stepWarp d w h hd) (List.map (stepWarp d w h) t)
 
 
@@ -142,7 +142,7 @@ update msg (Model snake nextDir ticks) =
     case msg of
         Tick ->
             if modBy 10 ticks == 0 then
-                Model (moveSnake snake) nextDir (ticks + 1)
+                Model (moveSnake nextDir snake) nextDir (ticks + 1)
 
             else
                 Model snake nextDir (ticks + 1)
