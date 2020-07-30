@@ -183,7 +183,7 @@ update msg model =
                                 Running newSnake nextDir (ticks + 1) newSeed
 
                             Nothing ->
-                                Debug.todo "impl"
+                                Over snake seed
 
                     else
                         Running snake nextDir (ticks + 1) seed
