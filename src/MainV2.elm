@@ -127,24 +127,6 @@ type Snake
     = Snake Int Int Direction Pos (List Pos)
 
 
-initSnake : Int -> Int -> Snake
-initSnake w h =
-    let
-        head =
-            ( 6, 9 ) |> warp w h
-
-        dir =
-            Right
-
-        tail =
-            List.repeat 5 head |> List.indexedMap tailHelp
-
-        tailHelp i =
-            applyN (i + 1) (step (opposite dir)) >> warp w h
-    in
-    Snake w h dir head tail
-
-
 moveSnake : Snake -> Snake
 moveSnake (Snake w h d hd t) =
     Snake w h d (stepWarp d w h hd) (List.map (stepWarp d w h) t)
@@ -156,7 +138,7 @@ type Msg
 
 
 update : Msg -> Model -> Model
-update msg ((Model snake nextDir ticks) as model) =
+update msg (Model snake nextDir ticks) =
     case msg of
         Tick ->
             if modBy 10 ticks == 0 then
