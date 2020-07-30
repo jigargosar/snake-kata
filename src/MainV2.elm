@@ -137,7 +137,10 @@ moveSnake d (Snake w h _ hd t f) =
         newHead =
             stepWarp d w h hd
     in
-    if newHead == f then
+    if List.member newHead t then
+        Nothing
+
+    else if newHead == f then
         randomPosition w h
             |> Random.map (Snake w h d newHead (hd :: t))
             |> Just
