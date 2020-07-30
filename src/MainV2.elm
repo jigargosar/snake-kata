@@ -248,7 +248,10 @@ view model =
             viewBoard snake
 
         Over snake _ ->
-            viewBoard snake
+            div []
+                [ viewBoard snake
+                , text "Game Over"
+                ]
 
 
 viewBoard : Snake -> Html Msg
