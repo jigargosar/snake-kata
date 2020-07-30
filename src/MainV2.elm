@@ -46,11 +46,8 @@ view model =
         cw =
             40
 
-        dy =
-            -(model.ticks // 20)
-
         mv ( x, y ) =
-            ( x, y + dy |> modBy h )
+            ( x, modBy h (y + -(model.ticks // 20)) + 1 )
 
         head =
             ( 5, 9 )
