@@ -5,6 +5,7 @@ import Browser.Events
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (style)
 import Json.Decode as JD
+import Random exposing (Generator, Seed)
 
 
 
@@ -96,7 +97,7 @@ main =
 
 
 type Model
-    = Model Snake Direction Int
+    = Model Snake Direction Int Seed
 
 
 init : Model
@@ -123,14 +124,14 @@ init =
         fruit =
             ( 7, 8 )
     in
-    Model (Snake w h dir head tail fruit) dir 0
+    Model (Snake w h dir head tail fruit) dir 0 (Random.initialSeed 43)
 
 
 type Snake
     = Snake Int Int Direction Pos (List Pos) Pos
 
 
-moveSnake : Direction -> Snake -> Snake
+moveSnake : Direction -> Snake -> Generator Snake
 moveSnake d (Snake w h _ hd t f) =
     let
         newHead =
@@ -138,9 +139,11 @@ moveSnake d (Snake w h _ hd t f) =
     in
     if newHead == f then
         Snake w h d newHead (hd :: t) f
+            |> Random.constant
 
     else
         Snake w h d newHead (hd :: dropLast t) f
+            |> Random.constant
 
 
 dropLast : List a -> List a
@@ -154,14 +157,18 @@ type Msg
 
 
 update : Msg -> Model -> Model
-update msg (Model snake nextDir ticks) =
+update msg (Model snake nextDir ticks seed) =
     case msg of
         Tick ->
             if modBy 10 ticks == 0 then
-                Model (moveSnake nextDir snake) nextDir (ticks + 1)
+                let
+                    ( newSnake, newSeed ) =
+                        Random.step (moveSnake nextDir snake) seed
+                in
+                Model newSnake nextDir (ticks + 1) newSeed
 
             else
-                Model snake nextDir (ticks + 1)
+                Model snake nextDir (ticks + 1) seed
 
         OnKeyDown key ->
             let
@@ -170,7 +177,7 @@ update msg (Model snake nextDir ticks) =
                         |> Maybe.andThen (validateDirection snake)
                         |> Maybe.withDefault nextDir
             in
-            Model snake dir ticks
+            Model snake dir ticks seed
 
 
 validateDirection : Snake -> Direction -> Maybe Direction
@@ -209,7 +216,7 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view (Model (Snake w h _ head tail fruit) _ _) =
+view (Model (Snake w h _ head tail fruit) _ _ _) =
     let
         cw =
             40
