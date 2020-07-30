@@ -156,23 +156,23 @@ type Msg
 
 
 update : Msg -> Model -> Model
-update msg ((Model s nextDir ticks) as model) =
+update msg ((Model snake nextDir ticks) as model) =
     case msg of
         Tick ->
             if modBy 10 ticks == 0 then
-                Model (moveSnake s) nextDir (ticks + 1)
+                Model (moveSnake snake) nextDir (ticks + 1)
 
             else
-                Model s nextDir (ticks + 1)
+                Model snake nextDir (ticks + 1)
 
         OnKeyDown key ->
             let
                 dir =
                     toDirection key
-                        |> Maybe.andThen (validateDirection s)
+                        |> Maybe.andThen (validateDirection snake)
                         |> Maybe.withDefault nextDir
             in
-            Model s dir ticks
+            Model snake dir ticks
 
 
 validateDirection : Snake -> Direction -> Maybe Direction
