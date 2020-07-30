@@ -138,12 +138,17 @@ moveSnake d (Snake w h _ hd t f) =
             stepWarp d w h hd
     in
     if newHead == f then
-        Snake w h d newHead (hd :: t) f
-            |> Random.constant
+        randomPosition w h
+            |> Random.map (Snake w h d newHead (hd :: t))
 
     else
         Snake w h d newHead (hd :: dropLast t) f
             |> Random.constant
+
+
+randomPosition : Int -> Int -> Random.Generator Pos
+randomPosition w h =
+    Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
 
 
 dropLast : List a -> List a
