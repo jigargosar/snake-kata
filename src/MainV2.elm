@@ -7,7 +7,77 @@ import Html.Attributes exposing (style)
 
 
 
--- KATA 2: Without Elm Playground
+-- KATA 2: Without Elm Playground, using CSS GRID
+-- DIRECTION
+
+
+type Direction
+    = Up
+    | Down
+    | Left
+    | Right
+
+
+opposite : Direction -> Direction
+opposite direction =
+    case direction of
+        Up ->
+            Down
+
+        Down ->
+            Up
+
+        Left ->
+            Right
+
+        Right ->
+            Left
+
+
+
+-- POSITION
+
+
+type alias Pos =
+    ( Int, Int )
+
+
+step : Direction -> Pos -> Pos
+step direction ( x, y ) =
+    case direction of
+        Up ->
+            ( x, y - 1 )
+
+        Down ->
+            ( x, y + 1 )
+
+        Left ->
+            ( x - 1, y )
+
+        Right ->
+            ( x + 1, y )
+
+
+stepWarp : Direction -> Int -> Int -> Pos -> Pos
+stepWarp d w h p =
+    step d p |> warp w h
+
+
+warp : Int -> Int -> Pos -> Pos
+warp w h ( x, y ) =
+    ( modBy w x, modBy h y )
+
+
+applyN n f x =
+    if n <= 0 then
+        x
+
+    else
+        applyN (n - 1) f (f x)
+
+
+
+-- MAIN
 
 
 main : Program () Model Msg
@@ -20,19 +90,12 @@ main =
         }
 
 
+
+-- MODEL
+
+
 type alias Model =
     { ticks : Int }
-
-
-type Msg
-    = Tick
-
-
-update : Msg -> Model -> Model
-update msg model =
-    case msg of
-        Tick ->
-            { model | ticks = model.ticks + 1 }
 
 
 type Snake
@@ -62,63 +125,15 @@ moveSnake (Snake w h d hd t) =
     Snake w h d (stepWarp d w h hd) (List.map (stepWarp d w h) t)
 
 
-stepWarp d w h p =
-    step d p |> warp w h
+type Msg
+    = Tick
 
 
-warp w h ( x, y ) =
-    ( modBy w x, modBy h y )
-
-
-type Direction
-    = Up
-    | Down
-    | Left
-    | Right
-
-
-opposite : Direction -> Direction
-opposite direction =
-    case direction of
-        Up ->
-            Down
-
-        Down ->
-            Up
-
-        Left ->
-            Right
-
-        Right ->
-            Left
-
-
-type alias Pos =
-    ( Int, Int )
-
-
-step : Direction -> Pos -> Pos
-step direction ( x, y ) =
-    case direction of
-        Up ->
-            ( x, y - 1 )
-
-        Down ->
-            ( x, y + 1 )
-
-        Left ->
-            ( x - 1, y )
-
-        Right ->
-            ( x + 1, y )
-
-
-applyN n f x =
-    if n <= 0 then
-        x
-
-    else
-        applyN (n - 1) f (f x)
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        Tick ->
+            { model | ticks = model.ticks + 1 }
 
 
 view model =
@@ -219,3 +234,7 @@ gridRow y =
 
 gridColumn x =
     style "grid-column" (String.fromInt x)
+
+
+
+-- HELPERS
