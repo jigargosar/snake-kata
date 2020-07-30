@@ -9,11 +9,11 @@ import Html.Attributes exposing (style)
 -- KATA 2: Without Elm Playground
 
 
-main : Program () Model msg
+main : Program () Model Msg
 main =
     Browser.element
         { init = \_ -> ( { ticks = 0 }, Cmd.none )
-        , update = \_ m -> ( m, Cmd.none )
+        , update = \msg model -> ( update msg model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         , view = view
         }
