@@ -43,7 +43,7 @@ initialSnake : Int -> Int -> Snake
 initialSnake w h =
     let
         initialHead =
-            ( 5, 9 ) |> warp w h
+            ( 6, 9 ) |> warp w h
 
         initialDirection =
             Right
