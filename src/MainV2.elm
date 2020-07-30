@@ -154,8 +154,8 @@ view model =
 
 viewHead ( x, y ) =
     div
-        [ style "grid-row" (String.fromInt y)
-        , style "grid-column" (String.fromInt x)
+        [ gridRow (y + 1)
+        , gridColumn (x + 1)
         , style "background-color" "hsl(0deg 85% 60%)"
         , style "transform" "rotate(45deg)"
         , style "z-index" "0"
@@ -167,8 +167,8 @@ viewTail =
     let
         viewTailCell ( x, y ) =
             div
-                [ style "grid-row" (String.fromInt y)
-                , style "grid-column" (String.fromInt x)
+                [ gridRow (y + 1)
+                , gridColumn (x + 1)
                 , style "background-color" "hsl(206deg 85% 60%)"
                 , style "z-index" "1"
                 ]
@@ -180,16 +180,16 @@ viewTail =
 viewGridBackgroundCells w h =
     let
         positions =
-            List.range 1 w
-                |> List.concatMap (\x -> List.range 1 h |> List.map (Tuple.pair x))
+            List.range 0 (w - 1)
+                |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
 
         viewXYCell ( x, y ) =
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
                 , style "overflow" "hidden"
-                , style "grid-row" (String.fromInt y)
-                , style "grid-column" (String.fromInt x)
+                , gridRow (y + 1)
+                , gridColumn (x + 1)
                 , style "background-color" "#444"
                 , style "color" "#fff"
                 , style "color" "transparent"
@@ -205,3 +205,11 @@ viewGridBackgroundCells w h =
                 ]
     in
     List.map viewXYCell positions
+
+
+gridRow y =
+    style "grid-row" (String.fromInt y)
+
+
+gridColumn x =
+    style "grid-column" (String.fromInt x)
