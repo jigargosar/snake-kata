@@ -303,7 +303,10 @@ viewHead dir ( x, y ) =
         , style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
         , style "z-index" "0"
         ]
-        [ triangleRightSvg "hsl(0deg 85% 60%)" ]
+        [ div
+            [ style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)") ]
+            [ triangleRightSvg "hsl(0deg 85% 60%)" ]
+        ]
 
 
 toDegrees : Direction -> Int
