@@ -119,17 +119,20 @@ init =
 
         tailHelp i =
             applyN (i + 1) (step (opposite dir)) >> warp w h
+
+        fruit =
+            ( 7, 8 )
     in
-    Model (Snake w h dir head tail) dir 0
+    Model (Snake w h dir head tail fruit) dir 0
 
 
 type Snake
-    = Snake Int Int Direction Pos (List Pos)
+    = Snake Int Int Direction Pos (List Pos) Pos
 
 
 moveSnake : Direction -> Snake -> Snake
-moveSnake d (Snake w h _ hd t) =
-    Snake w h d (stepWarp d w h hd) (hd :: dropLast t)
+moveSnake d (Snake w h _ hd t f) =
+    Snake w h d (stepWarp d w h hd) (hd :: dropLast t) f
 
 
 dropLast : List a -> List a
@@ -163,7 +166,7 @@ update msg (Model snake nextDir ticks) =
 
 
 validateDirection : Snake -> Direction -> Maybe Direction
-validateDirection (Snake _ _ currentDir _ _) nextDir =
+validateDirection (Snake _ _ currentDir _ _ _) nextDir =
     if nextDir /= opposite currentDir then
         Just nextDir
 
@@ -198,7 +201,7 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view (Model (Snake w h _ head tail) _ _) =
+view (Model (Snake w h _ head tail fruit) _ _) =
     let
         cw =
             40
@@ -216,6 +219,7 @@ view (Model (Snake w h _ head tail) _ _) =
             , style "background-color" "#ddd"
             ]
             (viewGridBackgroundCells w h
+                ++ [ viewFruit fruit ]
                 ++ [ viewHead head ]
                 ++ viewTail tail
             )
@@ -228,6 +232,18 @@ viewHead ( x, y ) =
         , gridColumn (x + 1)
         , style "background-color" "hsl(0deg 85% 60%)"
         , style "transform" "rotate(45deg)"
+        , style "z-index" "0"
+        ]
+        []
+
+
+viewFruit ( x, y ) =
+    div
+        [ gridRow (y + 1)
+        , gridColumn (x + 1)
+        , style "background-color" "hsl(110deg 85% 60%)"
+
+        --, style "transform" "rotate(45deg)"
         , style "z-index" "0"
         ]
         []
