@@ -106,16 +106,14 @@ type Model
 init : Model
 init =
     let
-        w =
-            10
-
-        h =
-            20
-
-        head =
-            ( 6, 9 ) |> warp w h
+        seed =
+            Random.initialSeed 43
     in
-    Running (initSnake w h head) 0 (Random.initialSeed 43)
+    let
+        ( snake, newSeed ) =
+            Random.step snakeGen seed
+    in
+    Running snake 0 newSeed
 
 
 snakeGen : Generator Snake
