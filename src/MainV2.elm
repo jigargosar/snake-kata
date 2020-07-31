@@ -138,25 +138,26 @@ snakeGen =
 
         h =
             20
-
-        initSnake head =
-            let
-                dir =
-                    Right
-
-                tail =
-                    List.repeat 5 head |> List.indexedMap tailHelp
-
-                tailHelp i =
-                    applyN (i + 1) (step (opposite dir)) >> warp w h
-
-                fruit =
-                    ( 7, 8 )
-            in
-            Snake w h dir dir head tail fruit
     in
     randomPosition w h
-        |> Random.map initSnake
+        |> Random.map (initSnake w h)
+
+
+initSnake w h head =
+    let
+        dir =
+            Right
+
+        tail =
+            List.repeat 5 head |> List.indexedMap tailHelp
+
+        tailHelp i =
+            applyN (i + 1) (step (opposite dir)) >> warp w h
+
+        fruit =
+            ( 7, 8 )
+    in
+    Snake w h dir dir head tail fruit
 
 
 type Snake
