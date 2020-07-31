@@ -105,10 +105,11 @@ type Model
 
 init : Model
 init =
-    let
-        seed =
-            Random.initialSeed 43
-    in
+    initWithSeed (Random.initialSeed 43)
+
+
+initWithSeed : Seed -> Model
+initWithSeed seed =
     let
         ( snake, newSeed ) =
             Random.step snakeGen seed
@@ -234,11 +235,7 @@ update msg model =
                 Over _ seed ->
                     case key of
                         "Enter" ->
-                            let
-                                ( snake, newSeed ) =
-                                    Random.step snakeGen seed
-                            in
-                            Running snake 0 newSeed
+                            initWithSeed seed
 
                         _ ->
                             model
