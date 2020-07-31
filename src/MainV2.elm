@@ -221,7 +221,7 @@ update msg model =
                     of
                         Nothing ->
                             if modBy delay ticks == 0 then
-                                stepOnTick snake ticks seed
+                                stepInCurrentDirection snake ticks seed
 
                             else
                                 Running snake inputDirection (ticks + 1) seed
@@ -258,11 +258,11 @@ stepInDirection direction snake ticks seed =
             Nothing
 
         Just newSnake ->
-            stepOnTick newSnake ticks seed
+            stepInCurrentDirection newSnake ticks seed
                 |> Just
 
 
-stepOnTick snake ticks seed =
+stepInCurrentDirection snake ticks seed =
     case moveSnake snake of
         SnakeAlive gen ->
             let
