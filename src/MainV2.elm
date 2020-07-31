@@ -208,10 +208,10 @@ update msg model =
                 Running snake ticks seed ->
                     if modBy delay ticks == 0 then
                         case moveSnake snake of
-                            SnakeAlive snakeGenerator ->
+                            SnakeAlive moveSnakeGenerator ->
                                 let
                                     ( newSnake, newSeed ) =
-                                        Random.step snakeGenerator seed
+                                        Random.step moveSnakeGenerator seed
                                 in
                                 Running newSnake (ticks + 1) newSeed
 
