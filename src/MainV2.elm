@@ -161,8 +161,8 @@ type SnakeResult
     | SnakeDead
 
 
-stepSnake : Snake -> SnakeResult
-stepSnake (Snake w h d hd t f) =
+moveSnake : Snake -> SnakeResult
+moveSnake (Snake w h d hd t f) =
     let
         newHead =
             stepWarp d w h hd
@@ -207,16 +207,7 @@ update msg model =
             case model of
                 Running snake inputDirection ticks seed ->
                     if modBy delay ticks == 0 then
-                        case stepSnake snake of
-                            SnakeAlive moveSnakeGenerator ->
-                                let
-                                    ( newSnake, newSeed ) =
-                                        Random.step moveSnakeGenerator seed
-                                in
-                                Running newSnake Nothing (ticks + 1) newSeed
-
-                            SnakeDead ->
-                                Over snake seed
+                        stepOnTick snake ticks seed
 
                     else
                         Running snake inputDirection (ticks + 1) seed
@@ -241,6 +232,19 @@ update msg model =
 
                         _ ->
                             model
+
+
+stepOnTick snake ticks seed =
+    case moveSnake snake of
+        SnakeAlive gen ->
+            let
+                ( newSnake, newSeed ) =
+                    Random.step gen seed
+            in
+            Running newSnake Nothing (ticks + 1) newSeed
+
+        SnakeDead ->
+            Over snake seed
 
 
 toDirection : String -> Maybe Direction
