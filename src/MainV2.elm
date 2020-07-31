@@ -233,10 +233,10 @@ update msg ((Model state inputDirection ticks seed) as model) =
                                     ( newState, newSeed ) =
                                         Random.step generator seed
                                 in
-                                Model newState Nothing (ticks + 1) newSeed
+                                Model newState Nothing 1 newSeed
 
                             else
-                                Model state inputDirection 1 seed
+                                Model state inputDirection (ticks + 1) seed
 
                         Just generator ->
                             let
