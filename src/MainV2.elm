@@ -292,7 +292,7 @@ view model =
 
 
 viewBoard : Snake -> Html Msg
-viewBoard (Snake w h nextDir head tail fruit) =
+viewBoard (Snake w h dir head tail fruit) =
     let
         cw =
             40
@@ -310,7 +310,7 @@ viewBoard (Snake w h nextDir head tail fruit) =
             ]
             (viewGridBackgroundCells w h
                 ++ [ viewFruit fruit ]
-                ++ [ viewHead nextDir head ]
+                ++ [ viewHead dir head ]
                 ++ viewTail tail
             )
         ]
