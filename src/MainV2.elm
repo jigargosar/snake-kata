@@ -99,7 +99,7 @@ main =
 
 
 type Model
-    = Running Snake Direction Int Seed
+    = Running Snake Int Seed
     | Over Snake Seed
 
 
@@ -127,34 +127,34 @@ init =
         fruit =
             ( 7, 8 )
     in
-    Running (Snake w h dir head tail fruit) dir 0 (Random.initialSeed 43)
+    Running (Snake w h dir dir head tail fruit) 0 (Random.initialSeed 43)
 
 
 type Snake
-    = Snake Int Int Direction Pos (List Pos) Pos
+    = Snake Int Int Direction Direction Pos (List Pos) Pos
 
 
 type SnakeResult
     = SnakeAlive (Generator Snake)
-    | SnakeDead Snake
+    | SnakeDead
 
 
-moveSnake : Direction -> Snake -> SnakeResult
-moveSnake d (Snake w h _ hd t f) =
+moveSnake : Snake -> SnakeResult
+moveSnake (Snake w h _ d hd t f) =
     let
         newHead =
             stepWarp d w h hd
     in
     if List.member newHead t then
-        SnakeDead (Snake w h d hd t f)
+        SnakeDead
 
     else if newHead == f then
         randomPosition w h
-            |> Random.map (Snake w h d newHead (hd :: t))
+            |> Random.map (Snake w h d d newHead (hd :: t))
             |> SnakeAlive
 
     else
-        Snake w h d newHead (hd :: dropLast t) f
+        Snake w h d d newHead (hd :: dropLast t) f
             |> Random.constant
             |> SnakeAlive
 
@@ -183,44 +183,46 @@ update msg model =
     case msg of
         Tick ->
             case model of
-                Running snake nextDir ticks seed ->
+                Running snake ticks seed ->
                     if modBy delay ticks == 0 then
-                        case moveSnake nextDir snake of
+                        case moveSnake snake of
                             SnakeAlive snakeGenerator ->
                                 let
                                     ( newSnake, newSeed ) =
                                         Random.step snakeGenerator seed
                                 in
-                                Running newSnake nextDir (ticks + 1) newSeed
+                                Running newSnake (ticks + 1) newSeed
 
-                            SnakeDead newSnake ->
-                                Over newSnake seed
+                            SnakeDead ->
+                                Over snake seed
 
                     else
-                        Running snake nextDir (ticks + 1) seed
+                        Running snake (ticks + 1) seed
 
                 _ ->
                     model
 
         OnKeyDown key ->
             case model of
-                Running snake nextDir ticks seed ->
-                    let
-                        dir =
-                            toDirection key
-                                |> Maybe.andThen (validateDirection snake)
-                                |> Maybe.withDefault nextDir
-                    in
-                    Running snake dir ticks seed
+                Running snake ticks seed ->
+                    case
+                        toDirection key
+                            |> Maybe.andThen (\d -> setNextDirection d snake)
+                    of
+                        Just newSnake ->
+                            Running newSnake ticks seed
+
+                        Nothing ->
+                            model
 
                 _ ->
                     model
 
 
-validateDirection : Snake -> Direction -> Maybe Direction
-validateDirection (Snake _ _ currentDir _ _ _) nextDir =
+setNextDirection : Direction -> Snake -> Maybe Snake
+setNextDirection nextDir (Snake w h currentDir _ hd t f) =
     if nextDir /= opposite currentDir then
-        Just nextDir
+        Just (Snake w h currentDir nextDir hd t f)
 
     else
         Nothing
@@ -255,7 +257,7 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     case model of
-        Running snake _ _ _ ->
+        Running snake _ _ ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
@@ -275,7 +277,7 @@ view model =
 
 
 viewBoard : Snake -> Html Msg
-viewBoard (Snake w h dir head tail fruit) =
+viewBoard (Snake w h _ nextDir head tail fruit) =
     let
         cw =
             40
@@ -293,7 +295,7 @@ viewBoard (Snake w h dir head tail fruit) =
             ]
             (viewGridBackgroundCells w h
                 ++ [ viewFruit fruit ]
-                ++ [ viewHead dir head ]
+                ++ [ viewHead nextDir head ]
                 ++ viewTail tail
             )
         ]
