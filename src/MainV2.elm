@@ -104,7 +104,7 @@ main =
 
 
 type Model
-    = Running Snake Int Seed
+    = Running Snake (Maybe Direction) Int Seed
     | Over Snake Seed
 
 
@@ -119,7 +119,7 @@ initWithSeed seed =
         ( snake, newSeed ) =
             Random.step snakeGen seed
     in
-    Running snake 0 newSeed
+    Running snake Nothing 0 newSeed
 
 
 snakeGen : Generator Snake
@@ -205,7 +205,7 @@ update msg model =
     case msg of
         Tick ->
             case model of
-                Running snake ticks seed ->
+                Running snake inputDirection ticks seed ->
                     if modBy delay ticks == 0 then
                         case moveSnake snake of
                             SnakeAlive moveSnakeGenerator ->
@@ -213,26 +213,26 @@ update msg model =
                                     ( newSnake, newSeed ) =
                                         Random.step moveSnakeGenerator seed
                                 in
-                                Running newSnake (ticks + 1) newSeed
+                                Running newSnake Nothing (ticks + 1) newSeed
 
                             SnakeDead ->
                                 Over snake seed
 
                     else
-                        Running snake (ticks + 1) seed
+                        Running snake inputDirection (ticks + 1) seed
 
                 _ ->
                     model
 
         OnKeyDown key ->
             case model of
-                Running snake ticks seed ->
+                Running snake inputDirection ticks seed ->
                     case
                         toDirection key
                             |> Maybe.andThen (\d -> setNextDirection d snake)
                     of
                         Just newSnake ->
-                            Running newSnake ticks seed
+                            Running newSnake inputDirection ticks seed
 
                         Nothing ->
                             model
@@ -284,7 +284,7 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     case model of
-        Running snake _ _ ->
+        Running snake _ _ _ ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
