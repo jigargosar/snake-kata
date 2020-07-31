@@ -436,7 +436,3 @@ gridRow y =
 
 gridColumn x =
     style "grid-column" (String.fromInt x)
-
-
-
--- HELPERS
