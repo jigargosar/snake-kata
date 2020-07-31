@@ -225,13 +225,25 @@ update msg ((Model state inputDirection ticks seed) as model) =
                     of
                         Nothing ->
                             if modBy delay ticks == 0 then
-                                generateStateOnTick (stepInCurrentDirection snake) model
+                                let
+                                    generator =
+                                        stepInCurrentDirection snake
+                                in
+                                let
+                                    ( newState, newSeed ) =
+                                        Random.step generator seed
+                                in
+                                Model newState Nothing (ticks + 1) newSeed
 
                             else
                                 Model state inputDirection (ticks + 1) seed
 
-                        Just stateGen ->
-                            generateStateOnTick stateGen model
+                        Just generator ->
+                            let
+                                ( newState, newSeed ) =
+                                    Random.step generator seed
+                            in
+                            Model newState Nothing (ticks + 1) newSeed
 
                 _ ->
                     model
@@ -253,15 +265,6 @@ update msg ((Model state inputDirection ticks seed) as model) =
 
                         _ ->
                             model
-
-
-generateStateOnTick : Generator State -> Model -> Model
-generateStateOnTick generator (Model _ _ ticks seed) =
-    let
-        ( state, newSeed ) =
-            Random.step generator seed
-    in
-    Model state Nothing (ticks + 1) newSeed
 
 
 stepInDirection : Direction -> Snake -> Maybe (Generator State)
