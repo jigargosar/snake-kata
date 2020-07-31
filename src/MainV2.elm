@@ -149,11 +149,11 @@ initSnake w h head dir fruit =
         tailHelp i =
             applyN (i + 1) (step (opposite dir)) >> warp w h
     in
-    Snake w h dir dir head tail fruit
+    Snake w h dir head tail fruit
 
 
 type Snake
-    = Snake Int Int Direction Direction Pos (List Pos) Pos
+    = Snake Int Int Direction Pos (List Pos) Pos
 
 
 type SnakeResult
@@ -162,7 +162,7 @@ type SnakeResult
 
 
 moveSnake : Snake -> SnakeResult
-moveSnake (Snake w h _ d hd t f) =
+moveSnake (Snake w h d hd t f) =
     let
         newHead =
             stepWarp d w h hd
@@ -172,11 +172,11 @@ moveSnake (Snake w h _ d hd t f) =
 
     else if newHead == f then
         randomPosition w h
-            |> Random.map (Snake w h d d newHead (hd :: t))
+            |> Random.map (Snake w h d newHead (hd :: t))
             |> SnakeAlive
 
     else
-        Snake w h d d newHead (hd :: dropLast t) f
+        Snake w h d newHead (hd :: dropLast t) f
             |> Random.constant
             |> SnakeAlive
 
@@ -243,15 +243,6 @@ update msg model =
                             model
 
 
-setNextDirection : Direction -> Snake -> Maybe Snake
-setNextDirection nextDir (Snake w h currentDir _ hd t f) =
-    if nextDir /= opposite currentDir then
-        Just (Snake w h currentDir nextDir hd t f)
-
-    else
-        Nothing
-
-
 toDirection : String -> Maybe Direction
 toDirection key =
     case key of
@@ -301,7 +292,7 @@ view model =
 
 
 viewBoard : Snake -> Html Msg
-viewBoard (Snake w h _ nextDir head tail fruit) =
+viewBoard (Snake w h nextDir head tail fruit) =
     let
         cw =
             40
