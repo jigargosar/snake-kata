@@ -140,6 +140,7 @@ snakeGen =
         posGen
 
 
+initSnake : Int -> Int -> Pos -> Direction -> Pos -> Snake
 initSnake w h head dir fruit =
     let
         tail =
