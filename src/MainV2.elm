@@ -103,23 +103,31 @@ main =
 -- MODEL
 
 
-type Model
-    = Running Snake (Maybe Direction) Int Seed
-    | Over Snake Seed
+type alias Model =
+    { state : State
+    , inputDirection : Maybe Direction
+    , ticks : Int
+    , seed : Seed
+    }
+
+
+type State
+    = Over Snake
+    | Running Snake
 
 
 init : Model
 init =
-    initWithSeed (Random.initialSeed 43)
+    generateModel (Random.initialSeed 43)
 
 
-initWithSeed : Seed -> Model
-initWithSeed seed =
+generateModel : Seed -> Model
+generateModel seed =
     let
         ( snake, newSeed ) =
             Random.step snakeGen seed
     in
-    Running snake Nothing 0 newSeed
+    Model (Running snake) Nothing 0 newSeed
 
 
 snakeGen : Generator Snake
@@ -213,66 +221,72 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         Tick ->
-            case model of
-                Running snake inputDirection ticks seed ->
+            case model.state of
+                Running snake ->
                     case
-                        inputDirection
-                            |> Maybe.andThen (\d -> stepInDirection d snake ticks seed)
+                        model.inputDirection
+                            |> Maybe.andThen (\d -> stepInDirection d snake)
                     of
                         Nothing ->
-                            if modBy delay ticks == 0 then
-                                stepInCurrentDirection snake ticks seed
+                            if modBy delay model.ticks == 0 then
+                                generateStateOnTick (stepInCurrentDirection snake) model
 
                             else
-                                Running snake inputDirection (ticks + 1) seed
+                                { model | ticks = model.ticks + 1 }
 
-                        Just newModel ->
-                            newModel
+                        Just stateGen ->
+                            generateStateOnTick stateGen model
 
                 _ ->
                     model
 
         OnKeyDown key ->
-            case model of
-                Running snake _ ticks seed ->
+            case model.state of
+                Running _ ->
                     case toDirection key of
                         Just newInputDirection ->
-                            Running snake (Just newInputDirection) ticks seed
+                            { model | inputDirection = Just newInputDirection }
 
                         Nothing ->
                             model
 
-                Over _ seed ->
+                Over _ ->
                     case key of
                         "Enter" ->
-                            initWithSeed seed
+                            generateModel model.seed
 
                         _ ->
                             model
 
 
-stepInDirection : Direction -> Snake -> Int -> Seed -> Maybe Model
-stepInDirection direction snake ticks seed =
+generateStateOnTick : Generator State -> Model -> Model
+generateStateOnTick generator model =
+    let
+        ( state, seed ) =
+            Random.step generator model.seed
+    in
+    { model | seed = seed, state = state, ticks = model.ticks + 1 }
+
+
+stepInDirection : Direction -> Snake -> Maybe (Generator State)
+stepInDirection direction snake =
     case changeDirection direction snake of
         Nothing ->
             Nothing
 
         Just newSnake ->
-            stepInCurrentDirection newSnake ticks seed
+            stepInCurrentDirection newSnake
                 |> Just
 
 
-stepInCurrentDirection snake ticks seed =
+stepInCurrentDirection : Snake -> Generator State
+stepInCurrentDirection snake =
     case moveSnake snake of
         SnakeAlive gen ->
-            let
-                ( newSnake, newSeed ) =
-                    Random.step gen seed
-            in
-            Running newSnake Nothing (ticks + 1) newSeed
+            Random.map Running gen
 
         SnakeDead ->
-            Over snake seed
+            Over snake |> Random.constant
 
 
 toDirection : String -> Maybe Direction
@@ -303,8 +317,8 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    case model of
-        Running snake _ _ _ ->
+    case model.state of
+        Running snake ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
@@ -313,7 +327,7 @@ view model =
                 , viewBoard snake
                 ]
 
-        Over snake _ ->
+        Over snake ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
