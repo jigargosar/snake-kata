@@ -114,20 +114,8 @@ init =
 
         head =
             ( 6, 9 ) |> warp w h
-
-        dir =
-            Right
-
-        tail =
-            List.repeat 5 head |> List.indexedMap tailHelp
-
-        tailHelp i =
-            applyN (i + 1) (step (opposite dir)) >> warp w h
-
-        fruit =
-            ( 7, 8 )
     in
-    Running (Snake w h dir dir head tail fruit) 0 (Random.initialSeed 43)
+    Running (initSnake w h head) 0 (Random.initialSeed 43)
 
 
 snakeGen : Generator Snake
