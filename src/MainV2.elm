@@ -286,26 +286,16 @@ updateOnTick snake inputDirection ticks seed =
 
 stepSnake : Snake -> Seed -> Model
 stepSnake snake seed =
-    generateStateAndResetTicksAndInput (stepInCurrentDirection snake) seed
-
-
-stepInCurrentDirection : Snake -> Generator State
-stepInCurrentDirection snake =
     case moveSnake snake of
-        SnakeAlive gen ->
-            Random.map Running gen
+        SnakeAlive generator ->
+            let
+                ( newSnake, newSeed ) =
+                    Random.step generator seed
+            in
+            Model (Running newSnake) Nothing 1 newSeed
 
         SnakeDead ->
-            Over snake |> Random.constant
-
-
-generateStateAndResetTicksAndInput : Generator State -> Seed -> Model
-generateStateAndResetTicksAndInput generator seed =
-    let
-        ( newState, newSeed ) =
-            Random.step generator seed
-    in
-    Model newState Nothing 1 newSeed
+            Model (Over snake) Nothing 1 seed
 
 
 toDirection : String -> Maybe Direction
