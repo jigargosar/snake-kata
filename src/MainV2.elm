@@ -77,12 +77,94 @@ warp w h ( x, y ) =
     ( modBy w x, modBy h y )
 
 
+randomPosition : Int -> Int -> Random.Generator Pos
+randomPosition w h =
+    Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
+
+
 applyN n f x =
     if n <= 0 then
         x
 
     else
         applyN (n - 1) f (f x)
+
+
+
+-- SNAKE
+
+
+snakeGenerator : Generator Snake
+snakeGenerator =
+    let
+        w =
+            10
+
+        h =
+            20
+
+        posGen =
+            randomPosition w h
+    in
+    Random.map3 (initSnake w h)
+        posGen
+        randomDirection
+        posGen
+
+
+initSnake : Int -> Int -> Pos -> Direction -> Pos -> Snake
+initSnake w h head dir fruit =
+    let
+        tail =
+            List.repeat 5 head |> List.indexedMap tailHelp
+
+        tailHelp i =
+            applyN (i + 1) (step (opposite dir)) >> warp w h
+    in
+    Snake w h dir head tail fruit
+
+
+type Snake
+    = Snake Int Int Direction Pos (List Pos) Pos
+
+
+type SnakeResult
+    = SnakeAlive (Generator Snake)
+    | SnakeDead
+
+
+changeDirection : Direction -> Snake -> Maybe Snake
+changeDirection direction (Snake w h d hd t f) =
+    if direction /= opposite d then
+        Snake w h direction hd t f |> Just
+
+    else
+        Nothing
+
+
+moveSnake : Snake -> SnakeResult
+moveSnake (Snake w h d hd t f) =
+    let
+        newHead =
+            stepWarp d w h hd
+    in
+    if List.member newHead t then
+        SnakeDead
+
+    else if newHead == f then
+        randomPosition w h
+            |> Random.map (Snake w h d newHead (hd :: t))
+            |> SnakeAlive
+
+    else
+        Snake w h d newHead (hd :: dropLast t) f
+            |> Random.constant
+            |> SnakeAlive
+
+
+dropLast : List a -> List a
+dropLast =
+    List.reverse >> List.drop 1 >> List.reverse
 
 
 
@@ -121,87 +203,9 @@ generateModel : Seed -> Model
 generateModel seed =
     let
         ( snake, newSeed ) =
-            Random.step snakeGen seed
+            Random.step snakeGenerator seed
     in
     Model (Running snake) Nothing 0 newSeed
-
-
-snakeGen : Generator Snake
-snakeGen =
-    let
-        w =
-            10
-
-        h =
-            20
-
-        posGen =
-            randomPosition w h
-    in
-    Random.map3 (initSnake w h)
-        posGen
-        randomDirection
-        posGen
-
-
-initSnake : Int -> Int -> Pos -> Direction -> Pos -> Snake
-initSnake w h head dir fruit =
-    let
-        tail =
-            List.repeat 5 head |> List.indexedMap tailHelp
-
-        tailHelp i =
-            applyN (i + 1) (step (opposite dir)) >> warp w h
-    in
-    Snake w h dir head tail fruit
-
-
-type Snake
-    = Snake Int Int Direction Pos (List Pos) Pos
-
-
-type SnakeResult
-    = SnakeAlive (Generator Snake)
-    | SnakeDead
-
-
-moveSnake : Snake -> SnakeResult
-moveSnake (Snake w h d hd t f) =
-    let
-        newHead =
-            stepWarp d w h hd
-    in
-    if List.member newHead t then
-        SnakeDead
-
-    else if newHead == f then
-        randomPosition w h
-            |> Random.map (Snake w h d newHead (hd :: t))
-            |> SnakeAlive
-
-    else
-        Snake w h d newHead (hd :: dropLast t) f
-            |> Random.constant
-            |> SnakeAlive
-
-
-changeDirection : Direction -> Snake -> Maybe Snake
-changeDirection direction (Snake w h d hd t f) =
-    if direction /= opposite d then
-        Snake w h direction hd t f |> Just
-
-    else
-        Nothing
-
-
-randomPosition : Int -> Int -> Random.Generator Pos
-randomPosition w h =
-    Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
-
-
-dropLast : List a -> List a
-dropLast =
-    List.reverse >> List.drop 1 >> List.reverse
 
 
 type Msg
