@@ -103,12 +103,8 @@ main =
 -- MODEL
 
 
-type alias Model =
-    { state : State
-    , inputDirection : Maybe Direction
-    , ticks : Int
-    , seed : Seed
-    }
+type Model
+    = Model State (Maybe Direction) Int Seed
 
 
 type State
@@ -218,21 +214,21 @@ delay =
 
 
 update : Msg -> Model -> Model
-update msg model =
+update msg ((Model state inputDirection ticks seed) as model) =
     case msg of
         Tick ->
-            case model.state of
+            case state of
                 Running snake ->
                     case
-                        model.inputDirection
+                        inputDirection
                             |> Maybe.andThen (\d -> stepInDirection d snake)
                     of
                         Nothing ->
-                            if modBy delay model.ticks == 0 then
+                            if modBy delay ticks == 0 then
                                 generateStateOnTick (stepInCurrentDirection snake) model
 
                             else
-                                { model | ticks = model.ticks + 1 }
+                                Model state inputDirection (ticks + 1) seed
 
                         Just stateGen ->
                             generateStateOnTick stateGen model
@@ -241,11 +237,11 @@ update msg model =
                     model
 
         OnKeyDown key ->
-            case model.state of
+            case state of
                 Running _ ->
                     case toDirection key of
                         Just newInputDirection ->
-                            { model | inputDirection = Just newInputDirection }
+                            Model state (Just newInputDirection) ticks seed
 
                         Nothing ->
                             model
@@ -253,19 +249,19 @@ update msg model =
                 Over _ ->
                     case key of
                         "Enter" ->
-                            generateModel model.seed
+                            generateModel seed
 
                         _ ->
                             model
 
 
 generateStateOnTick : Generator State -> Model -> Model
-generateStateOnTick generator model =
+generateStateOnTick generator (Model _ _ ticks seed) =
     let
-        ( state, seed ) =
-            Random.step generator model.seed
+        ( state, newSeed ) =
+            Random.step generator seed
     in
-    { model | seed = seed, state = state, ticks = model.ticks + 1, inputDirection = Nothing }
+    Model state Nothing (ticks + 1) newSeed
 
 
 stepInDirection : Direction -> Snake -> Maybe (Generator State)
@@ -316,8 +312,8 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view model =
-    case model.state of
+view (Model state _ _ _) =
+    case state of
         Running snake ->
             div
                 [ style "display" "grid"
