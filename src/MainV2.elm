@@ -181,6 +181,15 @@ moveSnake (Snake w h d hd t f) =
             |> SnakeAlive
 
 
+changeDirection : Direction -> Snake -> Maybe Snake
+changeDirection direction (Snake w h d hd t f) =
+    if direction /= opposite d then
+        Snake w h direction hd t f |> Just
+
+    else
+        Nothing
+
+
 randomPosition : Int -> Int -> Random.Generator Pos
 randomPosition w h =
     Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
@@ -206,11 +215,19 @@ update msg model =
         Tick ->
             case model of
                 Running snake inputDirection ticks seed ->
-                    if modBy delay ticks == 0 then
-                        stepOnTick snake ticks seed
+                    case
+                        inputDirection
+                            |> Maybe.andThen (\d -> stepInDirection d snake ticks seed)
+                    of
+                        Nothing ->
+                            if modBy delay ticks == 0 then
+                                stepOnTick snake ticks seed
 
-                    else
-                        Running snake inputDirection (ticks + 1) seed
+                            else
+                                Running snake inputDirection (ticks + 1) seed
+
+                        Just newModel ->
+                            newModel
 
                 _ ->
                     model
@@ -232,6 +249,17 @@ update msg model =
 
                         _ ->
                             model
+
+
+stepInDirection : Direction -> Snake -> Int -> Seed -> Maybe Model
+stepInDirection direction snake ticks seed =
+    case changeDirection direction snake of
+        Nothing ->
+            Nothing
+
+        Just newSnake ->
+            stepOnTick newSnake ticks seed
+                |> Just
 
 
 stepOnTick snake ticks seed =
