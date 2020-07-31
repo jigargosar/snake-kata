@@ -215,8 +215,13 @@ update msg model =
                         Nothing ->
                             model
 
-                _ ->
-                    model
+                Over snake seed ->
+                    case key of
+                        "Enter" ->
+                            model
+
+                        _ ->
+                            model
 
 
 setNextDirection : Direction -> Snake -> Maybe Snake
