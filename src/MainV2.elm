@@ -219,23 +219,7 @@ update msg ((Model state inputDirection ticks seed) as model) =
         Tick ->
             case state of
                 Running snake ->
-                    case
-                        inputDirection
-                            |> Maybe.andThen (\d -> stepInDirection d snake)
-                    of
-                        Nothing ->
-                            if modBy delay ticks == 0 then
-                                let
-                                    generator =
-                                        stepInCurrentDirection snake
-                                in
-                                generateStateAndResetTicksAndInput generator seed
-
-                            else
-                                Model state inputDirection (ticks + 1) seed
-
-                        Just generator ->
-                            generateStateAndResetTicksAndInput generator seed
+                    updateOnTick snake inputDirection ticks seed
 
                 _ ->
                     model
