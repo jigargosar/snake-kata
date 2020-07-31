@@ -267,7 +267,11 @@ updateOnTick : Snake -> Maybe Direction -> Int -> Seed -> Model
 updateOnTick snake inputDirection ticks seed =
     case
         inputDirection
-            |> Maybe.andThen (\d -> stepInDirection d snake)
+            |> Maybe.andThen
+                (\direction ->
+                    changeDirection direction snake
+                        |> Maybe.map stepInCurrentDirection
+                )
     of
         Just generator ->
             generateStateAndResetTicksAndInput generator seed
@@ -282,12 +286,6 @@ updateOnTick snake inputDirection ticks seed =
 
             else
                 Model (Running snake) inputDirection (ticks + 1) seed
-
-
-stepInDirection : Direction -> Snake -> Maybe (Generator State)
-stepInDirection direction snake =
-    changeDirection direction snake
-        |> Maybe.map stepInCurrentDirection
 
 
 stepInCurrentDirection : Snake -> Generator State
