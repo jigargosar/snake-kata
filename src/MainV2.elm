@@ -22,6 +22,11 @@ type Direction
     | Right
 
 
+randomDirection : Generator Direction
+randomDirection =
+    Random.uniform Up [ Down, Left, Right ]
+
+
 opposite : Direction -> Direction
 opposite direction =
     case direction of
@@ -125,24 +130,23 @@ snakeGen =
 
         h =
             20
+
+        posGen =
+            randomPosition w h
     in
-    randomPosition w h
-        |> Random.map (initSnake w h)
+    Random.map3 (initSnake w h)
+        posGen
+        randomDirection
+        posGen
 
 
-initSnake w h head =
+initSnake w h head dir fruit =
     let
-        dir =
-            Right
-
         tail =
             List.repeat 5 head |> List.indexedMap tailHelp
 
         tailHelp i =
             applyN (i + 1) (step (opposite dir)) >> warp w h
-
-        fruit =
-            ( 7, 8 )
     in
     Snake w h dir dir head tail fruit
 
