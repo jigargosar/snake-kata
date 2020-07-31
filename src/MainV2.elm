@@ -229,21 +229,13 @@ update msg ((Model state inputDirection ticks seed) as model) =
                                     generator =
                                         stepInCurrentDirection snake
                                 in
-                                let
-                                    ( newState, newSeed ) =
-                                        Random.step generator seed
-                                in
-                                Model newState Nothing 1 newSeed
+                                generateStateAndResetTicksAndInput generator seed
 
                             else
                                 Model state inputDirection (ticks + 1) seed
 
                         Just generator ->
-                            let
-                                ( newState, newSeed ) =
-                                    Random.step generator seed
-                            in
-                            Model newState Nothing 1 newSeed
+                            generateStateAndResetTicksAndInput generator seed
 
                 _ ->
                     model
@@ -265,6 +257,15 @@ update msg ((Model state inputDirection ticks seed) as model) =
 
                         _ ->
                             model
+
+
+generateStateAndResetTicksAndInput : Generator State -> Seed -> Model
+generateStateAndResetTicksAndInput generator seed =
+    let
+        ( newState, newSeed ) =
+            Random.step generator seed
+    in
+    Model newState Nothing 1 newSeed
 
 
 stepInDirection : Direction -> Snake -> Maybe (Generator State)
