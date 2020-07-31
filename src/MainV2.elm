@@ -265,7 +265,7 @@ generateStateOnTick generator model =
         ( state, seed ) =
             Random.step generator model.seed
     in
-    { model | seed = seed, state = state, ticks = model.ticks + 1 }
+    { model | seed = seed, state = state, ticks = model.ticks + 1, inputDirection = Nothing }
 
 
 stepInDirection : Direction -> Snake -> Maybe (Generator State)
