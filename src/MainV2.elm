@@ -226,13 +226,10 @@ update msg model =
 
         OnKeyDown key ->
             case model of
-                Running snake inputDirection ticks seed ->
-                    case
-                        toDirection key
-                            |> Maybe.andThen (\d -> setNextDirection d snake)
-                    of
-                        Just newSnake ->
-                            Running newSnake inputDirection ticks seed
+                Running snake _ ticks seed ->
+                    case toDirection key of
+                        Just newInputDirection ->
+                            Running snake (Just newInputDirection) ticks seed
 
                         Nothing ->
                             model
