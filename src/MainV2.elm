@@ -22,6 +22,22 @@ type Direction
     | Right
 
 
+toDegrees : Direction -> Int
+toDegrees direction =
+    case direction of
+        Up ->
+            -90
+
+        Down ->
+            90
+
+        Left ->
+            180
+
+        Right ->
+            0
+
+
 randomDirection : Generator Direction
 randomDirection =
     Random.uniform Up [ Down, Left, Right ]
@@ -388,22 +404,6 @@ viewHead dir ( x, y ) =
               triangleRightSvg "black"
             ]
         ]
-
-
-toDegrees : Direction -> Int
-toDegrees direction =
-    case direction of
-        Up ->
-            -90
-
-        Down ->
-            90
-
-        Left ->
-            180
-
-        Right ->
-            0
 
 
 triangleRightSvg color =
