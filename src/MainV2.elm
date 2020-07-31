@@ -161,8 +161,8 @@ type SnakeResult
     | SnakeDead
 
 
-moveSnake : Snake -> SnakeResult
-moveSnake (Snake w h d hd t f) =
+stepSnake : Snake -> SnakeResult
+stepSnake (Snake w h d hd t f) =
     let
         newHead =
             stepWarp d w h hd
@@ -207,7 +207,7 @@ update msg model =
             case model of
                 Running snake inputDirection ticks seed ->
                     if modBy delay ticks == 0 then
-                        case moveSnake snake of
+                        case stepSnake snake of
                             SnakeAlive moveSnakeGenerator ->
                                 let
                                     ( newSnake, newSeed ) =
