@@ -265,6 +265,9 @@ updateOnTick snake inputDirection ticks seed =
         inputDirection
             |> Maybe.andThen (\d -> stepInDirection d snake)
     of
+        Just generator ->
+            generateStateAndResetTicksAndInput generator seed
+
         Nothing ->
             if modBy delay ticks == 0 then
                 let
@@ -275,9 +278,6 @@ updateOnTick snake inputDirection ticks seed =
 
             else
                 Model (Running snake) inputDirection (ticks + 1) seed
-
-        Just generator ->
-            generateStateAndResetTicksAndInput generator seed
 
 
 generateStateAndResetTicksAndInput : Generator State -> Seed -> Model
