@@ -332,7 +332,7 @@ view (Model state _ _ _) =
                 , style "place-items" "center"
                 ]
                 [ h1 [] [ text "Running" ]
-                , viewBoard snake
+                , viewSnake snake
                 ]
 
         Over snake ->
@@ -341,12 +341,12 @@ view (Model state _ _ _) =
                 , style "place-items" "center"
                 ]
                 [ h1 [] [ text "Game Over" ]
-                , viewBoard snake
+                , viewSnake snake
                 ]
 
 
-viewBoard : Snake -> Html Msg
-viewBoard (Snake w h dir head tail fruit) =
+viewSnake : Snake -> Html Msg
+viewSnake (Snake w h dir head tail fruit) =
     let
         cw =
             40
