@@ -270,22 +270,23 @@ updateOnTick snake inputDirection ticks seed =
             |> Maybe.andThen
                 (\direction ->
                     changeDirection direction snake
-                        |> Maybe.map stepInCurrentDirection
+                        |> Maybe.map (\newSnake -> stepSnake newSnake seed)
                 )
     of
-        Just generator ->
-            generateStateAndResetTicksAndInput generator seed
+        Just model ->
+            model
 
         Nothing ->
             if modBy delay ticks == 0 then
-                let
-                    generator =
-                        stepInCurrentDirection snake
-                in
-                generateStateAndResetTicksAndInput generator seed
+                stepSnake snake seed
 
             else
                 Model (Running snake) inputDirection (ticks + 1) seed
+
+
+stepSnake : Snake -> Seed -> Model
+stepSnake snake seed =
+    generateStateAndResetTicksAndInput (stepInCurrentDirection snake) seed
 
 
 stepInCurrentDirection : Snake -> Generator State
