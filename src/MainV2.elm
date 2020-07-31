@@ -339,6 +339,10 @@ subscriptions _ =
         ]
 
 
+
+-- VIEW
+
+
 view : Model -> Html Msg
 view (Model state _ _ _) =
     case state of
