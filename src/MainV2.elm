@@ -296,8 +296,7 @@ stepInDirection direction snake =
             Nothing
 
         Just newSnake ->
-            stepInCurrentDirection newSnake
-                |> Just
+            stepInCurrentDirection newSnake |> Just
 
 
 stepInCurrentDirection : Snake -> Generator State
