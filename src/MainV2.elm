@@ -244,10 +244,14 @@ update msg model =
                         Nothing ->
                             model
 
-                Over snake seed ->
+                Over _ seed ->
                     case key of
                         "Enter" ->
-                            model
+                            let
+                                ( snake, newSeed ) =
+                                    Random.step snakeGen seed
+                            in
+                            Running snake 0 newSeed
 
                         _ ->
                             model
