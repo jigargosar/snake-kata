@@ -295,12 +295,8 @@ generateStateAndResetTicksAndInput generator seed =
 
 stepInDirection : Direction -> Snake -> Maybe (Generator State)
 stepInDirection direction snake =
-    case changeDirection direction snake of
-        Nothing ->
-            Nothing
-
-        Just newSnake ->
-            stepInCurrentDirection newSnake |> Just
+    changeDirection direction snake
+        |> Maybe.map stepInCurrentDirection
 
 
 stepInCurrentDirection : Snake -> Generator State
