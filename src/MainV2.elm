@@ -269,8 +269,7 @@ updateOnTick snake inputDirection ticks seed =
         inputDirection
             |> Maybe.andThen
                 (\direction ->
-                    changeDirection direction snake
-                        |> Maybe.map (\newSnake -> stepSnake newSnake seed)
+                    updateOnTickWithDirection snake direction seed
                 )
     of
         Just model ->
@@ -282,6 +281,12 @@ updateOnTick snake inputDirection ticks seed =
 
             else
                 Model (Running snake) inputDirection (ticks + 1) seed
+
+
+updateOnTickWithDirection : Snake -> Direction -> Seed -> Maybe Model
+updateOnTickWithDirection snake direction seed =
+    changeDirection direction snake
+        |> Maybe.map (\newSnake -> stepSnake newSnake seed)
 
 
 stepSnake : Snake -> Seed -> Model
