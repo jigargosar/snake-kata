@@ -57,7 +57,11 @@ generate seed0 =
             Random.step World.generator seed0
     in
     { world = world
-    , state = Running { inputDirection = Nothing, autoStepCounter = Counter.upto autoStepDelay }
+    , state =
+        Running
+            { inputDirection = Nothing
+            , autoStepCounter = Counter.upto autoStepDelay
+            }
     , seed = seed
     }
 
