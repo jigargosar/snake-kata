@@ -441,18 +441,18 @@ toNgonPoints i n radius string =
         toNgonPoints (i + 1) n radius (string ++ String.fromFloat x ++ "," ++ String.fromFloat y ++ " ")
 
 
+viewFruit : Pos -> Html msg
 viewFruit ( x, y ) =
     div
         [ gridRow (y + 1)
         , gridColumn (x + 1)
         , style "background-color" "hsl(110deg 85% 60%)"
-
-        --, style "transform" "rotate(45deg)"
         , style "z-index" "0"
         ]
         []
 
 
+viewTail : List Pos -> List (Html msg)
 viewTail =
     let
         viewTailCell ( x, y ) =
@@ -467,6 +467,7 @@ viewTail =
     List.map viewTailCell
 
 
+viewGridBackgroundCells : Int -> Int -> List (Html msg)
 viewGridBackgroundCells w h =
     let
         positions =
