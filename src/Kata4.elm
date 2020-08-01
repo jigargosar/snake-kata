@@ -50,21 +50,15 @@ init =
 
 
 generateModel : Seed -> Model
-generateModel seed =
-    Random.step modelGenerator seed |> Tuple.first
-
-
-modelGenerator : Generator Model
-modelGenerator =
-    Random.map2
-        (\world seed ->
-            { world = world
-            , state = Running { inputDirection = Nothing, autoStepCounter = 0 }
-            , seed = seed
-            }
-        )
-        World.generator
-        Random.independentSeed
+generateModel seed0 =
+    let
+        ( world, seed ) =
+            Random.step World.generator seed0
+    in
+    { world = world
+    , state = Running { inputDirection = Nothing, autoStepCounter = 0 }
+    , seed = seed
+    }
 
 
 type Msg
