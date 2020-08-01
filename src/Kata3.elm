@@ -22,8 +22,8 @@ type Direction
     | Right
 
 
-toDegrees : Direction -> Int
-toDegrees direction =
+directionToDegrees : Direction -> Int
+directionToDegrees direction =
     case direction of
         Up ->
             -90
@@ -36,6 +36,25 @@ toDegrees direction =
 
         Right ->
             0
+
+
+keyToDirection : String -> Maybe Direction
+keyToDirection key =
+    case key of
+        "ArrowUp" ->
+            Just Up
+
+        "ArrowDown" ->
+            Just Down
+
+        "ArrowLeft" ->
+            Just Left
+
+        "ArrowRight" ->
+            Just Right
+
+        _ ->
+            Nothing
 
 
 randomDirection : Generator Direction
@@ -219,7 +238,7 @@ update msg model =
         OnKeyDown key ->
             case model.state of
                 Running ->
-                    case toDirection key of
+                    case keyToDirection key of
                         Just newInputDirection ->
                             { model | inputDirection = Just newInputDirection }
 
@@ -292,25 +311,6 @@ stepSnake model =
         { model | head = newHead, tail = model.head :: dropLast model.tail, ticks = 1 }
 
 
-toDirection : String -> Maybe Direction
-toDirection key =
-    case key of
-        "ArrowUp" ->
-            Just Up
-
-        "ArrowDown" ->
-            Just Down
-
-        "ArrowLeft" ->
-            Just Left
-
-        "ArrowRight" ->
-            Just Right
-
-        _ ->
-            Nothing
-
-
 subscriptions _ =
     Sub.batch
         [ Browser.Events.onAnimationFrameDelta (\_ -> Tick)
@@ -381,7 +381,7 @@ viewHead dir ( x, y ) =
         [ div
             [ style "width" "100%"
             , style "height" "100%"
-            , style "transform" ("scale(0.8) rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
+            , style "transform" ("scale(0.8) rotate(" ++ String.fromInt (directionToDegrees dir) ++ "deg)")
             ]
             [ --triangleRightSvg "hsl(0deg 85% 60%)"
               triangleRightSvg "black"
