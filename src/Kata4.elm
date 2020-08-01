@@ -273,7 +273,7 @@ view model =
                 ]
 
 
-viewBoard : Model -> Html msg
+viewBoard : World a -> Html msg
 viewBoard model =
     viewBoardHelp
         model.size
