@@ -7,6 +7,7 @@ import Html.Attributes exposing (style)
 import Json.Decode as JD
 import Kata4.Grid.Direction as Dir exposing (Direction(..))
 import Kata4.Grid.Location as Loc exposing (Location)
+import Kata4.Grid.Size exposing (Size)
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
@@ -51,8 +52,7 @@ main =
 
 
 type alias Model =
-    { width : Int
-    , height : Int
+    { size : Size
     , head : Location
     , direction : Direction
     , tail : List Location
@@ -88,23 +88,25 @@ modelGenerator =
         height =
             20
 
+        size =
+            { width = width, height = height }
+
         gridPositionGenerator =
-            Loc.random width height
+            Loc.random size
     in
-    Random.map4 (initModelHelp width height)
+    Random.map4 (initModelHelp size)
         gridPositionGenerator
         Dir.random
         gridPositionGenerator
         Random.independentSeed
 
 
-initModelHelp : Int -> Int -> Location -> Direction -> Location -> Seed -> Model
-initModelHelp w h head direction fruit seed =
-    { width = w
-    , height = h
+initModelHelp : Size -> Location -> Direction -> Location -> Seed -> Model
+initModelHelp size head direction fruit seed =
+    { size = size
     , head = head
     , direction = direction
-    , tail = initTail w h head direction
+    , tail = initTail size head direction
     , fruit = fruit
     , inputDirection = Nothing
     , state = Running
@@ -113,11 +115,11 @@ initModelHelp w h head direction fruit seed =
     }
 
 
-initTail : Int -> Int -> Location -> Direction -> List Location
-initTail w h head direction =
+initTail : Size -> Location -> Direction -> List Location
+initTail size head direction =
     let
         tailHelp i =
-            applyN (i + 1) (Loc.step (Dir.opposite direction)) >> Loc.warp w h
+            applyN (i + 1) (Loc.step (Dir.opposite direction)) >> Loc.warp size
     in
     List.repeat 5 head |> List.indexedMap tailHelp
 
@@ -191,7 +193,7 @@ stepSnake : Model -> Model
 stepSnake model =
     let
         newHead =
-            Loc.stepWarp model.direction model.width model.height model.head
+            Loc.stepWarp model.direction model.size model.head
     in
     if List.member newHead model.tail then
         { model | state = Over }
@@ -199,7 +201,7 @@ stepSnake model =
     else if newHead == model.fruit then
         let
             ( newFruit, newSeed ) =
-                Random.step (Loc.random model.width model.height) model.seed
+                Random.step (Loc.random model.size) model.seed
         in
         { model
             | seed = newSeed
@@ -252,8 +254,9 @@ view model =
 
 viewBoard : Model -> Html msg
 viewBoard model =
-    viewBoardHelp model.width
-        model.height
+    viewBoardHelp
+        model.size.width
+        model.size.height
         model.direction
         model.head
         model.tail

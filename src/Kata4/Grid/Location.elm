@@ -1,6 +1,7 @@
 module Kata4.Grid.Location exposing (..)
 
 import Kata4.Grid.Direction exposing (Direction(..))
+import Kata4.Grid.Size exposing (Size)
 import Random
 
 
@@ -24,16 +25,16 @@ step direction ( x, y ) =
             ( x + 1, y )
 
 
-stepWarp : Direction -> Int -> Int -> Location -> Location
-stepWarp d w h p =
-    step d p |> warp w h
+stepWarp : Direction -> Size -> Location -> Location
+stepWarp d sz p =
+    step d p |> warp sz
 
 
-warp : Int -> Int -> Location -> Location
-warp w h ( x, y ) =
-    ( modBy w x, modBy h y )
+warp : Size -> Location -> Location
+warp sz ( x, y ) =
+    ( modBy sz.width x, modBy sz.height y )
 
 
-random : Int -> Int -> Random.Generator Location
-random w h =
-    Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
+random : Size -> Random.Generator Location
+random sz =
+    Random.pair (Random.int 0 (sz.width - 1)) (Random.int 0 (sz.height - 1))
