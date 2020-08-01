@@ -9,6 +9,7 @@ import Kata4.Grid.Direction as Dir exposing (Direction(..))
 import Kata4.Grid.Location as Loc exposing (Location)
 import Kata4.Grid.Size exposing (Size)
 import Kata4.More exposing (applyN, dropLast)
+import Maybe.Extra
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
@@ -205,6 +206,25 @@ stepSnake model =
             , tail = model.head :: dropLast model.tail
             , autoStepCounter = autoStepSnakeDelay
         }
+
+
+stepSnake2 : Maybe Direction -> Int -> World a -> Maybe (StepSnake a)
+stepSnake2 inputDirection autoStepCounter =
+    firstOf [ stepInInputDirection inputDirection, autoStep autoStepCounter ]
+
+
+firstOf : List (a -> Maybe b) -> a -> Maybe b
+firstOf =
+    Maybe.Extra.oneOf
+
+
+autoStep : Int -> World a -> Maybe (StepSnake a)
+autoStep autoStepCounter world =
+    if autoStepCounter <= 0 then
+        Just (stepWorld world)
+
+    else
+        Nothing
 
 
 stepInInputDirection : Maybe Direction -> World a -> Maybe (StepSnake a)
