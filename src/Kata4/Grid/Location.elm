@@ -4,11 +4,11 @@ import Kata4.Grid.Direction exposing (Direction(..))
 import Random
 
 
-type alias Pos =
+type alias Location =
     ( Int, Int )
 
 
-step : Direction -> Pos -> Pos
+step : Direction -> Location -> Location
 step direction ( x, y ) =
     case direction of
         Up ->
@@ -24,16 +24,16 @@ step direction ( x, y ) =
             ( x + 1, y )
 
 
-stepWarpPosition : Direction -> Int -> Int -> Pos -> Pos
-stepWarpPosition d w h p =
-    step d p |> warpPosition w h
+stepWarp : Direction -> Int -> Int -> Location -> Location
+stepWarp d w h p =
+    step d p |> warp w h
 
 
-warpPosition : Int -> Int -> Pos -> Pos
-warpPosition w h ( x, y ) =
+warp : Int -> Int -> Location -> Location
+warp w h ( x, y ) =
     ( modBy w x, modBy h y )
 
 
-randomPosition : Int -> Int -> Random.Generator Pos
-randomPosition w h =
+random : Int -> Int -> Random.Generator Location
+random w h =
     Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))

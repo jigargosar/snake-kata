@@ -6,7 +6,7 @@ import Html exposing (Html, div, h2, text)
 import Html.Attributes exposing (style)
 import Json.Decode as JD
 import Kata4.Grid.Direction as Dir exposing (Direction(..))
-import Kata4.Grid.Location as Loc exposing (Pos)
+import Kata4.Grid.Location as Loc exposing (Location)
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
@@ -53,10 +53,10 @@ main =
 type alias Model =
     { width : Int
     , height : Int
-    , head : Pos
+    , head : Location
     , direction : Direction
-    , tail : List Pos
-    , fruit : Pos
+    , tail : List Location
+    , fruit : Location
     , inputDirection : Maybe Direction
     , state : State
     , autoStepCounter : Int
@@ -89,7 +89,7 @@ modelGenerator =
             20
 
         gridPositionGenerator =
-            Loc.randomPosition width height
+            Loc.random width height
     in
     Random.map4 (initModelHelp width height)
         gridPositionGenerator
@@ -98,7 +98,7 @@ modelGenerator =
         Random.independentSeed
 
 
-initModelHelp : Int -> Int -> Pos -> Direction -> Pos -> Seed -> Model
+initModelHelp : Int -> Int -> Location -> Direction -> Location -> Seed -> Model
 initModelHelp w h head direction fruit seed =
     { width = w
     , height = h
@@ -113,11 +113,11 @@ initModelHelp w h head direction fruit seed =
     }
 
 
-initTail : Int -> Int -> Pos -> Direction -> List Pos
+initTail : Int -> Int -> Location -> Direction -> List Location
 initTail w h head direction =
     let
         tailHelp i =
-            applyN (i + 1) (Loc.step (Dir.opposite direction)) >> Loc.warpPosition w h
+            applyN (i + 1) (Loc.step (Dir.opposite direction)) >> Loc.warp w h
     in
     List.repeat 5 head |> List.indexedMap tailHelp
 
@@ -191,7 +191,7 @@ stepSnake : Model -> Model
 stepSnake model =
     let
         newHead =
-            Loc.stepWarpPosition model.direction model.width model.height model.head
+            Loc.stepWarp model.direction model.width model.height model.head
     in
     if List.member newHead model.tail then
         { model | state = Over }
@@ -199,7 +199,7 @@ stepSnake model =
     else if newHead == model.fruit then
         let
             ( newFruit, newSeed ) =
-                Random.step (Loc.randomPosition model.width model.height) model.seed
+                Random.step (Loc.random model.width model.height) model.seed
         in
         { model
             | seed = newSeed
@@ -260,7 +260,7 @@ viewBoard model =
         model.fruit
 
 
-viewBoardHelp : Int -> Int -> Direction -> Pos -> List Pos -> Pos -> Html msg
+viewBoardHelp : Int -> Int -> Direction -> Location -> List Location -> Location -> Html msg
 viewBoardHelp w h dir head tail fruit =
     let
         cw =
@@ -285,7 +285,7 @@ viewBoardHelp w h dir head tail fruit =
         ]
 
 
-viewHead : Direction -> Pos -> Html msg
+viewHead : Direction -> Location -> Html msg
 viewHead dir ( x, y ) =
     div
         [ gridRow (y + 1)
@@ -344,7 +344,7 @@ toNgonPoints i n radius string =
         toNgonPoints (i + 1) n radius (string ++ String.fromFloat x ++ "," ++ String.fromFloat y ++ " ")
 
 
-viewFruit : Pos -> Html msg
+viewFruit : Location -> Html msg
 viewFruit ( x, y ) =
     div
         [ gridRow (y + 1)
@@ -355,7 +355,7 @@ viewFruit ( x, y ) =
         []
 
 
-viewTail : List Pos -> List (Html msg)
+viewTail : List Location -> List (Html msg)
 viewTail =
     let
         viewTailCell ( x, y ) =
