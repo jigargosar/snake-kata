@@ -117,6 +117,7 @@ randomPosition w h =
     Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
 
 
+applyN : Int -> (a -> a) -> a -> a
 applyN n f x =
     if n <= 0 then
         x
