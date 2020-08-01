@@ -9,7 +9,6 @@ import Kata4.Grid.Direction as Dir exposing (Direction(..))
 import Kata4.Grid.Location as Loc exposing (Location)
 import Kata4.Grid.Size exposing (Size)
 import Kata4.More exposing (applyN, dropLast)
-import Maybe.Extra
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
@@ -40,9 +39,6 @@ type alias Model =
     , tail : List Location
     , fruit : Location
     , state : State
-    , inputDirection : Maybe Direction
-    , over : Bool
-    , autoStepCounter : Int
     , seed : Seed
     }
 
@@ -97,9 +93,6 @@ initModelHelp size head direction fruit seed =
     , tail = initTail size head direction
     , fruit = fruit
     , state = Running { inputDirection = Nothing, autoStepCounter = 0 }
-    , inputDirection = Nothing
-    , over = False
-    , autoStepCounter = 0
     , seed = seed
     }
 
@@ -126,19 +119,19 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         Tick ->
-            updateOnTick model
+            updateOnTick2 model
 
         OnKeyDown key ->
-            case model.over of
-                False ->
+            case model.state of
+                Running r ->
                     case Dir.fromArrowKey key of
                         Just newInputDirection ->
-                            { model | inputDirection = Just newInputDirection }
+                            { model | state = Running { r | inputDirection = Just newInputDirection } }
 
                         Nothing ->
                             model
 
-                True ->
+                Over ->
                     case key of
                         "Enter" ->
                             generateModel model.seed
@@ -147,65 +140,66 @@ update msg model =
                             model
 
 
-updateOnTick : Model -> Model
-updateOnTick model =
-    case
-        model.inputDirection
-            |> Maybe.andThen
-                (\direction ->
-                    updateOnTickWithDirection direction model
-                )
-    of
-        Just newModel ->
-            newModel
 
-        Nothing ->
-            if model.autoStepCounter <= 0 then
-                stepSnake model
-
-            else
-                { model | autoStepCounter = model.autoStepCounter - 1 }
-
-
-updateOnTickWithDirection : Direction -> Model -> Maybe Model
-updateOnTickWithDirection direction model =
-    if direction /= Dir.opposite model.direction then
-        { model | direction = direction, inputDirection = Nothing }
-            |> stepSnake
-            |> Just
-
-    else
-        Nothing
-
-
-stepSnake : Model -> Model
-stepSnake model =
-    let
-        newHead =
-            Loc.stepWarp model.direction model.size model.head
-    in
-    if List.member newHead model.tail then
-        { model | over = True }
-
-    else if newHead == model.fruit then
-        let
-            ( newFruit, newSeed ) =
-                Random.step (Loc.random model.size) model.seed
-        in
-        { model
-            | seed = newSeed
-            , fruit = newFruit
-            , head = newHead
-            , tail = model.head :: model.tail
-            , autoStepCounter = autoStepSnakeDelay
-        }
-
-    else
-        { model
-            | head = newHead
-            , tail = model.head :: dropLast model.tail
-            , autoStepCounter = autoStepSnakeDelay
-        }
+--updateOnTick : Model -> Model
+--updateOnTick model =
+--    case
+--        model.inputDirection
+--            |> Maybe.andThen
+--                (\direction ->
+--                    updateOnTickWithDirection direction model
+--                )
+--    of
+--        Just newModel ->
+--            newModel
+--
+--        Nothing ->
+--            if model.autoStepCounter <= 0 then
+--                stepSnake model
+--
+--            else
+--                { model | autoStepCounter = model.autoStepCounter - 1 }
+--
+--
+--updateOnTickWithDirection : Direction -> Model -> Maybe Model
+--updateOnTickWithDirection direction model =
+--    if direction /= Dir.opposite model.direction then
+--        { model | direction = direction, inputDirection = Nothing }
+--            |> stepSnake
+--            |> Just
+--
+--    else
+--        Nothing
+--
+--
+--stepSnake : Model -> Model
+--stepSnake model =
+--    let
+--        newHead =
+--            Loc.stepWarp model.direction model.size model.head
+--    in
+--    if List.member newHead model.tail then
+--        { model | over = True }
+--
+--    else if newHead == model.fruit then
+--        let
+--            ( newFruit, newSeed ) =
+--                Random.step (Loc.random model.size) model.seed
+--        in
+--        { model
+--            | seed = newSeed
+--            , fruit = newFruit
+--            , head = newHead
+--            , tail = model.head :: model.tail
+--            , autoStepCounter = autoStepSnakeDelay
+--        }
+--
+--    else
+--        { model
+--            | head = newHead
+--            , tail = model.head :: dropLast model.tail
+--            , autoStepCounter = autoStepSnakeDelay
+--        }
 
 
 updateOnTick2 : Model -> Model
@@ -321,8 +315,8 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    case model.over of
-        False ->
+    case model.state of
+        Running _ ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
@@ -331,7 +325,7 @@ view model =
                 , viewBoard model
                 ]
 
-        True ->
+        Over ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
