@@ -84,7 +84,12 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         Tick ->
-            updateOnTick model
+            case model.state of
+                Over ->
+                    model
+
+                Running { inputDirection, autoStepCounter } ->
+                    updateRunningOnTick inputDirection autoStepCounter model
 
         OnKeyDown key ->
             case model.state of
@@ -105,41 +110,36 @@ update msg model =
                             model
 
 
-updateOnTick : Model -> Model
-updateOnTick model =
-    case model.state of
-        Over ->
-            model
+updateRunningOnTick : Maybe Direction -> Counter -> Model -> Model
+updateRunningOnTick inputDirection autoStepCounter model =
+    case
+        firstOf
+            [ stepInInputDirection inputDirection
+            , autoStep autoStepCounter
+            ]
+            model.world
+    of
+        Just (SnakeMoved world) ->
+            { model
+                | state =
+                    Running
+                        { inputDirection = Nothing
+                        , autoStepCounter = Counter.reset autoStepCounter
+                        }
+                , world = world
+            }
 
-        Running { inputDirection, autoStepCounter } ->
-            case
-                firstOf
-                    [ stepInInputDirection inputDirection
-                    , autoStep autoStepCounter
-                    ]
-                    model.world
-            of
-                Just (SnakeMoved world) ->
-                    { model
-                        | state =
-                            Running
-                                { inputDirection = Nothing
-                                , autoStepCounter = Counter.reset autoStepCounter
-                                }
-                        , world = world
-                    }
+        Just SnakeDied ->
+            { model | state = Over }
 
-                Just SnakeDied ->
-                    { model | state = Over }
-
-                Nothing ->
-                    { model
-                        | state =
-                            Running
-                                { inputDirection = inputDirection
-                                , autoStepCounter = Counter.step autoStepCounter
-                                }
-                    }
+        Nothing ->
+            { model
+                | state =
+                    Running
+                        { inputDirection = inputDirection
+                        , autoStepCounter = Counter.step autoStepCounter
+                        }
+            }
 
 
 firstOf : List (a -> Maybe b) -> a -> Maybe b
