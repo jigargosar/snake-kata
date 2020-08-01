@@ -285,10 +285,11 @@ stepSnake model =
             , fruit = newFruit
             , head = newHead
             , tail = model.head :: model.tail
+            , ticks = 1
         }
 
     else
-        { model | head = newHead, tail = model.head :: dropLast model.tail }
+        { model | head = newHead, tail = model.head :: dropLast model.tail, ticks = 1 }
 
 
 toDirection : String -> Maybe Direction
