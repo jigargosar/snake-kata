@@ -15,8 +15,6 @@ import Svg.Attributes as SA
 
 
 -- KATA 4
--- POSITION
--- UTIL
 
 
 applyN : Int -> (a -> a) -> a -> a
