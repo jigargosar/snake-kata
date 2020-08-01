@@ -11,7 +11,7 @@ import Svg.Attributes as SA
 
 
 
--- KATA 3: Using type alias for model, flat model.
+-- KATA 3: Using type alias for model, flattening it
 -- DIRECTION
 
 
@@ -62,8 +62,8 @@ randomDirection =
     Random.uniform Up [ Down, Left, Right ]
 
 
-opposite : Direction -> Direction
-opposite direction =
+oppositeDirection : Direction -> Direction
+oppositeDirection direction =
     case direction of
         Up ->
             Down
@@ -102,19 +102,23 @@ step direction ( x, y ) =
             ( x + 1, y )
 
 
-stepWarp : Direction -> Int -> Int -> Pos -> Pos
-stepWarp d w h p =
-    step d p |> warp w h
+stepWarpPosition : Direction -> Int -> Int -> Pos -> Pos
+stepWarpPosition d w h p =
+    step d p |> warpPosition w h
 
 
-warp : Int -> Int -> Pos -> Pos
-warp w h ( x, y ) =
+warpPosition : Int -> Int -> Pos -> Pos
+warpPosition w h ( x, y ) =
     ( modBy w x, modBy h y )
 
 
 randomPosition : Int -> Int -> Random.Generator Pos
 randomPosition w h =
     Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
+
+
+
+-- UTIL
 
 
 applyN : Int -> (a -> a) -> a -> a
@@ -216,7 +220,7 @@ initTail : Int -> Int -> Pos -> Direction -> List Pos
 initTail w h head direction =
     let
         tailHelp i =
-            applyN (i + 1) (step (opposite direction)) >> warp w h
+            applyN (i + 1) (step (oppositeDirection direction)) >> warpPosition w h
     in
     List.repeat 5 head |> List.indexedMap tailHelp
 
@@ -277,7 +281,7 @@ updateOnTick model =
 
 updateOnTickWithDirection : Direction -> Model -> Maybe Model
 updateOnTickWithDirection direction model =
-    if direction /= opposite model.direction then
+    if direction /= oppositeDirection model.direction then
         { model | direction = direction, inputDirection = Nothing }
             |> stepSnake
             |> Just
@@ -290,7 +294,7 @@ stepSnake : Model -> Model
 stepSnake model =
     let
         newHead =
-            stepWarp model.direction model.width model.height model.head
+            stepWarpPosition model.direction model.width model.height model.head
     in
     if List.member newHead model.tail then
         { model | state = Over }
