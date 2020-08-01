@@ -1,4 +1,4 @@
-module Kata4.Grid.Direction exposing
+module Kata5.Grid.Direction exposing
     ( Direction(..)
     , fromArrowKey
     , opposite

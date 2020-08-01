@@ -1,15 +1,15 @@
-module Kata4 exposing (main)
+module Kata5 exposing (main)
 
 import Browser
 import Browser.Events
 import Html exposing (Html, div, h2, text)
 import Html.Attributes exposing (style)
 import Json.Decode as JD
-import Kata5.Counter as Counter exposing (Counter)
-import Kata5.Grid.Direction as Dir exposing (Direction(..))
-import Kata5.Grid.Location exposing (Location)
-import Kata5.Grid.Size exposing (Size)
-import Kata5.World as World exposing (Response(..), World)
+import Kata4.Counter as Counter exposing (Counter)
+import Kata4.Grid.Direction as Dir exposing (Direction(..))
+import Kata4.Grid.Location exposing (Location)
+import Kata4.Grid.Size exposing (Size)
+import Kata4.World as World exposing (Response(..), World)
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA

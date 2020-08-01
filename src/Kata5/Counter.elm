@@ -1,4 +1,4 @@
-module Kata4.Counter exposing (Counter, done, reset, step, upto)
+module Kata5.Counter exposing (Counter, done, reset, step, upto)
 
 
 type alias Counter =

@@ -1,9 +1,9 @@
-module Kata4.World exposing (Response(..), World, changeDirection, generator, stepSnake)
+module Kata5.World exposing (Response(..), World, changeDirection, generator, stepSnake)
 
-import Kata4.Grid.Direction as Dir exposing (Direction)
-import Kata4.Grid.Location as Loc exposing (Location)
-import Kata4.Grid.Size exposing (Size)
-import Kata4.More exposing (applyN, dropLast)
+import Kata5.Grid.Direction as Dir exposing (Direction)
+import Kata5.Grid.Location as Loc exposing (Location)
+import Kata5.Grid.Size exposing (Size)
+import Kata5.More exposing (applyN, dropLast)
 import Random exposing (Generator, Seed)
 
 

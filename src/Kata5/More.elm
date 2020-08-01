@@ -1,4 +1,4 @@
-module Kata4.More exposing (..)
+module Kata5.More exposing (..)
 
 
 applyN : Int -> (a -> a) -> a -> a

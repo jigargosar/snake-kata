@@ -1,7 +1,7 @@
-module Kata4.Grid.Location exposing (..)
+module Kata5.Grid.Location exposing (..)
 
-import Kata4.Grid.Direction exposing (Direction(..))
-import Kata4.Grid.Size exposing (Size)
+import Kata5.Grid.Direction exposing (Direction(..))
+import Kata5.Grid.Size exposing (Size)
 import Random
 
 

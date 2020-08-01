@@ -1,4 +1,4 @@
-module Kata4.Grid.Size exposing (..)
+module Kata5.Grid.Size exposing (..)
 
 
 type alias Size =
