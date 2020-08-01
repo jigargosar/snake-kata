@@ -2,7 +2,7 @@ module Kata4 exposing (main)
 
 import Browser
 import Browser.Events
-import Html exposing (Html, div, h1, text)
+import Html exposing (Html, div, h2, text)
 import Html.Attributes exposing (style)
 import Json.Decode as JD
 import Random exposing (Generator, Seed)
@@ -340,7 +340,7 @@ view model =
                 [ style "display" "grid"
                 , style "place-items" "center"
                 ]
-                [ h1 [] [ text "Running" ]
+                [ h2 [] [ text "Running" ]
                 , viewBoard model
                 ]
 
@@ -349,7 +349,7 @@ view model =
                 [ style "display" "grid"
                 , style "place-items" "center"
                 ]
-                [ h1 [] [ text "Game Over" ]
+                [ h2 [] [ text "Game Over: Press Enter" ]
                 , viewBoard model
                 ]
 
