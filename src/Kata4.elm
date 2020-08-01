@@ -61,6 +61,11 @@ generateModel seed0 =
     }
 
 
+restart : Model -> Model
+restart model =
+    generateModel model.seed
+
+
 type Msg
     = Tick
     | OnKeyDown String
@@ -89,7 +94,7 @@ update msg model =
                 Over ->
                     case key of
                         "Enter" ->
-                            generateModel model.seed
+                            restart model
 
                         _ ->
                             model
