@@ -340,7 +340,7 @@ view model =
                 , style "place-items" "center"
                 ]
                 [ h1 [] [ text "Running" ]
-                , viewBoard model.width model.height model.direction model.head model.tail model.fruit
+                , viewBoard model
                 ]
 
         Over ->
@@ -349,12 +349,17 @@ view model =
                 , style "place-items" "center"
                 ]
                 [ h1 [] [ text "Game Over" ]
-                , viewBoard model.width model.height model.direction model.head model.tail model.fruit
+                , viewBoard model
                 ]
 
 
-viewBoard : Int -> Int -> Direction -> Pos -> List Pos -> Pos -> Html Msg
-viewBoard w h dir head tail fruit =
+viewBoard : Model -> Html msg
+viewBoard model =
+    viewBoardHelp model.width model.height model.direction model.head model.tail model.fruit
+
+
+viewBoardHelp : Int -> Int -> Direction -> Pos -> List Pos -> Pos -> Html msg
+viewBoardHelp w h dir head tail fruit =
     let
         cw =
             40
