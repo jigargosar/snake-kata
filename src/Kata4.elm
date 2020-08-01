@@ -71,7 +71,7 @@ type Msg
     | OnKeyDown String
 
 
-autoStepSnakeDelay =
+autoStepDelay =
     20
 
 
@@ -119,7 +119,7 @@ updateOnTick model =
                         | state =
                             Running
                                 { inputDirection = Nothing
-                                , autoStepCounter = autoStepSnakeDelay
+                                , autoStepCounter = autoStepDelay
                                 }
                         , world = world
                     }
