@@ -255,19 +255,21 @@ view model =
 viewBoard : Model -> Html msg
 viewBoard model =
     viewBoardHelp
-        model.size.width
-        model.size.height
+        model.size
         model.direction
         model.head
         model.tail
         model.fruit
 
 
-viewBoardHelp : Int -> Int -> Direction -> Location -> List Location -> Location -> Html msg
-viewBoardHelp w h dir head tail fruit =
+viewBoardHelp : Size -> Direction -> Location -> List Location -> Location -> Html msg
+viewBoardHelp sz dir head tail fruit =
     let
         cw =
             40
+
+        ( w, h ) =
+            ( sz.width, sz.height )
     in
     div
         [ style "display" "grid"
