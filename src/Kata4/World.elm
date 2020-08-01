@@ -1,4 +1,4 @@
-module Kata4.World exposing (World, generator)
+module Kata4.World exposing (Response(..), World, changeDirection, generator, stepSnake)
 
 import Kata4.Grid.Direction as Dir exposing (Direction)
 import Kata4.Grid.Location as Loc exposing (Location)
@@ -51,3 +51,47 @@ initTail size head direction =
             applyN (i + 1) (Loc.stepWarp (Dir.opposite direction) size)
     in
     List.repeat 5 head |> List.indexedMap tailHelp
+
+
+type Response
+    = SnakeMoved World
+    | SnakeDied
+
+
+changeDirection : Direction -> World -> Maybe World
+changeDirection direction world =
+    if direction /= Dir.opposite world.direction then
+        Just { world | direction = direction }
+
+    else
+        Nothing
+
+
+stepSnake : World -> Response
+stepSnake world =
+    let
+        newHead =
+            Loc.stepWarp world.direction world.size world.head
+    in
+    if List.member newHead world.tail then
+        SnakeDied
+
+    else if newHead == world.fruit then
+        let
+            ( newFruit, newSeed ) =
+                Random.step (Loc.random world.size) world.seed
+        in
+        SnakeMoved
+            { world
+                | seed = newSeed
+                , fruit = newFruit
+                , head = newHead
+                , tail = world.head :: world.tail
+            }
+
+    else
+        SnakeMoved
+            { world
+                | head = newHead
+                , tail = world.head :: dropLast world.tail
+            }
