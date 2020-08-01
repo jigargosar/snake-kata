@@ -38,6 +38,7 @@ type alias Model =
     , direction : Direction
     , tail : List Location
     , fruit : Location
+    , state : State
     , inputDirection : Maybe Direction
     , over : Bool
     , autoStepCounter : Int
@@ -47,7 +48,18 @@ type alias Model =
 
 type State
     = Over
-    | Running
+    | Running { autoStepCounter : Int, inputDirection : Maybe Direction }
+
+
+type alias World a =
+    { a
+        | size : Size
+        , head : Location
+        , direction : Direction
+        , tail : List Location
+        , fruit : Location
+        , seed : Seed
+    }
 
 
 init : Model
@@ -83,6 +95,7 @@ initModelHelp size head direction fruit seed =
     , direction = direction
     , tail = initTail size head direction
     , fruit = fruit
+    , state = Running { inputDirection = Nothing, autoStepCounter = 0 }
     , inputDirection = Nothing
     , over = False
     , autoStepCounter = 0
