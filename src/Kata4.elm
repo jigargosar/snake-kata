@@ -207,6 +207,70 @@ stepSnake model =
         }
 
 
+updateOnTick2 : Model -> Model
+updateOnTick2 model =
+    case
+        model.inputDirection
+            |> Maybe.andThen
+                (\direction ->
+                    updateOnTickWithDirection direction model
+                )
+    of
+        Just newModel ->
+            newModel
+
+        Nothing ->
+            if model.autoStepCounter <= 0 then
+                stepSnake model
+
+            else
+                { model | autoStepCounter = model.autoStepCounter - 1 }
+
+
+type StepSnake a
+    = SnakeMoved (World a)
+    | SnakeDied
+
+
+changeDirection : Direction -> World a -> Maybe (World a)
+changeDirection direction world =
+    if direction /= Dir.opposite world.direction then
+        Just { world | direction = direction }
+
+    else
+        Nothing
+
+
+stepWorld : World a -> StepSnake a
+stepWorld world =
+    let
+        newHead =
+            Loc.stepWarp world.direction world.size world.head
+    in
+    if List.member newHead world.tail then
+        SnakeDied
+
+    else if newHead == world.fruit then
+        let
+            ( newFruit, newSeed ) =
+                Random.step (Loc.random world.size) world.seed
+        in
+        SnakeMoved
+            { world
+                | seed = newSeed
+                , fruit = newFruit
+                , head = newHead
+                , tail = world.head :: world.tail
+            }
+
+    else
+        SnakeMoved
+            { world
+                | head = newHead
+                , tail = world.head :: dropLast world.tail
+            }
+
+
 subscriptions _ =
     Sub.batch
         [ Browser.Events.onAnimationFrameDelta (\_ -> Tick)
