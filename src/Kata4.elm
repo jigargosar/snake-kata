@@ -8,7 +8,7 @@ import Json.Decode as JD
 import Kata4.Grid.Direction as Dir exposing (Direction(..))
 import Kata4.Grid.Location as Loc exposing (Location)
 import Kata4.Grid.Size exposing (Size)
-import More exposing (applyN, dropLast)
+import Kata4.More exposing (applyN, dropLast)
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
