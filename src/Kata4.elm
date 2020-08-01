@@ -113,7 +113,7 @@ initTail : Size -> Location -> Direction -> List Location
 initTail size head direction =
     let
         tailHelp i =
-            applyN (i + 1) (Loc.step (Dir.opposite direction)) >> Loc.warp size
+            applyN (i + 1) (Loc.stepWarp (Dir.opposite direction) size)
     in
     List.repeat 5 head |> List.indexedMap tailHelp
 
