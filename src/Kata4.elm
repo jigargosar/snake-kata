@@ -5,6 +5,7 @@ import Browser.Events
 import Html exposing (Html, div, h2, text)
 import Html.Attributes exposing (style)
 import Json.Decode as JD
+import Kata4.Grid.Direction as Dir exposing (Direction(..))
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
@@ -14,72 +15,6 @@ import Svg.Attributes as SA
 -- KATA 4: Try Moving State(Over/Running) as top level.
 -- Need HELP !!!
 -- DIRECTION
-
-
-type Direction
-    = Up
-    | Down
-    | Left
-    | Right
-
-
-directionToDegrees : Direction -> Int
-directionToDegrees direction =
-    case direction of
-        Up ->
-            -90
-
-        Down ->
-            90
-
-        Left ->
-            180
-
-        Right ->
-            0
-
-
-keyToDirection : String -> Maybe Direction
-keyToDirection key =
-    case key of
-        "ArrowUp" ->
-            Just Up
-
-        "ArrowDown" ->
-            Just Down
-
-        "ArrowLeft" ->
-            Just Left
-
-        "ArrowRight" ->
-            Just Right
-
-        _ ->
-            Nothing
-
-
-randomDirection : Generator Direction
-randomDirection =
-    Random.uniform Up [ Down, Left, Right ]
-
-
-oppositeDirection : Direction -> Direction
-oppositeDirection direction =
-    case direction of
-        Up ->
-            Down
-
-        Down ->
-            Up
-
-        Left ->
-            Right
-
-        Right ->
-            Left
-
-
-
 -- POSITION
 
 
@@ -197,7 +132,7 @@ modelGenerator =
     in
     Random.map4 (initModelHelp width height)
         gridPositionGenerator
-        randomDirection
+        Dir.random
         gridPositionGenerator
         Random.independentSeed
 
@@ -221,7 +156,7 @@ initTail : Int -> Int -> Pos -> Direction -> List Pos
 initTail w h head direction =
     let
         tailHelp i =
-            applyN (i + 1) (step (oppositeDirection direction)) >> warpPosition w h
+            applyN (i + 1) (step (Dir.opposite direction)) >> warpPosition w h
     in
     List.repeat 5 head |> List.indexedMap tailHelp
 
@@ -244,7 +179,7 @@ update msg model =
         OnKeyDown key ->
             case model.state of
                 Running ->
-                    case keyToDirection key of
+                    case Dir.fromArrowKey key of
                         Just newInputDirection ->
                             { model | inputDirection = Just newInputDirection }
 
@@ -282,7 +217,7 @@ updateOnTick model =
 
 updateOnTickWithDirection : Direction -> Model -> Maybe Model
 updateOnTickWithDirection direction model =
-    if direction /= oppositeDirection model.direction then
+    if direction /= Dir.opposite model.direction then
         { model | direction = direction, inputDirection = Nothing }
             |> stepSnake
             |> Just
@@ -400,7 +335,7 @@ viewHead dir ( x, y ) =
         [ div
             [ style "width" "100%"
             , style "height" "100%"
-            , style "transform" ("scale(0.8) rotate(" ++ String.fromInt (directionToDegrees dir) ++ "deg)")
+            , style "transform" ("scale(0.8) rotate(" ++ String.fromInt (Dir.toDegrees dir) ++ "deg)")
             ]
             [ triangleRightSvg "black"
             ]
