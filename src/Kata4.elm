@@ -119,7 +119,7 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         Tick ->
-            updateOnTick2 model
+            updateOnTick model
 
         OnKeyDown key ->
             case model.state of
@@ -140,8 +140,8 @@ update msg model =
                             model
 
 
-updateOnTick2 : Model -> Model
-updateOnTick2 model =
+updateOnTick : Model -> Model
+updateOnTick model =
     case model.state of
         Over ->
             model
@@ -182,7 +182,7 @@ firstOf fns a =
 autoStep : Int -> World a -> Maybe (StepWorld a)
 autoStep autoStepCounter world =
     if autoStepCounter <= 0 then
-        Just (stepSnake2 world)
+        Just (stepSnake world)
 
     else
         Nothing
@@ -193,7 +193,7 @@ stepInInputDirection inputDirection model =
     inputDirection
         |> Maybe.andThen
             (\direction -> changeDirection direction model)
-        |> Maybe.map stepSnake2
+        |> Maybe.map stepSnake
 
 
 type StepWorld a
@@ -210,8 +210,8 @@ changeDirection direction world =
         Nothing
 
 
-stepSnake2 : World a -> StepWorld a
-stepSnake2 world =
+stepSnake : World a -> StepWorld a
+stepSnake world =
     let
         newHead =
             Loc.stepWarp world.direction world.size world.head
