@@ -6,6 +6,7 @@ import Html exposing (Html, div, h2, text)
 import Html.Attributes exposing (style)
 import Json.Decode as JD
 import Kata4.Grid.Direction as Dir exposing (Direction(..))
+import Kata4.Grid.Location as Loc exposing (Pos)
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
@@ -14,44 +15,6 @@ import Svg.Attributes as SA
 
 -- KATA 4
 -- POSITION
-
-
-type alias Pos =
-    ( Int, Int )
-
-
-step : Direction -> Pos -> Pos
-step direction ( x, y ) =
-    case direction of
-        Up ->
-            ( x, y - 1 )
-
-        Down ->
-            ( x, y + 1 )
-
-        Left ->
-            ( x - 1, y )
-
-        Right ->
-            ( x + 1, y )
-
-
-stepWarpPosition : Direction -> Int -> Int -> Pos -> Pos
-stepWarpPosition d w h p =
-    step d p |> warpPosition w h
-
-
-warpPosition : Int -> Int -> Pos -> Pos
-warpPosition w h ( x, y ) =
-    ( modBy w x, modBy h y )
-
-
-randomPosition : Int -> Int -> Random.Generator Pos
-randomPosition w h =
-    Random.pair (Random.int 0 (w - 1)) (Random.int 0 (h - 1))
-
-
-
 -- UTIL
 
 
@@ -126,7 +89,7 @@ modelGenerator =
             20
 
         gridPositionGenerator =
-            randomPosition width height
+            Loc.randomPosition width height
     in
     Random.map4 (initModelHelp width height)
         gridPositionGenerator
@@ -154,7 +117,7 @@ initTail : Int -> Int -> Pos -> Direction -> List Pos
 initTail w h head direction =
     let
         tailHelp i =
-            applyN (i + 1) (step (Dir.opposite direction)) >> warpPosition w h
+            applyN (i + 1) (Loc.step (Dir.opposite direction)) >> Loc.warpPosition w h
     in
     List.repeat 5 head |> List.indexedMap tailHelp
 
@@ -228,7 +191,7 @@ stepSnake : Model -> Model
 stepSnake model =
     let
         newHead =
-            stepWarpPosition model.direction model.width model.height model.head
+            Loc.stepWarpPosition model.direction model.width model.height model.head
     in
     if List.member newHead model.tail then
         { model | state = Over }
@@ -236,7 +199,7 @@ stepSnake model =
     else if newHead == model.fruit then
         let
             ( newFruit, newSeed ) =
-                Random.step (randomPosition model.width model.height) model.seed
+                Random.step (Loc.randomPosition model.width model.height) model.seed
         in
         { model
             | seed = newSeed
