@@ -191,13 +191,13 @@ modelGenerator =
         height =
             20
 
-        posGen =
+        gridPositionGenerator =
             randomPosition width height
     in
     Random.map4 (initModelHelp width height)
-        posGen
+        gridPositionGenerator
         randomDirection
-        posGen
+        gridPositionGenerator
         Random.independentSeed
 
 
