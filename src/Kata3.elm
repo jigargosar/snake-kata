@@ -355,7 +355,12 @@ view model =
 
 viewBoard : Model -> Html msg
 viewBoard model =
-    viewBoardHelp model.width model.height model.direction model.head model.tail model.fruit
+    viewBoardHelp model.width
+        model.height
+        model.direction
+        model.head
+        model.tail
+        model.fruit
 
 
 viewBoardHelp : Int -> Int -> Direction -> Pos -> List Pos -> Pos -> Html msg
