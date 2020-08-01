@@ -6,10 +6,9 @@ import Html exposing (Html, div, h2, text)
 import Html.Attributes exposing (style)
 import Json.Decode as JD
 import Kata4.Grid.Direction as Dir exposing (Direction(..))
-import Kata4.Grid.Location as Loc exposing (Location)
+import Kata4.Grid.Location exposing (Location)
 import Kata4.Grid.Size exposing (Size)
-import Kata4.More exposing (applyN, dropLast)
-import Kata4.World as World exposing (World)
+import Kata4.World as World exposing (Response(..), World)
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
@@ -154,65 +153,21 @@ firstOf fns a =
                     firstOf rest a
 
 
-autoStep : Int -> World -> Maybe StepWorld
+autoStep : Int -> World -> Maybe World.Response
 autoStep autoStepCounter world =
     if autoStepCounter <= 0 then
-        Just (stepSnake world)
+        Just (World.stepSnake world)
 
     else
         Nothing
 
 
-stepInInputDirection : Maybe Direction -> World -> Maybe StepWorld
+stepInInputDirection : Maybe Direction -> World -> Maybe World.Response
 stepInInputDirection inputDirection model =
     inputDirection
         |> Maybe.andThen
-            (\direction -> changeDirection direction model)
-        |> Maybe.map stepSnake
-
-
-type StepWorld
-    = SnakeMoved World
-    | SnakeDied
-
-
-changeDirection : Direction -> World -> Maybe World
-changeDirection direction world =
-    if direction /= Dir.opposite world.direction then
-        Just { world | direction = direction }
-
-    else
-        Nothing
-
-
-stepSnake : World -> StepWorld
-stepSnake world =
-    let
-        newHead =
-            Loc.stepWarp world.direction world.size world.head
-    in
-    if List.member newHead world.tail then
-        SnakeDied
-
-    else if newHead == world.fruit then
-        let
-            ( newFruit, newSeed ) =
-                Random.step (Loc.random world.size) world.seed
-        in
-        SnakeMoved
-            { world
-                | seed = newSeed
-                , fruit = newFruit
-                , head = newHead
-                , tail = world.head :: world.tail
-            }
-
-    else
-        SnakeMoved
-            { world
-                | head = newHead
-                , tail = world.head :: dropLast world.tail
-            }
+            (\direction -> World.changeDirection direction model)
+        |> Maybe.map World.stepSnake
 
 
 subscriptions _ =
