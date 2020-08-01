@@ -384,8 +384,6 @@ viewHead dir ( x, y ) =
         [ gridRow (y + 1)
         , gridColumn (x + 1)
         , style "background-color" "hsl(0deg 85% 60%)"
-
-        --, style "transform" ("rotate(" ++ String.fromInt (toDegrees dir) ++ "deg)")
         , style "z-index" "0"
         ]
         [ div
@@ -393,8 +391,7 @@ viewHead dir ( x, y ) =
             , style "height" "100%"
             , style "transform" ("scale(0.8) rotate(" ++ String.fromInt (directionToDegrees dir) ++ "deg)")
             ]
-            [ --triangleRightSvg "hsl(0deg 85% 60%)"
-              triangleRightSvg "black"
+            [ triangleRightSvg "black"
             ]
         ]
 
@@ -447,7 +444,7 @@ viewFruit ( x, y ) =
         [ gridRow (y + 1)
         , gridColumn (x + 1)
         , style "background-color" "hsl(110deg 85% 60%)"
-        , style "z-index" "0"
+        , style "z-index" "2"
         ]
         []
 
