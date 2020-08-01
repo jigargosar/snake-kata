@@ -85,13 +85,13 @@ modelGenerator =
         size =
             { width = 10, height = 20 }
 
-        gridPositionGenerator =
+        randomLocation =
             Loc.random size
     in
     Random.map4 (initModelHelp size)
-        gridPositionGenerator
+        randomLocation
         Dir.random
-        gridPositionGenerator
+        randomLocation
         Random.independentSeed
 
 
