@@ -425,7 +425,6 @@ toNgonPoints i n radius string =
             turnOffset =
                 -0.25
 
-            --0
             a =
                 turns (toFloat i / toFloat n + turnOffset)
 
