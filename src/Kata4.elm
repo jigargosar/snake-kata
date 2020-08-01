@@ -208,8 +208,26 @@ stepSnake model =
         }
 
 
-stepSnake2 : Maybe Direction -> Int -> World a -> Maybe (StepSnake a)
-stepSnake2 inputDirection autoStepCounter =
+updateOnTick2 : Model -> Model
+updateOnTick2 model =
+    case model.state of
+        Over ->
+            model
+
+        Running { inputDirection, autoStepCounter } ->
+            case stepSnakeHelp inputDirection autoStepCounter model of
+                Just (SnakeMoved newModel) ->
+                    { newModel | state = Running { inputDirection = Nothing, autoStepCounter = autoStepSnakeDelay } }
+
+                Just SnakeDied ->
+                    { model | state = Over }
+
+                Nothing ->
+                    { model | state = Running { inputDirection = inputDirection, autoStepCounter = autoStepCounter - 1 } }
+
+
+stepSnakeHelp : Maybe Direction -> Int -> World a -> Maybe (StepSnake a)
+stepSnakeHelp inputDirection autoStepCounter =
     firstOf [ stepInInputDirection inputDirection, autoStep autoStepCounter ]
 
 
