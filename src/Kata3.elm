@@ -106,78 +106,6 @@ applyN n f x =
         applyN (n - 1) f (f x)
 
 
-
--- SNAKE
-
-
-snakeGenerator : Generator Snake
-snakeGenerator =
-    let
-        w =
-            10
-
-        h =
-            20
-
-        posGen =
-            randomPosition w h
-    in
-    Random.map3 (initSnake w h)
-        posGen
-        randomDirection
-        posGen
-
-
-initSnake : Int -> Int -> Pos -> Direction -> Pos -> Snake
-initSnake w h head dir fruit =
-    let
-        tail =
-            List.repeat 5 head |> List.indexedMap tailHelp
-
-        tailHelp i =
-            applyN (i + 1) (step (opposite dir)) >> warp w h
-    in
-    Snake w h dir head tail fruit
-
-
-type Snake
-    = Snake Int Int Direction Pos (List Pos) Pos
-
-
-type SnakeResult
-    = SnakeAlive (Generator Snake)
-    | SnakeDead
-
-
-changeDirection : Direction -> Snake -> Maybe Snake
-changeDirection direction (Snake w h d hd t f) =
-    if direction /= opposite d then
-        Snake w h direction hd t f |> Just
-
-    else
-        Nothing
-
-
-moveSnake : Snake -> SnakeResult
-moveSnake (Snake w h d hd t f) =
-    let
-        newHead =
-            stepWarp d w h hd
-    in
-    if List.member newHead t then
-        SnakeDead
-
-    else if newHead == f then
-        randomPosition w h
-            |> Random.map (Snake w h d newHead (hd :: t))
-            |> SnakeAlive
-
-    else
-        Snake w h d newHead (hd :: dropLast t) f
-            |> Random.constant
-            |> SnakeAlive
-
-
 dropLast : List a -> List a
 dropLast =
     List.reverse >> List.drop 1 >> List.reverse
@@ -201,13 +129,23 @@ main =
 -- MODEL
 
 
-type Model
-    = Model State (Maybe Direction) Int Seed
+type alias Model =
+    { width : Int
+    , height : Int
+    , head : Pos
+    , direction : Direction
+    , tail : List Pos
+    , fruit : Pos
+    , inputDirection : Maybe Direction
+    , state : State
+    , ticks : Int
+    , seed : Seed
+    }
 
 
 type State
-    = Over Snake
-    | Running Snake
+    = Over
+    | Running
 
 
 init : Model
@@ -217,11 +155,50 @@ init =
 
 generateModel : Seed -> Model
 generateModel seed =
+    Random.step modelGenerator seed |> Tuple.first
+
+
+modelGenerator : Generator Model
+modelGenerator =
     let
-        ( snake, newSeed ) =
-            Random.step snakeGenerator seed
+        w =
+            10
+
+        h =
+            20
+
+        posGen =
+            randomPosition w h
     in
-    Model (Running snake) Nothing 0 newSeed
+    Random.map4 (initModelHelp w h)
+        posGen
+        randomDirection
+        posGen
+        Random.independentSeed
+
+
+initModelHelp : Int -> Int -> Pos -> Direction -> Pos -> Seed -> Model
+initModelHelp w h head direction fruit seed =
+    { width = w
+    , height = h
+    , head = head
+    , direction = direction
+    , tail = initTail w h head direction
+    , fruit = fruit
+    , inputDirection = Nothing
+    , state = Running
+    , ticks = 0
+    , seed = seed
+    }
+
+
+initTail : Int -> Int -> Pos -> Direction -> List Pos
+initTail w h head direction =
+    let
+        tailHelp i =
+            applyN (i + 1) (step (opposite direction)) >> warp w h
+    in
+    List.repeat 5 head |> List.indexedMap tailHelp
 
 
 type Msg
@@ -234,73 +211,84 @@ delay =
 
 
 update : Msg -> Model -> Model
-update msg ((Model state inputDirection ticks seed) as model) =
+update msg model =
     case msg of
         Tick ->
-            case state of
-                Running snake ->
-                    updateOnTick snake inputDirection ticks seed
-
-                _ ->
-                    model
+            updateOnTick model
 
         OnKeyDown key ->
-            case state of
-                Running _ ->
+            case model.state of
+                Running ->
                     case toDirection key of
                         Just newInputDirection ->
-                            Model state (Just newInputDirection) ticks seed
+                            { model | inputDirection = Just newInputDirection }
 
                         Nothing ->
                             model
 
-                Over _ ->
+                Over ->
                     case key of
                         "Enter" ->
-                            generateModel seed
+                            generateModel model.seed
 
                         _ ->
                             model
 
 
-updateOnTick : Snake -> Maybe Direction -> Int -> Seed -> Model
-updateOnTick snake inputDirection ticks seed =
+updateOnTick : Model -> Model
+updateOnTick model =
     case
-        inputDirection
+        model.inputDirection
             |> Maybe.andThen
                 (\direction ->
-                    updateOnTickWithDirection snake direction seed
+                    updateOnTickWithDirection direction model
                 )
     of
-        Just model ->
-            model
+        Just newModel ->
+            newModel
 
         Nothing ->
-            if modBy delay ticks == 0 then
-                stepSnake snake seed
+            if modBy delay model.ticks == 0 then
+                stepSnake model
 
             else
-                Model (Running snake) inputDirection (ticks + 1) seed
+                { model | ticks = model.ticks + 1 }
 
 
-updateOnTickWithDirection : Snake -> Direction -> Seed -> Maybe Model
-updateOnTickWithDirection snake direction seed =
-    changeDirection direction snake
-        |> Maybe.map (\newSnake -> stepSnake newSnake seed)
+updateOnTickWithDirection : Direction -> Model -> Maybe Model
+updateOnTickWithDirection direction model =
+    if direction /= opposite model.direction then
+        { model | direction = direction, inputDirection = Nothing }
+            |> stepSnake
+            |> Just
+
+    else
+        Nothing
 
 
-stepSnake : Snake -> Seed -> Model
-stepSnake snake seed =
-    case moveSnake snake of
-        SnakeAlive generator ->
-            let
-                ( newSnake, newSeed ) =
-                    Random.step generator seed
-            in
-            Model (Running newSnake) Nothing 1 newSeed
+stepSnake : Model -> Model
+stepSnake model =
+    let
+        newHead =
+            stepWarp model.direction model.width model.height model.head
+    in
+    if List.member newHead model.tail then
+        { model | state = Over }
 
-        SnakeDead ->
-            Model (Over snake) Nothing 1 seed
+    else if newHead == model.fruit then
+        let
+            ( newFruit, newSeed ) =
+                Random.step (randomPosition model.width model.height) model.seed
+        in
+        { model
+            | seed = newSeed
+            , fruit = newFruit
+            , head = newHead
+            , tail = model.head :: model.tail
+        }
+
+    else
+        { model | head = newHead, tail = model.head :: dropLast model.tail }
 
 
 toDirection : String -> Maybe Direction
@@ -334,29 +322,29 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view (Model state _ _ _) =
-    case state of
-        Running snake ->
+view model =
+    case model.state of
+        Running ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
                 ]
                 [ h1 [] [ text "Running" ]
-                , viewSnake snake
+                , viewBoard model.width model.height model.direction model.head model.tail model.fruit
                 ]
 
-        Over snake ->
+        Over ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
                 ]
                 [ h1 [] [ text "Game Over" ]
-                , viewSnake snake
+                , viewBoard model.width model.height model.direction model.head model.tail model.fruit
                 ]
 
 
-viewSnake : Snake -> Html Msg
-viewSnake (Snake w h dir head tail fruit) =
+viewBoard : Int -> Int -> Direction -> Pos -> List Pos -> Pos -> Html Msg
+viewBoard w h dir head tail fruit =
     let
         cw =
             40
