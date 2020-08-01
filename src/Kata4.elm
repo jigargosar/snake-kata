@@ -215,7 +215,13 @@ updateOnTick2 model =
             model
 
         Running { inputDirection, autoStepCounter } ->
-            case stepSnakeHelp inputDirection autoStepCounter model of
+            case
+                firstOf
+                    [ stepInInputDirection inputDirection
+                    , autoStep autoStepCounter
+                    ]
+                    model
+            of
                 Just (SnakeMoved newModel) ->
                     { newModel | state = Running { inputDirection = Nothing, autoStepCounter = autoStepSnakeDelay } }
 
@@ -226,17 +232,12 @@ updateOnTick2 model =
                     { model | state = Running { inputDirection = inputDirection, autoStepCounter = autoStepCounter - 1 } }
 
 
-stepSnakeHelp : Maybe Direction -> Int -> World a -> Maybe (StepSnake a)
-stepSnakeHelp inputDirection autoStepCounter =
-    firstOf [ stepInInputDirection inputDirection, autoStep autoStepCounter ]
-
-
 firstOf : List (a -> Maybe b) -> a -> Maybe b
 firstOf =
     Maybe.Extra.oneOf
 
 
-autoStep : Int -> World a -> Maybe (StepSnake a)
+autoStep : Int -> World a -> Maybe (StepWorld a)
 autoStep autoStepCounter world =
     if autoStepCounter <= 0 then
         Just (stepWorld world)
@@ -245,7 +246,7 @@ autoStep autoStepCounter world =
         Nothing
 
 
-stepInInputDirection : Maybe Direction -> World a -> Maybe (StepSnake a)
+stepInInputDirection : Maybe Direction -> World a -> Maybe (StepWorld a)
 stepInInputDirection inputDirection model =
     inputDirection
         |> Maybe.andThen
@@ -253,7 +254,7 @@ stepInInputDirection inputDirection model =
         |> Maybe.map stepWorld
 
 
-type StepSnake a
+type StepWorld a
     = SnakeMoved (World a)
     | SnakeDied
 
@@ -267,7 +268,7 @@ changeDirection direction world =
         Nothing
 
 
-stepWorld : World a -> StepSnake a
+stepWorld : World a -> StepWorld a
 stepWorld world =
     let
         newHead =
