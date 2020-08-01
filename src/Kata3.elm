@@ -378,6 +378,7 @@ viewBoard w h dir head tail fruit =
         ]
 
 
+viewHead : Direction -> Pos -> Html msg
 viewHead dir ( x, y ) =
     div
         [ gridRow (y + 1)
@@ -398,6 +399,7 @@ viewHead dir ( x, y ) =
         ]
 
 
+triangleRightSvg : String -> Html msg
 triangleRightSvg color =
     Svg.svg
         [ style "width" "100%"
@@ -410,6 +412,10 @@ triangleRightSvg color =
 
 toTrianglePoints radius =
     toNgonPoints 0 3 radius ""
+
+
+
+-- Copied from elm-playground
 
 
 toNgonPoints : Int -> Int -> Float -> String -> String
