@@ -272,11 +272,11 @@ updateOnTick model =
             newModel
 
         Nothing ->
-            if modBy autoStepSnakeDelay model.autoStepCounter == 0 then
+            if model.autoStepCounter <= 0 then
                 stepSnake model
 
             else
-                { model | autoStepCounter = model.autoStepCounter + 1 }
+                { model | autoStepCounter = model.autoStepCounter - 1 }
 
 
 updateOnTickWithDirection : Direction -> Model -> Maybe Model
@@ -309,14 +309,14 @@ stepSnake model =
             , fruit = newFruit
             , head = newHead
             , tail = model.head :: model.tail
-            , autoStepCounter = 1
+            , autoStepCounter = autoStepSnakeDelay
         }
 
     else
         { model
             | head = newHead
             , tail = model.head :: dropLast model.tail
-            , autoStepCounter = 1
+            , autoStepCounter = autoStepSnakeDelay
         }
 
 
