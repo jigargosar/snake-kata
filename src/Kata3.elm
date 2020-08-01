@@ -162,7 +162,7 @@ type alias Model =
     , fruit : Pos
     , inputDirection : Maybe Direction
     , state : State
-    , ticks : Int
+    , autoStepCounter : Int
     , seed : Seed
     }
 
@@ -211,7 +211,7 @@ initModelHelp w h head direction fruit seed =
     , fruit = fruit
     , inputDirection = Nothing
     , state = Running
-    , ticks = 0
+    , autoStepCounter = 0
     , seed = seed
     }
 
@@ -272,11 +272,11 @@ updateOnTick model =
             newModel
 
         Nothing ->
-            if modBy autoStepSnakeDelay model.ticks == 0 then
+            if modBy autoStepSnakeDelay model.autoStepCounter == 0 then
                 stepSnake model
 
             else
-                { model | ticks = model.ticks + 1 }
+                { model | autoStepCounter = model.autoStepCounter + 1 }
 
 
 updateOnTickWithDirection : Direction -> Model -> Maybe Model
@@ -309,14 +309,14 @@ stepSnake model =
             , fruit = newFruit
             , head = newHead
             , tail = model.head :: model.tail
-            , ticks = 1
+            , autoStepCounter = 1
         }
 
     else
         { model
             | head = newHead
             , tail = model.head :: dropLast model.tail
-            , ticks = 1
+            , autoStepCounter = 1
         }
 
 
