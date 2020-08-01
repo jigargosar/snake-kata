@@ -340,7 +340,7 @@ view model =
                 [ style "display" "grid"
                 , style "place-items" "center"
                 ]
-                [ h2 [] [ text "Running" ]
+                [ h2 [] [ text "Move with Arrow keys" ]
                 , viewBoard model
                 ]
 
@@ -349,7 +349,7 @@ view model =
                 [ style "display" "grid"
                 , style "place-items" "center"
                 ]
-                [ h2 [] [ text "Game Over: Press Enter" ]
+                [ h2 [] [ text "Game Over : Press Enter" ]
                 , viewBoard model
                 ]
 
