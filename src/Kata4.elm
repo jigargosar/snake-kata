@@ -46,11 +46,11 @@ type State
 
 init : Model
 init =
-    generateModel (Random.initialSeed 43)
+    generate (Random.initialSeed 43)
 
 
-generateModel : Seed -> Model
-generateModel seed0 =
+generate : Seed -> Model
+generate seed0 =
     let
         ( world, seed ) =
             Random.step World.generator seed0
@@ -63,7 +63,7 @@ generateModel seed0 =
 
 restart : Model -> Model
 restart model =
-    generateModel model.seed
+    generate model.seed
 
 
 type Msg
