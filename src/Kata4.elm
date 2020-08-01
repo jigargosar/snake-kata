@@ -240,7 +240,7 @@ firstOf =
 autoStep : Int -> World a -> Maybe (StepWorld a)
 autoStep autoStepCounter world =
     if autoStepCounter <= 0 then
-        Just (stepWorld world)
+        Just (stepSnake2 world)
 
     else
         Nothing
@@ -251,7 +251,7 @@ stepInInputDirection inputDirection model =
     inputDirection
         |> Maybe.andThen
             (\direction -> changeDirection direction model)
-        |> Maybe.map stepWorld
+        |> Maybe.map stepSnake2
 
 
 type StepWorld a
@@ -268,8 +268,8 @@ changeDirection direction world =
         Nothing
 
 
-stepWorld : World a -> StepWorld a
-stepWorld world =
+stepSnake2 : World a -> StepWorld a
+stepSnake2 world =
     let
         newHead =
             Loc.stepWarp world.direction world.size world.head
