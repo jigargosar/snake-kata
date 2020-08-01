@@ -233,8 +233,18 @@ updateOnTick2 model =
 
 
 firstOf : List (a -> Maybe b) -> a -> Maybe b
-firstOf =
-    Maybe.Extra.oneOf
+firstOf fns a =
+    case fns of
+        [] ->
+            Nothing
+
+        fmb :: rest ->
+            case fmb a of
+                Just b ->
+                    Just b
+
+                Nothing ->
+                    firstOf rest a
 
 
 autoStep : Int -> World a -> Maybe (StepWorld a)
