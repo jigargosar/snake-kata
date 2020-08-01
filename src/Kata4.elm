@@ -58,7 +58,7 @@ type alias Model =
     , tail : List Location
     , fruit : Location
     , inputDirection : Maybe Direction
-    , state : State
+    , over : Bool
     , autoStepCounter : Int
     , seed : Seed
     }
@@ -103,7 +103,7 @@ initModelHelp size head direction fruit seed =
     , tail = initTail size head direction
     , fruit = fruit
     , inputDirection = Nothing
-    , state = Running
+    , over = False
     , autoStepCounter = 0
     , seed = seed
     }
@@ -134,8 +134,8 @@ update msg model =
             updateOnTick model
 
         OnKeyDown key ->
-            case model.state of
-                Running ->
+            case model.over of
+                False ->
                     case Dir.fromArrowKey key of
                         Just newInputDirection ->
                             { model | inputDirection = Just newInputDirection }
@@ -143,7 +143,7 @@ update msg model =
                         Nothing ->
                             model
 
-                Over ->
+                True ->
                     case key of
                         "Enter" ->
                             generateModel model.seed
@@ -190,7 +190,7 @@ stepSnake model =
             Loc.stepWarp model.direction model.size model.head
     in
     if List.member newHead model.tail then
-        { model | state = Over }
+        { model | over = True }
 
     else if newHead == model.fruit then
         let
@@ -226,8 +226,8 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    case model.state of
-        Running ->
+    case model.over of
+        False ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
@@ -236,7 +236,7 @@ view model =
                 , viewBoard model
                 ]
 
-        Over ->
+        True ->
             div
                 [ style "display" "grid"
                 , style "place-items" "center"
