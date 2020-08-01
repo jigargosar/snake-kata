@@ -140,68 +140,6 @@ update msg model =
                             model
 
 
-
---updateOnTick : Model -> Model
---updateOnTick model =
---    case
---        model.inputDirection
---            |> Maybe.andThen
---                (\direction ->
---                    updateOnTickWithDirection direction model
---                )
---    of
---        Just newModel ->
---            newModel
---
---        Nothing ->
---            if model.autoStepCounter <= 0 then
---                stepSnake model
---
---            else
---                { model | autoStepCounter = model.autoStepCounter - 1 }
---
---
---updateOnTickWithDirection : Direction -> Model -> Maybe Model
---updateOnTickWithDirection direction model =
---    if direction /= Dir.opposite model.direction then
---        { model | direction = direction, inputDirection = Nothing }
---            |> stepSnake
---            |> Just
---
---    else
---        Nothing
---
---
---stepSnake : Model -> Model
---stepSnake model =
---    let
---        newHead =
---            Loc.stepWarp model.direction model.size model.head
---    in
---    if List.member newHead model.tail then
---        { model | over = True }
---
---    else if newHead == model.fruit then
---        let
---            ( newFruit, newSeed ) =
---                Random.step (Loc.random model.size) model.seed
---        in
---        { model
---            | seed = newSeed
---            , fruit = newFruit
---            , head = newHead
---            , tail = model.head :: model.tail
---            , autoStepCounter = autoStepSnakeDelay
---        }
---
---    else
---        { model
---            | head = newHead
---            , tail = model.head :: dropLast model.tail
---            , autoStepCounter = autoStepSnakeDelay
---        }
-
-
 updateOnTick2 : Model -> Model
 updateOnTick2 model =
     case model.state of
