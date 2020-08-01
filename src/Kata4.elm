@@ -82,14 +82,8 @@ generateModel seed =
 modelGenerator : Generator Model
 modelGenerator =
     let
-        width =
-            10
-
-        height =
-            20
-
         size =
-            { width = width, height = height }
+            { width = 10, height = 20 }
 
         gridPositionGenerator =
             Loc.random size
