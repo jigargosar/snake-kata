@@ -9,6 +9,7 @@ import Kata4.Grid.Direction as Dir exposing (Direction(..))
 import Kata4.Grid.Location as Loc exposing (Location)
 import Kata4.Grid.Size exposing (Size)
 import Kata4.More exposing (applyN, dropLast)
+import Kata4.World as World exposing (World)
 import Random exposing (Generator, Seed)
 import Svg
 import Svg.Attributes as SA
@@ -33,11 +34,7 @@ main =
 
 
 type alias Model =
-    { size : Size
-    , head : Location
-    , direction : Direction
-    , tail : List Location
-    , fruit : Location
+    { world : World
     , state : State
     , seed : Seed
     }
@@ -46,17 +43,6 @@ type alias Model =
 type State
     = Over
     | Running { autoStepCounter : Int, inputDirection : Maybe Direction }
-
-
-type alias World a =
-    { a
-        | size : Size
-        , head : Location
-        , direction : Direction
-        , tail : List Location
-        , fruit : Location
-        , seed : Seed
-    }
 
 
 init : Model
@@ -71,39 +57,15 @@ generateModel seed =
 
 modelGenerator : Generator Model
 modelGenerator =
-    let
-        size =
-            { width = 10, height = 20 }
-
-        randomLocation =
-            Loc.random size
-    in
-    Random.map4 (initModelHelp size)
-        randomLocation
-        Dir.random
-        randomLocation
+    Random.map2
+        (\world seed ->
+            { world = world
+            , state = Running { inputDirection = Nothing, autoStepCounter = 0 }
+            , seed = seed
+            }
+        )
+        World.generator
         Random.independentSeed
-
-
-initModelHelp : Size -> Location -> Direction -> Location -> Seed -> Model
-initModelHelp size head direction fruit seed =
-    { size = size
-    , head = head
-    , direction = direction
-    , tail = initTail size head direction
-    , fruit = fruit
-    , state = Running { inputDirection = Nothing, autoStepCounter = 0 }
-    , seed = seed
-    }
-
-
-initTail : Size -> Location -> Direction -> List Location
-initTail size head direction =
-    let
-        tailHelp i =
-            applyN (i + 1) (Loc.stepWarp (Dir.opposite direction) size)
-    in
-    List.repeat 5 head |> List.indexedMap tailHelp
 
 
 type Msg
@@ -152,16 +114,29 @@ updateOnTick model =
                     [ stepInInputDirection inputDirection
                     , autoStep autoStepCounter
                     ]
-                    model
+                    model.world
             of
-                Just (SnakeMoved newModel) ->
-                    { newModel | state = Running { inputDirection = Nothing, autoStepCounter = autoStepSnakeDelay } }
+                Just (SnakeMoved world) ->
+                    { model
+                        | state =
+                            Running
+                                { inputDirection = Nothing
+                                , autoStepCounter = autoStepSnakeDelay
+                                }
+                        , world = world
+                    }
 
                 Just SnakeDied ->
                     { model | state = Over }
 
                 Nothing ->
-                    { model | state = Running { inputDirection = inputDirection, autoStepCounter = autoStepCounter - 1 } }
+                    { model
+                        | state =
+                            Running
+                                { inputDirection = inputDirection
+                                , autoStepCounter = autoStepCounter - 1
+                                }
+                    }
 
 
 firstOf : List (a -> Maybe b) -> a -> Maybe b
@@ -179,7 +154,7 @@ firstOf fns a =
                     firstOf rest a
 
 
-autoStep : Int -> World a -> Maybe (StepWorld a)
+autoStep : Int -> World -> Maybe StepWorld
 autoStep autoStepCounter world =
     if autoStepCounter <= 0 then
         Just (stepSnake world)
@@ -188,7 +163,7 @@ autoStep autoStepCounter world =
         Nothing
 
 
-stepInInputDirection : Maybe Direction -> World a -> Maybe (StepWorld a)
+stepInInputDirection : Maybe Direction -> World -> Maybe StepWorld
 stepInInputDirection inputDirection model =
     inputDirection
         |> Maybe.andThen
@@ -196,12 +171,12 @@ stepInInputDirection inputDirection model =
         |> Maybe.map stepSnake
 
 
-type StepWorld a
-    = SnakeMoved (World a)
+type StepWorld
+    = SnakeMoved World
     | SnakeDied
 
 
-changeDirection : Direction -> World a -> Maybe (World a)
+changeDirection : Direction -> World -> Maybe World
 changeDirection direction world =
     if direction /= Dir.opposite world.direction then
         Just { world | direction = direction }
@@ -210,7 +185,7 @@ changeDirection direction world =
         Nothing
 
 
-stepSnake : World a -> StepWorld a
+stepSnake : World -> StepWorld
 stepSnake world =
     let
         newHead =
@@ -260,7 +235,7 @@ view model =
                 , style "place-items" "center"
                 ]
                 [ h2 [] [ text "Move with Arrow keys" ]
-                , viewBoard model
+                , viewBoard model.world
                 ]
 
         Over ->
@@ -269,11 +244,11 @@ view model =
                 , style "place-items" "center"
                 ]
                 [ h2 [] [ text "Game Over : Press Enter" ]
-                , viewBoard model
+                , viewBoard model.world
                 ]
 
 
-viewBoard : World a -> Html msg
+viewBoard : World -> Html msg
 viewBoard model =
     viewBoardHelp
         model.size

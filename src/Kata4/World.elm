@@ -3,7 +3,7 @@ module Kata4.World exposing (Response(..), World, changeDirection, generator, st
 import Kata4.Grid.Direction as Dir exposing (Direction)
 import Kata4.Grid.Location as Loc exposing (Location)
 import Kata4.Grid.Size exposing (Size)
-import Kata4.More exposing (applyN)
+import Kata4.More exposing (applyN, dropLast)
 import Random exposing (Generator, Seed)
 
 
