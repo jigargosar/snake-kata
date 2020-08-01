@@ -5,6 +5,7 @@ import Browser.Events
 import Html exposing (Html, div, h2, text)
 import Html.Attributes exposing (style)
 import Json.Decode as JD
+import Kata4.Counter as Counter exposing (Counter)
 import Kata4.Grid.Direction as Dir exposing (Direction(..))
 import Kata4.Grid.Location exposing (Location)
 import Kata4.Grid.Size exposing (Size)
@@ -41,7 +42,7 @@ type alias Model =
 
 type State
     = Over
-    | Running { autoStepCounter : Int, inputDirection : Maybe Direction }
+    | Running { autoStepCounter : Counter, inputDirection : Maybe Direction }
 
 
 init : Model
@@ -56,7 +57,7 @@ generate seed0 =
             Random.step World.generator seed0
     in
     { world = world
-    , state = Running { inputDirection = Nothing, autoStepCounter = 0 }
+    , state = Running { inputDirection = Nothing, autoStepCounter = Counter.upto autoStepDelay }
     , seed = seed
     }
 
@@ -119,7 +120,7 @@ updateOnTick model =
                         | state =
                             Running
                                 { inputDirection = Nothing
-                                , autoStepCounter = autoStepDelay
+                                , autoStepCounter = Counter.reset autoStepCounter
                                 }
                         , world = world
                     }
@@ -132,7 +133,7 @@ updateOnTick model =
                         | state =
                             Running
                                 { inputDirection = inputDirection
-                                , autoStepCounter = autoStepCounter - 1
+                                , autoStepCounter = Counter.step autoStepCounter
                                 }
                     }
 
@@ -152,9 +153,9 @@ firstOf fns a =
                     firstOf rest a
 
 
-autoStep : Int -> World -> Maybe World.Response
+autoStep : Counter -> World -> Maybe World.Response
 autoStep autoStepCounter world =
-    if autoStepCounter <= 0 then
+    if Counter.done autoStepCounter then
         Just (World.stepSnake world)
 
     else

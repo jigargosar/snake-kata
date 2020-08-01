@@ -1,4 +1,4 @@
-module Kata4.Counter exposing (Counter, done, restart, start, step)
+module Kata4.Counter exposing (Counter, done, reset, step, upto)
 
 
 type alias Counter =
@@ -7,8 +7,8 @@ type alias Counter =
     }
 
 
-start : Int -> Counter
-start limit =
+upto : Int -> Counter
+upto limit =
     { limit = limit
     , current = 0
     }
@@ -24,6 +24,6 @@ done counter =
     counter.current >= counter.limit
 
 
-restart : Counter -> Counter
-restart counter =
+reset : Counter -> Counter
+reset counter =
     { counter | current = 0 }
