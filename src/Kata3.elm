@@ -230,7 +230,7 @@ type Msg
     | OnKeyDown String
 
 
-autoStepDelay =
+autoStepSnakeDelay =
     20
 
 
@@ -272,7 +272,7 @@ updateOnTick model =
             newModel
 
         Nothing ->
-            if modBy autoStepDelay model.ticks == 0 then
+            if modBy autoStepSnakeDelay model.ticks == 0 then
                 stepSnake model
 
             else
