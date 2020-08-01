@@ -207,24 +207,12 @@ stepSnake model =
         }
 
 
-updateOnTick2 : Model -> Model
-updateOnTick2 model =
-    case
-        model.inputDirection
-            |> Maybe.andThen
-                (\direction ->
-                    updateOnTickWithDirection direction model
-                )
-    of
-        Just newModel ->
-            newModel
-
-        Nothing ->
-            if model.autoStepCounter <= 0 then
-                stepSnake model
-
-            else
-                { model | autoStepCounter = model.autoStepCounter - 1 }
+stepInInputDirection : Maybe Direction -> World a -> Maybe (StepSnake a)
+stepInInputDirection inputDirection model =
+    inputDirection
+        |> Maybe.andThen
+            (\direction -> changeDirection direction model)
+        |> Maybe.map stepWorld
 
 
 type StepSnake a
