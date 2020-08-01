@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Kata1 exposing (main)
 
 import Playground exposing (..)
 import Random exposing (Generator, Seed)

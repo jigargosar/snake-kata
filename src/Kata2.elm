@@ -1,4 +1,4 @@
-module MainV2 exposing (main)
+module Kata2 exposing (main)
 
 import Browser
 import Browser.Events
