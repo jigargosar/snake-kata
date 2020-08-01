@@ -313,7 +313,11 @@ stepSnake model =
         }
 
     else
-        { model | head = newHead, tail = model.head :: dropLast model.tail, ticks = 1 }
+        { model
+            | head = newHead
+            , tail = model.head :: dropLast model.tail
+            , ticks = 1
+        }
 
 
 subscriptions _ =
