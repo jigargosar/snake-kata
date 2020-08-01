@@ -185,16 +185,16 @@ generateModel seed =
 modelGenerator : Generator Model
 modelGenerator =
     let
-        w =
+        width =
             10
 
-        h =
+        height =
             20
 
         posGen =
-            randomPosition w h
+            randomPosition width height
     in
-    Random.map4 (initModelHelp w h)
+    Random.map4 (initModelHelp width height)
         posGen
         randomDirection
         posGen
